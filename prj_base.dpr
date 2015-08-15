@@ -4,11 +4,14 @@ uses
   Forms,
   main_base in 'main_base.pas' {frmMainBase},
   login_base in 'login\login_base.pas' {frmLoginBase},
-  pkg_uses in 'lib\pkg_uses.pas',
-  lib_mensagem in 'lib\lib_mensagem.pas',
-  lib_vmsis in 'lib\lib_vmsis.pas',
-  libframes in 'lib\libframes.pas',
-  pdv in 'app\pdv\pdv.pas' {frmPDV: TFrame};
+  pdv in 'app\pdv\pdv.pas' {frmPDV: TFrame},
+  lib_interface in 'vlib\lib_interface.pas',
+  lib_mensagem in 'vlib\lib_mensagem.pas',
+  lib_vmsis in 'vlib\lib_vmsis.pas',
+  libframes in 'vlib\libframes.pas',
+  uvPadraoFrame in 'vlib\vComponents\uvPadraoFrame.pas' {vPadraoFrame: TFrame},
+  uvVisaoFrame in 'vlib\vComponents\uvVisaoFrame.pas' {vVisaoFrame: TFrame},
+  uvCadastroFrame in 'vlib\vComponents\uvCadastroFrame.pas' {vCadastroFrame: TFrame};
 
 {$R *.res}
 

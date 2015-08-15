@@ -4,7 +4,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, pkg_uses, cxGraphics, cxControls, cxLookAndFeels,
+  Dialogs, cxGraphics, cxControls, cxLookAndFeels,
   cxLookAndFeelPainters, dxSkinsCore, dxSkinBlack, dxSkinBlue,
   dxSkinCaramel, dxSkinCoffee, dxSkinDarkRoom, dxSkinDarkSide, dxSkinFoggy,
   dxSkinGlassOceans, dxSkiniMaginary, dxSkinLilian, dxSkinLiquidSky,
@@ -34,7 +34,7 @@ type
     procedure nbgPDVClick(Sender: TObject);
   private
     { Private declarations }
-    procedure InvocadordeBpl(stClasse: String);
+//    procedure InvocadordeBpl(stClasse: String);
   public
     { Public declarations }
   end;
@@ -54,7 +54,7 @@ begin
    Close;
 end;
 
-procedure TfrmMainBase.FormCreate(Sender: TObject); 
+procedure TfrmMainBase.FormCreate(Sender: TObject);
 var
    region: hrgn;
 begin
@@ -63,17 +63,17 @@ begin
    SetWindowRgn(handle, region, true);
 end;
 
-procedure TfrmMainBase.Invocadordebpl(stClasse: String);
-var
-   Classe: TPersistentClass;
-begin
-   Classe := GetClass(stClasse);
-   if Classe <> nil then
-   begin
-      with TComponentClass(Classe).Create(Application) as TFrame do
-         Visible := True;
-   end;
-end;
+//procedure TfrmMainBase.Invocadordebpl(stClasse: String);
+//var
+//   Classe: TPersistentClass;
+//begin
+//   Classe := GetClass(stClasse);
+//   if Classe <> nil then
+//   begin
+//      with TComponentClass(Classe).Create(Application) as TFrame do
+//         Visible := True;
+//   end;
+//end;
 
 procedure TfrmMainBase.nbgPDVClick(Sender: TObject);
 begin

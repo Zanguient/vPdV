@@ -1,6 +1,6 @@
 object frmMainBase: TfrmMainBase
   Left = 52
-  Top = 59
+  Top = 57
   BorderStyle = bsNone
   ClientHeight = 632
   ClientWidth = 1222
@@ -71,6 +71,7 @@ object frmMainBase: TfrmMainBase
     object nbiCliente: TdxNavBarItem
       Caption = 'Cliente'
       SmallImageIndex = 1
+      OnClick = nbiClienteClick
     end
     object nbiEntrada: TdxNavBarItem
       Caption = 'Entrada'

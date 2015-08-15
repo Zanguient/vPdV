@@ -17,7 +17,7 @@ uses
   dxSkinValentine, dxSkinXmas2008Blue, dxSkinscxPCPainter, cxCustomData,
   cxFilter, cxData, cxDataStorage, cxEdit, DB, cxDBData, cxGridLevel,
   cxClasses, cxGridCustomView, cxGridCustomTableView, cxGridTableView,
-  cxGridDBTableView, cxGrid, ImgList;
+  cxGridDBTableView, cxGrid, ImgList, lib_interface;
 
 type
   TfrmPDV = class(TFrame)
@@ -58,8 +58,6 @@ type
     { Private declarations }
   public
     { Public declarations }
-    procedure CriaButtonPanel(ScrollBox: TScrollBox; stCaption, stOnClick: String);
-    procedure OrganizaPanel(ScrollBox: TScrollBox);
     constructor Create(AOwner: TComponent); override;
   end;  
 
@@ -83,62 +81,10 @@ implementation
 
 { TfrmPDV }
 
-procedure TfrmPDV.CriaButtonPanel(ScrollBox: TScrollBox; stCaption,
-  stOnClick: String);
-var
-   btn: TcxButton;
-begin
-   btn := TcxButton.Create(nil);
-   btn.Visible := False;
-   btn.Parent  := ScrollBox;
-   btn.Name    := 'btn'+ScrollBox.Name+IntToStr(ScrollBox.ControlCount);
-   btn.Caption := stCaption;
-   btn.Height  := BUTTON_HEIGHT;
-   btn.Width   := BUTTON_WIDTH;
-//   btn.OnClick := stOnClick;
-   btn.Visible := True;
-end;
-
-procedure TfrmPDV.OrganizaPanel(ScrollBox: TScrollBox);
-var
-  iComp, iCompLinha, iCompDaLn: Integer;
-  iRestDimen: Double;
-  boMudaLinha: Boolean;
-begin
-   iCompDaLn := 0;
-   iCompLinha := (ScrollBox.Width div BUTTON_WIDTH);
-   if (QTDECOLUNS_PANEL > 0) and (iCompLinha > QTDECOLUNS_PANEL) then
-      iCompLinha := QTDECOLUNS_PANEL;
-
-   iRestDimen := (ScrollBox.Width-(BUTTON_WIDTH * iCompLinha))/(iCompLinha+1);
-
-   for iComp := 0 to pred(ScrollBox.ControlCount) do begin
-      if iCompDaLn < iCompLinha then
-         boMudaLinha := False
-      else
-         boMudaLinha := True;
-
-      if boMudaLinha then begin
-         ScrollBox.Controls[iComp].Left := Trunc(iRestDimen);
-         ScrollBox.Controls[iComp].Top  := ScrollBox.Controls[iComp-1].Top+BUTTON_TOP+BUTTON_HEIGHT;
-         iCompDaLn := 0;
-      end else begin
-         if iComp = 0 then begin
-            ScrollBox.Controls[iComp].Left := Trunc(iRestDimen);
-            ScrollBox.Controls[iComp].Top  := BUTTON_TOP;
-         end else begin
-            ScrollBox.Controls[iComp].Left := ScrollBox.Controls[iComp-1].Left+BUTTON_WIDTH+Trunc(iRestDimen);
-            ScrollBox.Controls[iComp].Top  := ScrollBox.Controls[iComp-1].Top;
-         end;
-      end;
-      inc(iCompDaLn);
-   end;
-end;
-
 constructor TfrmPDV.Create(AOwner: TComponent);
 begin
-  inherited; 
-   OrganizaPanel(sbxOpcoesPDV);
+  inherited;
+
 end;
 
 initialization
