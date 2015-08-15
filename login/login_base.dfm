@@ -262,6 +262,7 @@ object frmLoginBase: TfrmLoginBase
       Hint = 'Senha'
       ParentFont = False
       Properties.Alignment.Horz = taLeftJustify
+      Properties.EchoMode = eemPassword
       Properties.PasswordChar = '*'
       Style.Font.Charset = DEFAULT_CHARSET
       Style.Font.Color = clBackground

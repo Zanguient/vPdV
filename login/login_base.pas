@@ -37,7 +37,7 @@ type
     procedure edtSenhaKeyPress(Sender: TObject; var Key: Char);
     procedure btnLoginClick(Sender: TObject);
   private
-    { Private declarations } 
+    { Private declarations }
     FLogado: Boolean;
     procedure WMov_tela(var Msg: TMessage);
     message WM_NChitTest;
@@ -61,78 +61,86 @@ uses
 
 function TfrmLoginBase.GetLogado: Boolean;
 begin
-   Result := FLogado;
+  Result := FLogado;
 end;
 
 procedure TfrmLoginBase.FormCreate(Sender: TObject);
 var
-   region: hrgn;
+  region: hrgn;
 begin
-   DoubleBuffered := True;
-   region := CreateRoundRectRgn(0, 0, width, height, 15, 15);
-   SetWindowRgn(handle, region, true);
-   ArredondarComponente(btnLogin,10);
+  DoubleBuffered := True;
+  region := CreateRoundRectRgn(0, 0, width, height, 15, 15);
+  SetWindowRgn(handle, region, true);
+  ArredondarComponente(btnLogin,10);
 end;
 
 procedure TfrmLoginBase.WMov_tela(var Msg: TMessage);
 begin
-   if GetAsyncKeyState(VK_LBUTTON) < 0 then
-      Msg.Result := HTCAPTION
-   else
-      Msg.Result := HTCLIENT;
+  if GetAsyncKeyState(VK_LBUTTON) < 0 then
+    Msg.Result := HTCAPTION
+  else
+    Msg.Result := HTCLIENT;
 end;
 
 procedure TfrmLoginBase.btnMinimizaClick(Sender: TObject);
-begin   
-   Application.Minimize;
+begin
+  Application.Minimize;
 end;
 
 procedure TfrmLoginBase.btnFecharClick(Sender: TObject);
 begin
-   Application.Terminate;
+  Application.Terminate;
 end;
 
-procedure TfrmLoginBase.ArredondarComponente(Componente: TWinControl;
-  const Radius: SmallInt);
+procedure TfrmLoginBase.ArredondarComponente(Componente: TWinControl; const Radius: SmallInt);
 var
-   R: TRect;
-   Rgn: HRGN;
+  R: TRect;
+  Rgn: HRGN;
 begin
-   with Componente do begin
-      R := ClientRect;
-      Rgn := CreateRoundRectRgn(R.Left, R.Top, R.Right, R.Bottom, Radius, Radius);
-      Perform(EM_GETRECT, 0, lParam(@R));
-      InflateRect(R, -5, -5);
-      Perform(EM_SETRECTNP, 0, lParam(@R));
-      SetWindowRgn(Handle, Rgn, True);
-      Invalidate;
-   end;
+  with Componente do
+  begin
+    R := ClientRect;
+    Rgn := CreateRoundRectRgn(R.Left, R.Top, R.Right, R.Bottom, Radius, Radius);
+    Perform(EM_GETRECT, 0, lParam(@R));
+    InflateRect(R, -5, -5);
+    Perform(EM_SETRECTNP, 0, lParam(@R));
+    SetWindowRgn(Handle, Rgn, True);
+    Invalidate;
+  end;
 end;
 
 procedure TfrmLoginBase.edtUsuarioKeyPress(Sender: TObject; var Key: Char);
 begin
-   if (key in [#13]) then
-      if (edtSenha.Text = '') then begin
-         Aviso(INFORMAR_SENHA);
-         edtSenha.SetFocus;
-      end else
-         btnLoginClick(btnLogin);
+  if (key in [#13]) then
+  begin
+    if (edtSenha.Text = '') then
+    begin
+      Aviso(INFORMAR_SENHA);
+      edtSenha.SetFocus;
+    end
+    else
+      btnLoginClick(btnLogin);
+  end;
 end;
 
 procedure TfrmLoginBase.edtSenhaKeyPress(Sender: TObject; var Key: Char);
-begin 
-   if (key in [#13]) then
-      if (edtUsuario.Text = '') then begin
-         Aviso(INFORMAR_USUARIO);
-         edtUsuario.SetFocus;
-      end else
-         btnLoginClick(btnLogin);
+begin
+  if (key in [#13]) then
+  begin
+    if (edtUsuario.Text = '') then
+    begin
+      Aviso(INFORMAR_USUARIO);
+      edtUsuario.SetFocus;
+    end
+    else
+      btnLoginClick(btnLogin);
+  end;
 end;
 
 procedure TfrmLoginBase.btnLoginClick(Sender: TObject);
 begin   
-   FLogado := True;
-   Close;
+  FLogado := True;
+  Close;
 end;
 
 end.
