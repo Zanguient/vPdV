@@ -1,0 +1,79 @@
+package pkg_pdv;
+
+{$R *.res}
+{$ALIGN 8}
+{$ASSERTIONS ON}
+{$BOOLEVAL OFF}
+{$DEBUGINFO ON}
+{$EXTENDEDSYNTAX ON}
+{$IMPORTEDDATA ON}
+{$IOCHECKS ON}
+{$LOCALSYMBOLS ON}
+{$LONGSTRINGS ON}
+{$OPENSTRINGS ON}
+{$OPTIMIZATION ON}
+{$OVERFLOWCHECKS OFF}
+{$RANGECHECKS OFF}
+{$REFERENCEINFO ON}
+{$SAFEDIVIDE OFF}
+{$STACKFRAMES OFF}
+{$TYPEDADDRESS OFF}
+{$VARSTRINGCHECKS ON}
+{$WRITEABLECONST OFF}
+{$MINENUMSIZE 1}
+{$IMAGEBASE $400000}
+{$IMPLICITBUILD OFF}
+
+requires
+  rtl,
+  vcl,
+  vcljpg,
+  dbrtl,
+  vcldb,
+  dxCoreD7,
+  dxGDIPlusD7,
+  cxLibraryVCLD7,
+  dxThemeD7,
+  cxEditorsVCLD7,
+  cxDataD7,
+  cxExtEditorsVCLD7,
+  cxPageControlVCLD7,
+  cxGridD7,
+  dxSkinsCoreD7,
+  dxSkinscxPCPainterD7,
+  dxSkinXmas2008BlueD7,
+  dxSkinBlackD7,
+  dxSkinBlueD7,
+  dxSkinCaramelD7,
+  dxSkinCoffeeD7,
+  dxSkinDarkRoomD7,
+  dxSkinDarkSideD7,
+  dxSkinFoggyD7,
+  dxSkinGlassOceansD7,
+  dxSkiniMaginaryD7,
+  dxSkinLilianD7,
+  dxSkinLiquidSkyD7,
+  dxSkinLondonLiquidSkyD7,
+  dxSkinMcSkinD7,
+  dxSkinMoneyTwinsD7,
+  dxSkinOffice2007BlackD7,
+  dxSkinOffice2007BlueD7,
+  dxSkinOffice2007GreenD7,
+  dxSkinOffice2007PinkD7,
+  dxSkinOffice2007SilverD7,
+  dxSkinOffice2010BlackD7,
+  dxSkinOffice2010BlueD7,
+  dxSkinOffice2010SilverD7,
+  dxSkinPumpkinD7,
+  dxSkinSevenD7,
+  dxSkinSharpD7,
+  dxSkinSilverD7,
+  dxSkinSpringTimeD7,
+  dxSkinStardustD7,
+  dxSkinSummer2008D7,
+  dxSkinValentineD7;
+
+contains
+  pdv in 'pdv.pas' {frmPDV: TFrame};
+
+end.
