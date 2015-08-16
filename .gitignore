@@ -4,3 +4,5 @@
 *.~pas
 *.~dpr
 *.~dpr
+*.dcu
+*.~pas

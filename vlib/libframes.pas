@@ -25,7 +25,7 @@ interface
         FPageControl : TcxPageControl;
         function CriarAba(onwner : TcxPageControl) : TcxTabSheet;
      public
-        property NomeLabelPadrao : String read FNomeLabelPadrao write FNomeLabelPadrao;
+        property NomeLabelPadrao : String read FNomeLabelPadrao;
         procedure Criar();
         constructor Create(PageControl : TcxPageControl; Frame : TParamFrame);
      end;
@@ -54,16 +54,18 @@ var
    frame : TFrame;
    labelCaption : TComponent;
 begin
-   tab := CriarAba(FPageControl);
-   frame := FClassFrame.create(tab);
-   frame.Parent := tab;
-   frame.Align := alClient;
-   labelCaption := frame.FindComponent(FNomeLabelPadrao);
-   if(labelCaption <> nil) then begin
-      if labelCaption.ClassName = 'TLabel' then
-         tab.Caption := (labelCaption as Tlabel).Caption;
-   end else
-      tab.Caption := FNomeLabelPadrao;
+  tab := CriarAba(FPageControl);
+  frame := FClassFrame.create(tab);
+  frame.Parent := tab;
+  frame.Align := alClient;
+  labelCaption := frame.FindComponent(FNomeLabelPadrao);
+  if(labelCaption <> nil) then
+  begin
+    if labelCaption.ClassName = 'TLabel' then
+      tab.Caption := (labelCaption as Tlabel).Caption;
+  end
+  else
+     tab.Caption := FNomeLabelPadrao;
 end;
 
 function TAbas.CriarAba(onwner: TcxPageControl): TcxTabSheet;
@@ -79,6 +81,7 @@ begin
   begin
     tab := TcxTabSheet.Create(onwner);
     tab.PageControl := onwner;
+    onwner.ActivePage := tab;
     Result := tab;
   end;
 end;
