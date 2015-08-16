@@ -56,9 +56,12 @@ procedure TfrmPDVMain.FrameResize(Sender: TObject);
 var
   iComp: Integer;
   Interface_: TInterface;
-begin
-  Interface_ := TInterface.Create();
-  Interface_.OrganizaScrollBox(sbxOpcoesPDV,1);
+begin                               
+  if sbxOpcoesPDV.ControlCount > 0 then
+  begin
+    Interface_ := TInterface.Create();
+    Interface_.OrganizaScrollBox(sbxOpcoesPDV,1);
+  end;
   
   for iComp := 0 to pred(scbOpcoes.ControlCount) do
   begin
