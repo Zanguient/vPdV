@@ -25,11 +25,10 @@ type
     panMaxMin: TPanel;
     btnMinimiza: TcxButton;
     btnFechar: TcxButton;
-    panLogin: TPanel;
     lblUsuario: TcxLabel;
-    edtUsuario: TcxTextEdit;
     lblSenha: TcxLabel;
     edtSenha: TcxMaskEdit;
+    edtUsuario: TcxTextEdit;
     procedure FormCreate(Sender: TObject);
     procedure btnMinimizaClick(Sender: TObject);
     procedure btnFecharClick(Sender: TObject);
