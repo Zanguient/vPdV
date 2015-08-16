@@ -13,7 +13,8 @@ uses
   uvPadraoFrame in 'vlib\vComponents\uvPadraoFrame.pas' {vPadraoFrame: TFrame},
   uvVisaoFrame in 'vlib\vComponents\uvVisaoFrame.pas' {vVisaoFrame: TFrame},
   uvCadastroFrame in 'vlib\vComponents\uvCadastroFrame.pas' {vCadastroFrame: TFrame},
-  uDmConexao in 'vlib\vComponents\uDmConexao.pas' {dmConexao: TDataModule};
+  uDmConexao in 'vlib\vComponents\uDmConexao.pas' {dmConexao: TDataModule},
+  pdv_main in 'app\pdv\pdv_main.pas' {frmPDVMain: TFrame};
 
 {$R *.res}
 
