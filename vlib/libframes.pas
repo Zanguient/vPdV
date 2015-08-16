@@ -32,7 +32,7 @@ interface
 
      TAbasNavegacao = class
      public
-         class procedure CriarAba(PageControl : TcxPageControl; Frame : TParamFrame; const
+         class procedure CriarAba(PageControl : TcxPageControl; Frame : TParamFrame; 
             NomeLabelCaption : String = 'lblNomeFrame');
      end;
 
@@ -85,7 +85,7 @@ end;
 
 { TAbasNavegacao }
 
-class procedure TAbasNavegacao.CriarAba(PageControl: TcxPageControl; Frame: TParamFrame; const NomeLabelCaption: String);
+class procedure TAbasNavegacao.CriarAba(PageControl: TcxPageControl; Frame: TParamFrame; NomeLabelCaption: String);
 var
   aba : TAbas;
 begin
