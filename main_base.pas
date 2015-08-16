@@ -47,7 +47,7 @@ implementation
 {$R *.dfm}
 
 uses
-   libframes, pdv;
+   libframes, pdv_main;
 
 procedure TfrmMainBase.nbgSairClick(Sender: TObject);
 begin
@@ -78,7 +78,7 @@ end;
 procedure TfrmMainBase.nbgPDVClick(Sender: TObject);
 begin
  //  InvocadordeBpl('TfrmPDV');
-   TAbasNavegacao.CriarAba(pgcPrincipal, TfrmPDV);
+   TAbasNavegacao.CriarAba(pgcPrincipal, TfrmPDVMain);
 end;
 
 end.
