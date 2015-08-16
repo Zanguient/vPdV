@@ -2,26 +2,40 @@ program prj_base;
 
 uses
   Forms,
+  SysUtils,
   main_base in 'main_base.pas' {frmMainBase},
   login_base in 'login\login_base.pas' {frmLoginBase},
-  pkg_uses in 'lib\pkg_uses.pas',
-  lib_mensagem in 'lib\lib_mensagem.pas',
-  lib_vmsis in 'lib\lib_vmsis.pas',
-  libframes in 'lib\libframes.pas',
   pdv in 'app\pdv\pdv.pas' {frmPDV: TFrame},
-  uvPadraoFrame in 'app\vLib\vComponents\uvPadraoFrame.pas' {vPadraoFrame: TFrame},
-  uvVisaoFrame in 'app\vLib\vComponents\uvVisaoFrame.pas' {vVisaoFrame: TFrame},
-  uvCadastroFrame in 'app\vLib\vComponents\uvCadastroFrame.pas' {vCadastroFrame: TFrame};
+  lib_interface in 'vlib\lib_interface.pas',
+  lib_mensagem in 'vlib\lib_mensagem.pas',
+  lib_vmsis in 'vlib\lib_vmsis.pas',
+  libframes in 'vlib\libframes.pas',
+  uvPadraoFrame in 'vlib\vComponents\uvPadraoFrame.pas' {vPadraoFrame: TFrame},
+  uvVisaoFrame in 'vlib\vComponents\uvVisaoFrame.pas' {vVisaoFrame: TFrame},
+  uvCadastroFrame in 'vlib\vComponents\uvCadastroFrame.pas' {vCadastroFrame: TFrame},
+  uDmConexao in 'vlib\vComponents\uDmConexao.pas' {dmConexao: TDataModule};
 
 {$R *.res}
 
 begin
   Application.Initialize;
-  Application.CreateForm(TfrmMainBase, frmMainBase);
-  frmLoginBase := TfrmLoginBase.Create(nil);
+  Application.CreateForm(TdmConexao, dmConexao);
+  frmLoginBase := TfrmLoginBase.Create(Application);
   frmLoginBase.ShowModal;
-  if frmLoginBase.GetLogado then begin
-     frmLoginBase.Release;
-     Application.Run;
-  end;
+  try
+     if frmLoginBase.GetLogado then
+     begin
+       FreeAndNil(frmLoginBase);
+       Application.CreateForm(TfrmMainBase, frmMainBase);
+       Application.Run;
+     end;
+  finally
+    FreeAndNil(frmLoginBase);
+    Application.Terminate;
+  end
 end.
+
+
+
+
+

@@ -88,7 +88,7 @@ end;
 
 procedure TfrmLoginBase.btnFecharClick(Sender: TObject);
 begin
-  Application.Terminate;
+  close;
 end;
 
 procedure TfrmLoginBase.ArredondarComponente(Componente: TWinControl; const Radius: SmallInt);

@@ -5,7 +5,7 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, cxGraphics, cxLookAndFeels, cxLookAndFeelPainters, Menus,
-  StdCtrls, cxButtons, ExtCtrls, DB, DBClient;
+  StdCtrls, cxButtons, ExtCtrls, DB, DBClient, ADODB;
 
 const
   CLOSE_FRAME_PARENT = 'P';
@@ -17,8 +17,9 @@ type
     btnFechar: TcxButton;
     panClient: TPanel;
     lblNomeFrame: TLabel;
-    ClientDataSet1: TClientDataSet;
-    DataSource1: TDataSource;
+    cdsPadrao: TClientDataSet;
+    dtsPadrao: TDataSource;
+    adqPadrao: TADOQuery;
     procedure btnFecharClick(Sender: TObject);
   private
     { Private declarations }
@@ -30,6 +31,8 @@ type
   end;
 
 implementation
+
+uses uDmConexao;
 
 {$R *.dfm}
 

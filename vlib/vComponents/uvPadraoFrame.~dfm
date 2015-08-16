@@ -54,15 +54,21 @@ object vPadraoFrame: TvPadraoFrame
     ParentColor = True
     TabOrder = 1
   end
-  object ClientDataSet1: TClientDataSet
+  object cdsPadrao: TClientDataSet
     Aggregates = <>
     Params = <>
     Left = 368
     Top = 40
   end
-  object DataSource1: TDataSource
-    DataSet = ClientDataSet1
+  object dtsPadrao: TDataSource
+    DataSet = cdsPadrao
     Left = 400
     Top = 40
+  end
+  object adqPadrao: TADOQuery
+    DataSource = dtsPadrao
+    Parameters = <>
+    Left = 368
+    Top = 80
   end
 end
