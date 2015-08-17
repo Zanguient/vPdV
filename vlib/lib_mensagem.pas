@@ -18,6 +18,21 @@ CONST
    INFORMAR_SENHA   = 'Senha deve ser informada.';
    OPCAO_N_IDENTIFICADA = 'Opção não identificada.';
 
+   { Gaveta / Impressora não fiscal }
+   GAVETA_ACIONADA = 'A gaveta foi aberta.';
+   GAVETA_ERRO = 'Verifique conexão com a gaveta.';
+   GAVETA_ABERTA = 'A gaveta já está aberta.';
+   GAVETA_SEM_PERMISSAO = 'Você não tem permissão para abrir a gaveta sem chave.';
+
+   IMPRESSORA_DESLIGADA = 'Impressora desligada.';
+   IMPRESSORA_OFFLINE   = 'Impressora OFFLINE.';
+   IMPRESSORA_SEMPAPEL  = 'Impressora sem papel.';
+   IMPRESSORA_INICIALIZANDO  = 'Impressora inicializando.';
+   ERRO_AO_IMPRIMIR = 'Erro durante a impressão, verifique a impressora.';
+
+   ERRO_GENERICO = 'Erro generico.';
+   ERRO_RETORNO_NAO_ESPERADO = 'Retorno não esperado.';
+
    { Rotina de Login }
    INICIA_PROCESSO_FC = 'Iniciando frente de caixa...';
 

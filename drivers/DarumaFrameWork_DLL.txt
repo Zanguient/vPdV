@@ -1,0 +1,3 @@
+DarumaFrameWork_DLL
+- Coloque as dlls dentro da pasta System32 (se o windows for 32bits) ou SysWow64 (se o windows for 64bits)
+- Fim

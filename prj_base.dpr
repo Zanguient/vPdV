@@ -13,7 +13,8 @@ uses
   uvVisaoFrame in 'vlib\vComponents\uvVisaoFrame.pas' {vVisaoFrame: TFrame},
   uvCadastroFrame in 'vlib\vComponents\uvCadastroFrame.pas' {vCadastroFrame: TFrame},
   uDmConexao in 'vlib\vComponents\uDmConexao.pas' {dmConexao: TDataModule},
-  pdv_main in 'app\pdv\pdv_main.pas' {frmPDVMain: TFrame};
+  pdv_main in 'app\pdv\pdv_main.pas' {frmPDVMain: TFrame},
+  lib_modelo_impressao in 'vlib\lib_modelo_impressao.pas';
 
 {$R *.res}
 

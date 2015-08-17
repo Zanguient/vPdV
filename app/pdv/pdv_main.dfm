@@ -82,6 +82,7 @@ inherited frmPDVMain: TfrmPDVMain
           Font.Style = []
           ParentFont = False
           TabOrder = 0
+          OnClick = btnGavetaClick
           Align = alLeft
           Glyph.Data = {
             36400000424D3640000000000000360000002800000040000000400000000100

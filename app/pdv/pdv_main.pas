@@ -36,6 +36,7 @@ type
     cxButton1: TcxButton;
     sbxOpcoesPDV: TScrollBox;
     procedure FrameResize(Sender: TObject);
+    procedure btnGavetaClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -50,7 +51,10 @@ implementation
 {$R *.dfm}
 
 uses
-  lib_interface;
+  lib_interface, lib_mensagem;
+
+  function rStatusGaveta_DUAL_DarumaFramework(var iStatusGaveta: Integer): Integer; StdCall; External 'DarumaFrameWork.dll';
+  function iAcionarGaveta_DUAL_DarumaFramework(): Integer; StdCall; External 'DarumaFrameWork.dll';
 
 procedure TfrmPDVMain.FrameResize(Sender: TObject);
 var
@@ -68,6 +72,38 @@ begin
     scbOpcoes.Controls[iComp].Width := Trunc(panLeft.Width/scbOpcoes.ControlCount);
     scbOpcoes.Controls[iComp].Left  := Trunc(panLeft.Width/scbOpcoes.ControlCount)*(iComp+1);
   end;
+end;
+
+procedure TfrmPDVMain.btnGavetaClick(Sender: TObject);
+  procedure AcionaGaveta;
+  var
+    iRetorno: Integer;
+  begin
+    iRetorno := iAcionarGaveta_DUAL_DarumaFramework();
+    if (iRetorno = 1) then
+      Aviso(GAVETA_ACIONADA)
+    else
+      Erro(GAVETA_ERRO);
+  end;
+var
+  iRetorno: Integer;
+  iStatusGaveta: Integer;
+begin
+  inherited;
+  //Permissao
+  //if PodeMexer(GAVETA_SEM_PERMISSAO) then begin
+    iRetorno := rStatusGaveta_DUAL_DarumaFramework(iStatusGaveta);
+    if (iRetorno = 1) then
+    begin
+      case iStatusGaveta of
+        0: AcionaGaveta;
+        1: Aviso(GAVETA_ABERTA);
+      else
+        Aviso(GAVETA_ERRO);
+      end;
+    end else
+      Aviso(GAVETA_ERRO);
+  //end;
 end;
 
 end.
