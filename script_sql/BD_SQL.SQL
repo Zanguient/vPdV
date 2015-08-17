@@ -278,10 +278,6 @@ CREATE INDEX posestoque_lote_id ON posestoque(lote_id);
 CREATE INDEX posestoque_produto_id ON posestoque(produto_id);
 
 
-
--- Table: "AgrupAdicional"
--- DROP TABLE "AgrupAdicional";
-
 CREATE TABLE AgrupAdicional
 (
   id INTEGER NOT NULL AUTO_INCREMENT,
@@ -291,10 +287,7 @@ CREATE TABLE AgrupAdicional
   CONSTRAINT AgrupAdicional_pkey PRIMARY KEY (id),
   CONSTRAINT AgrupAdicional_nmagrupadic_key UNIQUE (nmagrupadic)
 )
-  
--- Table: categoria
 
--- DROP TABLE categoria;
 
 CREATE TABLE categoria
 (
@@ -308,9 +301,6 @@ CREATE TABLE categoria
 
 CREATE INDEX categoria_nmcategoria_like ON categoria (nmcategoria);
 
--- Table: "ComposicaoProd"
-
--- DROP TABLE "ComposicaoProd";
 
 CREATE TABLE ComposicaoProd
 (
@@ -333,11 +323,6 @@ CREATE INDEX ComposicaoProd_produto_id ON ComposicaoProd (produto_id);
 CREATE INDEX ComposicaoProd_unimedida_id ON ComposicaoProd(unimedida_id);
 
 
-
-
--- Table: "ItemCategoria"
--- DROP TABLE "ItemCategoria";
-
 CREATE TABLE ItemCategoria
 (
   id integer NOT NULL AUTO_INCREMENT,
@@ -350,7 +335,7 @@ CREATE TABLE ItemCategoria
   CONSTRAINT ItemCategoria_categoria_id_fkey FOREIGN KEY (categoria_id)
       REFERENCES categoria (id),
   CONSTRAINT ItemCategoria_produto_id_fkey FOREIGN KEY (produto_id)
-      REFERENCES produto (id)       
+      REFERENCES produto (id)
 );
 
 CREATE INDEX ItemCategoria_categoria_id ON ItemCategoria (categoria_id);
@@ -389,9 +374,6 @@ CREATE INDEX mesa_unidade_id ON mesa(unidade_id);
 
 
 
--- Table: pedido
--- DROP TABLE pedido;
-
 CREATE TABLE pedido
 (
   id integer NOT NULL AUTO_INCREMENT,
@@ -412,16 +394,13 @@ CREATE INDEX pedido_cliente_id ON pedido(cliente_id);
 CREATE INDEX pedido_mesa_id ON pedido(mesa_id);
 
 
--- Table: itempedido
--- DROP TABLE itempedido;
-
 CREATE TABLE itempedido
 (
   id INTEGER NOT NULL AUTO_INCREMENT,
   empresa_id integer,
   dtcadastro date NULL,
   pedido_id integer NOT NULL,
-  cardapio_id integer NOT NULL,  
+  cardapio_id integer NOT NULL,
   lote_id integer NULL,
   qtitem double precision NOT NULL,
   vrvenda double precision NOT NULL,
@@ -444,9 +423,6 @@ CREATE INDEX itempedido_lote_id ON itempedido(lote_id);
 CREATE INDEX itempedido_pedido_id ON itempedido(pedido_id);
 
 
--- Table: agrupadicional_adicionais
-
--- DROP TABLE agrupadicional_adicionais;
 
 CREATE TABLE adicionais
 (
@@ -483,9 +459,4 @@ CREATE INDEX frentecaixa_itadicional_item_id ON itadicional(item_id);
 CREATE INDEX frentecaixa_itadicional_itempedido_id ON itadicional(itempedido_id);
 
   
---unidade
---  produto
---  unimedida
---  finalidade
---  entrada/saida
---  fornecedor
+
