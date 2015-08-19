@@ -154,8 +154,30 @@ begin
     #                                       #
   }
 
+  Texto_Impressao.Lines.Add('<sl>3</sl>');
   Texto_Impressao.Lines.Add('<e><ce><b>'+cdsInfo.FieldByName('EMPRESA').AsString+'</b></ce></e>');
   Texto_Impressao.Lines.Add('<ce>'+cdsInfo.FieldByName('UNIDADE').AsString+'<ce>');
+  Texto_Impressao.Lines.Add('<l></l>');
+  Texto_Impressao.Lines.Add('<n>Delivery</n>');
+  Texto_Impressao.Lines.Add('<n>Rua Dois mais Cinco, 15, Bairro</n>');
+  Texto_Impressao.Lines.Add('<n>Referencia</n>');
+  Texto_Impressao.Lines.Add('<l></l>');
+  Texto_Impressao.Lines.Add('<b>Produto<tb><tb><tb>Qtde<tb>Valor</b>');
+  Texto_Impressao.Lines.Add('Produto 1<tb><tb><tb>5.000<tb>400,00');
+  Texto_Impressao.Lines.Add('Produto 2<tb><tb><tb>5.000<tb>400,00');
+  Texto_Impressao.Lines.Add('Produto 3<tb><tb><tb>5.000<tb>400,00'); 
+  Texto_Impressao.Lines.Add('<tb>Adicional<tb><tb>5.000<tb>400,00');
+  Texto_Impressao.Lines.Add('<tb>Adicional<tb><tb>5.000<tb>400,00');
+  Texto_Impressao.Lines.Add('<tb>Adicional<tb><tb>5.000<tb>400,00');
+  Texto_Impressao.Lines.Add('Produto 4<tb><tb><tb>5.000<tb>400,00');
+  Texto_Impressao.Lines.Add('Produto 5<tb><tb><tb>5.000<tb>400,00');
+  Texto_Impressao.Lines.Add('Produto 6<tb><tb><tb>5.000<tb>400,00');
+  Texto_Impressao.Lines.Add('<tb><tb><tb><tb><tb>700,00');
+  Texto_Impressao.Lines.Add('<l></l>');
+  Texto_Impressao.Lines.Add('<ce>Documento sem valor fiscal</ce>');
+  Texto_Impressao.Lines.Add('<ce>VMSis</ce>');
+  Texto_Impressao.Lines.Add('<ce><dt> - <hr></hr></dt></ce>');
+  Texto_Impressao.Lines.Add('<sl>4</sl>');
   Texto_Impressao.Lines.Add('<l></l>');                                            
 
   try
