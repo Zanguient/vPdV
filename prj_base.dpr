@@ -14,7 +14,8 @@ uses
   uvCadastroFrame in 'vlib\vComponents\uvCadastroFrame.pas' {vCadastroFrame: TFrame},
   uDmConexao in 'vlib\vComponents\uDmConexao.pas' {dmConexao: TDataModule},
   pdv_main in 'app\pdv\pdv_main.pas' {frmPDVMain: TFrame},
-  lib_modelo_impressao in 'vlib\lib_modelo_impressao.pas';
+  lib_modelo_impressao in 'vlib\lib_modelo_impressao.pas',
+  uvCadastroClienteFrame in 'app\cadastro\cliente\uvCadastroClienteFrame.pas' {vCadastroClienteFrame: TFrame};
 
 {$R *.res}
 

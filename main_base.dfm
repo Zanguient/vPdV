@@ -71,6 +71,7 @@ object frmMainBase: TfrmMainBase
     object nbiCliente: TdxNavBarItem
       Caption = 'Cliente'
       SmallImageIndex = 1
+      OnClick = nbiClienteClick
     end
     object nbiEntrada: TdxNavBarItem
       Caption = 'Entrada'

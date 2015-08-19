@@ -2,7 +2,7 @@ object vPadraoFrame: TvPadraoFrame
   Left = 0
   Top = 0
   Width = 477
-  Height = 391
+  Height = 495
   TabOrder = 0
   object panTop: TPanel
     Left = 0
@@ -47,7 +47,7 @@ object vPadraoFrame: TvPadraoFrame
     Left = 0
     Top = 27
     Width = 477
-    Height = 364
+    Height = 468
     Align = alClient
     AutoSize = True
     BevelOuter = bvNone
@@ -57,6 +57,7 @@ object vPadraoFrame: TvPadraoFrame
   object cdsPadrao: TClientDataSet
     Aggregates = <>
     Params = <>
+    ProviderName = 'dspPadrao'
     Left = 368
     Top = 40
   end
@@ -70,6 +71,12 @@ object vPadraoFrame: TvPadraoFrame
     DataSource = dtsPadrao
     Parameters = <>
     Left = 368
+    Top = 80
+  end
+  object dspPadrao: TDataSetProvider
+    DataSet = adqPadrao
+    Options = [poAllowMultiRecordUpdates]
+    Left = 416
     Top = 80
   end
 end

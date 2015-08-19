@@ -13,14 +13,13 @@ inherited vVisaoFrame: TvVisaoFrame
       Left = 0
       Top = 113
       Width = 376
-      Height = 251
+      Height = 355
       Align = alClient
       TabOrder = 1
       LookAndFeel.NativeStyle = True
       LookAndFeel.SkinName = ''
       object cxGrid1DBTableView1: TcxGridDBTableView
         NavigatorButtons.ConfirmDelete = False
-        DataController.DataSource = DataSource1
         DataController.Summary.DefaultGroupSummaryItems = <>
         DataController.Summary.FooterSummaryItems = <>
         DataController.Summary.SummaryGroups = <>
@@ -61,7 +60,6 @@ inherited vVisaoFrame: TvVisaoFrame
         Buttons.GotoBookmark.Visible = False
         Buttons.Filter.Enabled = False
         Buttons.Filter.Visible = False
-        DataSource = DataSource1
         InfoPanel.Font.Charset = DEFAULT_CHARSET
         InfoPanel.Font.Color = clDefault
         InfoPanel.Font.Height = -11
@@ -78,7 +76,7 @@ inherited vVisaoFrame: TvVisaoFrame
       Left = 376
       Top = 113
       Width = 101
-      Height = 251
+      Height = 355
       Align = alRight
       ActiveGroupIndex = 0
       TabOrder = 3

@@ -19,7 +19,8 @@ uses
   cxDataStorage, DB, cxDBData, dxSkinsdxNavBar2Painter, cxNavigator,
   cxDBNavigator, dxNavBar, cxGridLevel, cxClasses, cxGridCustomView,
   cxGridCustomTableView, cxGridTableView, cxGridDBTableView, cxGrid,
-  cxInplaceContainer, cxVGrid, dxNavBarCollns, dxNavBarBase, DBClient;
+  cxInplaceContainer, cxVGrid, dxNavBarCollns, dxNavBarBase, DBClient,
+  Provider, ADODB;
 
 type
   TvVisaoFrame = class(TvPadraoFrame)

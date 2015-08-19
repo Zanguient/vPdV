@@ -20,7 +20,7 @@ uses
   dxNavBarCollns, cxClasses, dxNavBarBase, dxNavBar, cxGridLevel,
   cxGridCustomView, cxGridCustomTableView, cxGridTableView,
   cxGridDBTableView, cxGrid, DBClient, cxVGrid, cxDBVGrid,
-  cxInplaceContainer, cxLabel, cxNavigator, cxDBNavigator;
+  cxInplaceContainer, cxLabel, cxNavigator, cxDBNavigator, Provider, ADODB;
 
 type
   TvCadastroFrame = class(TvPadraoFrame)

@@ -5,7 +5,7 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, cxGraphics, cxLookAndFeels, cxLookAndFeelPainters, Menus,
-  StdCtrls, cxButtons, ExtCtrls, DB, DBClient, ADODB;
+  StdCtrls, cxButtons, ExtCtrls, DB, DBClient, ADODB, Provider;
 
 const
   CLOSE_FRAME_PARENT = 'P';
@@ -20,6 +20,7 @@ type
     cdsPadrao: TClientDataSet;
     dtsPadrao: TDataSource;
     adqPadrao: TADOQuery;
+    dspPadrao: TDataSetProvider;
     procedure btnFecharClick(Sender: TObject);
   private
     { Private declarations }

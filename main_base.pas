@@ -32,6 +32,7 @@ type
     procedure nbgSairClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure nbgPDVClick(Sender: TObject);
+    procedure nbiClienteClick(Sender: TObject);
   private
     { Private declarations }
 //    procedure InvocadordeBpl(stClasse: String);
@@ -47,7 +48,7 @@ implementation
 {$R *.dfm}
 
 uses
-   libframes, pdv_main;
+   libframes, pdv_main, uvCadastroClienteFrame;
 
 procedure TfrmMainBase.nbgSairClick(Sender: TObject);
 begin
@@ -79,6 +80,11 @@ procedure TfrmMainBase.nbgPDVClick(Sender: TObject);
 begin
  //  InvocadordeBpl('TfrmPDV');
    TAbasNavegacao.CriarAba(pgcPrincipal, TfrmPDVMain);
+end;
+
+procedure TfrmMainBase.nbiClienteClick(Sender: TObject);
+begin
+  TAbasNavegacao.CriarAba(pgcPrincipal, TvCadastroClienteFrame);
 end;
 
 end.
