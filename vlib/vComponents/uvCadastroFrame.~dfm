@@ -17,7 +17,6 @@ inherited vCadastroFrame: TvCadastroFrame
       Height = 121
       Align = alTop
       TabOrder = 0
-      DataController.DataSource = DataSource1
       Version = 1
     end
     object dxNavBar1: TdxNavBar
@@ -127,12 +126,17 @@ inherited vCadastroFrame: TvCadastroFrame
       end
     end
   end
-  object DataSource2: TDataSource [2]
+  inherited adqPadrao: TADOQuery
+    SQL.Strings = (
+      'select *'
+      '  from clientes')
+  end
+  object DataSource2: TDataSource
     DataSet = ClientDataSet2
     Left = 424
     Top = 262
   end
-  object ClientDataSet2: TClientDataSet [3]
+  object ClientDataSet2: TClientDataSet
     Aggregates = <>
     Params = <>
     Left = 392

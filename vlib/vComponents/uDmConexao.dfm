@@ -6,8 +6,9 @@ object dmConexao: TdmConexao
   Width = 215
   object adoConexaoBd: TADOConnection
     ConnectionString = 
-      'Provider=MSDASQL.1;Password=silfer;Persist Security Info=True;Us' +
-      'er ID=root;Data Source=vmsis;Initial Catalog=vmsis'
+      'Provider=MSDASQL.1;Persist Security Info=False;Data Source=VMSIS' +
+      ';Initial Catalog=vmsis_db'
+    LoginPrompt = False
     Provider = 'MSDASQL.1'
     Left = 48
     Top = 40

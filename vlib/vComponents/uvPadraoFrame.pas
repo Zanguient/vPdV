@@ -49,6 +49,8 @@ constructor TvPadraoFrame.Create(AOwner: TComponent);
 begin
   inherited;
   FFrameClose := CLOSE_FRAME_SELF;
+  if adqPadrao.SQL.Text <> EmptyStr then
+    adqPadrao.Open;
 end;
 
 procedure TvPadraoFrame.setFrameClose(frameClose: String);

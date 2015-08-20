@@ -126,6 +126,12 @@ inherited vCadastroFrame: TvCadastroFrame
       end
     end
   end
+  inherited adqPadrao: TADOQuery
+    SQL.Strings = (
+      'select *'
+      '  from clientes')
+    Top = 88
+  end
   object DataSource2: TDataSource
     DataSet = ClientDataSet2
     Left = 424

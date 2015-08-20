@@ -47,6 +47,8 @@ type
     cxvGrid1telfixo: TcxDBEditorRow;
     nbiSalvar: TdxNavBarItem;
     procedure nbiSalvarClick(Sender: TObject);
+    procedure nbiInserirClick(Sender: TObject);
+    procedure nbiExcluirClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -58,12 +60,28 @@ var
 
 implementation
 
+uses uvPadraoFrame;
+
 {$R *.dfm}
 
 procedure TvCadastroClienteFrame.nbiSalvarClick(Sender: TObject);
 begin
   inherited;
-  cdsPadrao.Post;
+ // cdsPadrao.Post;
+//  cdsPadrao.ApplyUpdates(0);
+
+end;
+
+procedure TvCadastroClienteFrame.nbiInserirClick(Sender: TObject);
+begin
+  inherited;
+//   cdsPadrao.Append;
+end;
+
+procedure TvCadastroClienteFrame.nbiExcluirClick(Sender: TObject);
+begin
+  inherited;
+  // cdsPadrao.Delete;
 end;
 
 end.

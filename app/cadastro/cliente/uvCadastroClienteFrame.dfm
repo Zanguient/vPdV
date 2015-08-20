@@ -69,6 +69,12 @@ inherited vCadastroClienteFrame: TvCadastroClienteFrame
             Item = nbiSalvar
           end>
       end
+      inherited nbiInserir: TdxNavBarItem
+        OnClick = nbiInserirClick
+      end
+      inherited nbiExcluir: TdxNavBarItem
+        OnClick = nbiExcluirClick
+      end
       object nbiSalvar: TdxNavBarItem
         Caption = 'Salvar'
         OnClick = nbiSalvarClick
@@ -77,6 +83,9 @@ inherited vCadastroClienteFrame: TvCadastroClienteFrame
     inherited panGrid: TPanel
       Height = 295
       inherited pnlNavigator: TPanel
+        inherited cxDBNavigator1: TcxDBNavigator
+          DataSource = dtsPadrao
+        end
         inherited lblGridCaption: TcxLabel
           Style.IsFontAssigned = True
         end
@@ -113,7 +122,12 @@ inherited vCadastroClienteFrame: TvCadastroClienteFrame
       Size = 15
     end
   end
+  inherited dtsPadrao: TDataSource
+    DataSet = adqPadrao
+  end
   inherited adqPadrao: TADOQuery
+    CursorType = ctStatic
+    DataSource = nil
     SQL.Strings = (
       'select * from cliente')
     object adqPadraoid: TAutoIncField
