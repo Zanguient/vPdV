@@ -17,10 +17,8 @@ type
     btnFechar: TcxButton;
     panClient: TPanel;
     lblNomeFrame: TLabel;
-    cdsPadrao: TClientDataSet;
     dtsPadrao: TDataSource;
     adqPadrao: TADOQuery;
-    dspPadrao: TDataSetProvider;
     procedure btnFecharClick(Sender: TObject);
   private
     { Private declarations }

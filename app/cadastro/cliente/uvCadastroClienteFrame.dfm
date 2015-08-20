@@ -1,7 +1,15 @@
 inherited vCadastroClienteFrame: TvCadastroClienteFrame
   Height = 443
+  inherited panTop: TPanel
+    inherited lblNomeFrame: TLabel
+      Left = 253
+    end
+    inherited cxDBNavigator2: TcxDBNavigator
+      Width = 252
+    end
+  end
   inherited panClient: TPanel
-    Height = 416
+    Height = 414
     inherited cxvGrid1: TcxDBVerticalGrid
       DataController.DataSource = dtsPadrao
       Version = 1
@@ -56,7 +64,7 @@ inherited vCadastroClienteFrame: TvCadastroClienteFrame
       end
     end
     inherited dxNavBar1: TdxNavBar
-      Height = 295
+      Height = 293
       inherited nbProcesso: TdxNavBarGroup
         Links = <
           item
@@ -69,65 +77,24 @@ inherited vCadastroClienteFrame: TvCadastroClienteFrame
             Item = nbiSalvar
           end>
       end
-      inherited nbiInserir: TdxNavBarItem
-        OnClick = nbiInserirClick
-      end
-      inherited nbiExcluir: TdxNavBarItem
-        OnClick = nbiExcluirClick
-      end
       object nbiSalvar: TdxNavBarItem
         Caption = 'Salvar'
-        OnClick = nbiSalvarClick
       end
     end
     inherited panGrid: TPanel
-      Height = 295
+      Height = 293
       inherited pnlNavigator: TPanel
-        inherited cxDBNavigator1: TcxDBNavigator
-          DataSource = dtsPadrao
-        end
         inherited lblGridCaption: TcxLabel
           Style.IsFontAssigned = True
         end
       end
       inherited cxGrid1: TcxGrid
-        Height = 271
+        Height = 269
       end
     end
   end
-  inherited cdsPadrao: TClientDataSet
-    object cdsPadraoid: TAutoIncField
-      FieldName = 'id'
-    end
-    object cdsPadraoidempresa: TIntegerField
-      FieldName = 'idempresa'
-    end
-    object cdsPadraonrinscjurd: TWideStringField
-      FieldName = 'nrinscjurd'
-    end
-    object cdsPadraonmcliente: TWideStringField
-      FieldName = 'nmcliente'
-      Size = 250
-    end
-    object cdsPadraoidentificador: TWideStringField
-      FieldName = 'identificador'
-      Size = 1
-    end
-    object cdsPadraotelcel: TWideStringField
-      FieldName = 'telcel'
-      Size = 15
-    end
-    object cdsPadraotelfixo: TWideStringField
-      FieldName = 'telfixo'
-      Size = 15
-    end
-  end
-  inherited dtsPadrao: TDataSource
-    DataSet = adqPadrao
-  end
   inherited adqPadrao: TADOQuery
     CursorType = ctStatic
-    DataSource = nil
     SQL.Strings = (
       'select * from cliente')
     object adqPadraoid: TAutoIncField

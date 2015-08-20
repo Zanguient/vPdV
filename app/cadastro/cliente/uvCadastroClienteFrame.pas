@@ -20,7 +20,7 @@ uses
   cxClasses, cxGridCustomView, cxGridCustomTableView, cxGridTableView,
   cxGridDBTableView, cxGrid, cxLabel, cxNavigator, cxDBNavigator,
   dxNavBarCollns, dxNavBarBase, dxNavBar, cxInplaceContainer, cxVGrid,
-  cxDBVGrid, StdCtrls, cxButtons, ExtCtrls;
+  cxDBVGrid, StdCtrls, cxButtons, ExtCtrls, ActnList;
 
 type
   TvCadastroClienteFrame = class(TvCadastroFrame)
@@ -31,13 +31,6 @@ type
     adqPadraoidentificador: TWideStringField;
     adqPadraotelcel: TWideStringField;
     adqPadraotelfixo: TWideStringField;
-    cdsPadraoid: TAutoIncField;
-    cdsPadraoidempresa: TIntegerField;
-    cdsPadraonrinscjurd: TWideStringField;
-    cdsPadraonmcliente: TWideStringField;
-    cdsPadraoidentificador: TWideStringField;
-    cdsPadraotelcel: TWideStringField;
-    cdsPadraotelfixo: TWideStringField;
     cxvGrid1id: TcxDBEditorRow;
     cxvGrid1idempresa: TcxDBEditorRow;
     cxvGrid1nrinscjurd: TcxDBEditorRow;
@@ -46,9 +39,6 @@ type
     cxvGrid1telcel: TcxDBEditorRow;
     cxvGrid1telfixo: TcxDBEditorRow;
     nbiSalvar: TdxNavBarItem;
-    procedure nbiSalvarClick(Sender: TObject);
-    procedure nbiInserirClick(Sender: TObject);
-    procedure nbiExcluirClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -63,25 +53,5 @@ implementation
 uses uvPadraoFrame;
 
 {$R *.dfm}
-
-procedure TvCadastroClienteFrame.nbiSalvarClick(Sender: TObject);
-begin
-  inherited;
- // cdsPadrao.Post;
-//  cdsPadrao.ApplyUpdates(0);
-
-end;
-
-procedure TvCadastroClienteFrame.nbiInserirClick(Sender: TObject);
-begin
-  inherited;
-//   cdsPadrao.Append;
-end;
-
-procedure TvCadastroClienteFrame.nbiExcluirClick(Sender: TObject);
-begin
-  inherited;
-  // cdsPadrao.Delete;
-end;
 
 end.

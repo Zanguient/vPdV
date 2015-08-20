@@ -54,29 +54,15 @@ object vPadraoFrame: TvPadraoFrame
     ParentColor = True
     TabOrder = 1
   end
-  object cdsPadrao: TClientDataSet
-    Aggregates = <>
-    Params = <>
-    ProviderName = 'dspPadrao'
-    Left = 368
-    Top = 40
-  end
   object dtsPadrao: TDataSource
-    DataSet = cdsPadrao
+    DataSet = adqPadrao
     Left = 400
     Top = 40
   end
   object adqPadrao: TADOQuery
     Connection = dmConexao.adoConexaoBd
-    DataSource = dtsPadrao
     Parameters = <>
     Left = 368
-    Top = 80
-  end
-  object dspPadrao: TDataSetProvider
-    DataSet = adqPadrao
-    Options = [poAllowMultiRecordUpdates]
-    Left = 416
-    Top = 80
+    Top = 40
   end
 end

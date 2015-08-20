@@ -3,13 +3,50 @@ inherited vCadastroFrame: TvCadastroFrame
   Height = 469
   inherited panTop: TPanel
     Width = 649
+    Height = 29
+    inherited lblNomeFrame: TLabel
+      Left = 101
+      Height = 27
+    end
     inherited btnFechar: TcxButton
       Left = 624
+      Height = 27
+    end
+    object cxNavPadrao: TcxDBNavigator
+      Left = 1
+      Top = 1
+      Width = 100
+      Height = 27
+      Buttons.First.Visible = False
+      Buttons.PriorPage.Visible = False
+      Buttons.Prior.Visible = False
+      Buttons.Next.Visible = False
+      Buttons.NextPage.Visible = False
+      Buttons.Last.Visible = False
+      Buttons.Insert.Visible = False
+      Buttons.Delete.Visible = False
+      Buttons.Edit.Visible = False
+      Buttons.Refresh.Visible = False
+      Buttons.SaveBookmark.Visible = False
+      Buttons.GotoBookmark.Visible = False
+      Buttons.Filter.Visible = False
+      DataSource = dtsPadrao
+      InfoPanel.Font.Charset = DEFAULT_CHARSET
+      InfoPanel.Font.Color = clDefault
+      InfoPanel.Font.Height = -11
+      InfoPanel.Font.Name = 'MS Sans Serif'
+      InfoPanel.Font.Style = []
+      LookAndFeel.Kind = lfStandard
+      LookAndFeel.NativeStyle = False
+      LookAndFeel.SkinName = 'McSkin'
+      Align = alLeft
+      TabOrder = 1
     end
   end
   inherited panClient: TPanel
+    Top = 29
     Width = 649
-    Height = 442
+    Height = 440
     object cxvGrid1: TcxDBVerticalGrid
       Left = 0
       Top = 0
@@ -23,7 +60,7 @@ inherited vCadastroFrame: TvCadastroFrame
       Left = 499
       Top = 121
       Width = 150
-      Height = 321
+      Height = 319
       Align = alRight
       ActiveGroupIndex = 0
       TabOrder = 1
@@ -45,17 +82,17 @@ inherited vCadastroFrame: TvCadastroFrame
           end>
       end
       object nbiInserir: TdxNavBarItem
-        Caption = 'Inserir'
+        Action = actInserir
       end
       object nbiExcluir: TdxNavBarItem
-        Caption = 'Excluir'
+        Action = actExcluir
       end
     end
     object panGrid: TPanel
       Left = 0
       Top = 121
       Width = 499
-      Height = 321
+      Height = 319
       Align = alClient
       BevelOuter = bvNone
       TabOrder = 2
@@ -67,17 +104,19 @@ inherited vCadastroFrame: TvCadastroFrame
         Align = alTop
         BevelOuter = bvNone
         TabOrder = 0
-        object cxDBNavigator1: TcxDBNavigator
-          Left = 169
+        object cxNavDetail: TcxDBNavigator
+          Left = 179
           Top = 0
-          Width = 330
+          Width = 320
           Height = 24
+          Buttons.PriorPage.Visible = False
+          Buttons.NextPage.Visible = False
           Buttons.Edit.Visible = False
           Buttons.Refresh.Visible = False
           Buttons.SaveBookmark.Visible = False
           Buttons.GotoBookmark.Visible = False
           Buttons.Filter.Visible = False
-          DataSource = DataSource2
+          DataSource = dtsDetail
           InfoPanel.Font.Charset = DEFAULT_CHARSET
           InfoPanel.Font.Color = clDefault
           InfoPanel.Font.Height = -11
@@ -109,12 +148,12 @@ inherited vCadastroFrame: TvCadastroFrame
         Left = 0
         Top = 24
         Width = 499
-        Height = 297
+        Height = 295
         Align = alClient
         TabOrder = 1
         object cxGrid1DBTableView1: TcxGridDBTableView
           NavigatorButtons.ConfirmDelete = False
-          DataController.DataSource = DataSource2
+          DataController.DataSource = dtsDetail
           DataController.Summary.DefaultGroupSummaryItems = <>
           DataController.Summary.FooterSummaryItems = <>
           DataController.Summary.SummaryGroups = <>
@@ -126,21 +165,41 @@ inherited vCadastroFrame: TvCadastroFrame
       end
     end
   end
+  inherited dtsPadrao: TDataSource
+    OnStateChange = dtsPadraoStateChange
+  end
   inherited adqPadrao: TADOQuery
     SQL.Strings = (
       'select *'
       '  from clientes')
-    Top = 88
   end
-  object DataSource2: TDataSource
-    DataSet = ClientDataSet2
+  object dtsDetail: TDataSource
+    DataSet = adqDetail
     Left = 424
     Top = 262
   end
-  object ClientDataSet2: TClientDataSet
-    Aggregates = <>
-    Params = <>
-    Left = 392
-    Top = 262
+  object adqDetail: TADOQuery
+    Connection = dmConexao.adoConexaoBd
+    BeforeEdit = adqDetailBeforeEdit
+    Parameters = <>
+    SQL.Strings = (
+      'select *'
+      '  from clientes')
+    Left = 384
+    Top = 264
+  end
+  object ActionList1: TActionList
+    Left = 312
+    Top = 224
+    object actInserir: TAction
+      Caption = 'Inserir'
+      ShortCut = 45
+      OnExecute = actInserirExecute
+    end
+    object actExcluir: TAction
+      Caption = 'Excluir'
+      ShortCut = 46
+      OnExecute = actExcluirExecute
+    end
   end
 end
