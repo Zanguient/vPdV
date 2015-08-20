@@ -115,8 +115,6 @@ CREATE TABLE cliente
   CONSTRAINT cliente_nmcliente_key UNIQUE (nmcliente)
 );
 CREATE INDEX cliente_nmcliente_like ON cliente (nmcliente);
---CREATE UNIQUE INDEX cliente_telcel_key ON cliente (telcel);
---CREATE UNIQUE INDEX cliente_telfixo_key ON cliente (telfixo);
 
 CREATE TABLE fornecedor
 (
@@ -286,7 +284,7 @@ CREATE TABLE AgrupAdicional
   idagrupativ character varying(1) NOT NULL,
   CONSTRAINT AgrupAdicional_pkey PRIMARY KEY (id),
   CONSTRAINT AgrupAdicional_nmagrupadic_key UNIQUE (nmagrupadic)
-)
+);
 
 
 CREATE TABLE categoria
@@ -295,7 +293,7 @@ CREATE TABLE categoria
   nmcategoria character varying(250) NOT NULL,
   idcategoriativ character varying(1) NOT NULL,
   imgindex integer NOT NULL,
-  CONSTRAINT categoria_pkey PRIMARY KEY (id),
+  CONSTRAINT categoria_pkey PRIMARY KEY(id),
   CONSTRAINT categoria_nmcategoria_key UNIQUE (nmcategoria)
 );
 
