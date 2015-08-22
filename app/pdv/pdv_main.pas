@@ -62,7 +62,7 @@ implementation
 {$R *.dfm}
 
 uses
-  lib_interface, lib_mensagem;
+  lib_interface, lib_mensagem, pdv_pdv;
 
   function rStatusGaveta_DUAL_DarumaFramework(var iStatusGaveta: Integer): Integer; StdCall; External 'DarumaFrameWork.dll';
   function iAcionarGaveta_DUAL_DarumaFramework(): Integer; StdCall; External 'DarumaFrameWork.dll';
@@ -145,7 +145,15 @@ end;
 
 procedure TfrmPDVMain.OnClickOpcoesPDV(Sender: TObject);
 begin
-  //
+  FrmPDV_PDV := TfrmPDV_PDV.Create(Self);
+
+  try
+    frmPDV_PDV.Tag := (Sender as TcxButton).Tag;
+    frmPDV_PDV.ShowModal;
+  finally
+    frmPDV_PDV.Release;
+    frmPDV_PDV := nil;
+  end;
 end;
 
 end.

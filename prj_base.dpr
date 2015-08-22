@@ -16,7 +16,8 @@ uses
   pdv_main in 'app\pdv\pdv_main.pas' {frmPDVMain: TFrame},
   lib_modelo_impressao in 'vlib\lib_modelo_impressao.pas',
   uvCadastroClienteFrame in 'app\cadastro\cliente\uvCadastroClienteFrame.pas' {vCadastroClienteFrame: TFrame},
-  pdv_pdv in 'app\pdv\pdv_pdv.pas' {Form1};
+  pdv_pdv in 'app\pdv\pdv_pdv.pas' {frmPDV_PDV},
+  pdv_adicional in 'app\pdv\pdv_adicional.pas' {frmAdicional};
 
 {$R *.res}
 
