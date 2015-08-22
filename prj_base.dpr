@@ -16,7 +16,10 @@ uses
   pdv_main in 'app\pdv\pdv_main.pas' {frmPDVMain: TFrame},
   lib_modelo_impressao in 'vlib\lib_modelo_impressao.pas',
   uvCadastroClienteFrame in 'app\cadastro\cliente\uvCadastroClienteFrame.pas' {vCadastroClienteFrame: TFrame},
-  pdv_pdv in 'app\pdv\pdv_pdv.pas' {Form1},
+  pdv_pdv in 'app\pdv\pdv_pdv.pas' {frmPDV_PDV},
+  pdv_adicional in 'app\pdv\pdv_adicional.pas' {frmAdicional},
+  lib_acesso in 'vlib\lib_acesso.pas',
+  lib_db in 'vlib\lib_db.pas',
   uvVisaoClienteFrame in 'app\cadastro\cliente\uvVisaoClienteFrame.pas' {vVisaoClienteFrame: TFrame},
   lib_imagens in 'vlib\lib_imagens.pas' {lb_imagens};
 

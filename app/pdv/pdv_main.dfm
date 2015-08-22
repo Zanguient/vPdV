@@ -625,6 +625,7 @@ inherited frmPDVMain: TfrmPDVMain
           ParentShowHint = False
           ShowHint = True
           TabOrder = 1
+          OnClick = btnDeliveryClick
           Align = alLeft
           Glyph.Data = {
             36400000424D3640000000000000360000002800000040000000400000000100
@@ -1153,6 +1154,7 @@ inherited frmPDVMain: TfrmPDVMain
           Hint = 'Balc'#227'o'
           Caption = 'Balc'#227'o'
           TabOrder = 2
+          OnClick = btnBalcaoClick
           Align = alLeft
           Glyph.Data = {
             36400000424D3640000000000000360000002800000040000000400000000100

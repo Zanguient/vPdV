@@ -47,6 +47,8 @@ type
     procedure dtvPedidosCustomDrawCell(Sender: TcxCustomGridTableView;
       ACanvas: TcxCanvas; AViewInfo: TcxGridTableDataCellViewInfo;
       var ADone: Boolean);
+    procedure btnDeliveryClick(Sender: TObject);
+    procedure btnBalcaoClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -62,7 +64,7 @@ implementation
 {$R *.dfm}
 
 uses
-  lib_interface, lib_mensagem;
+  lib_interface, lib_mensagem, pdv_pdv, pdv_adicional;
 
   function rStatusGaveta_DUAL_DarumaFramework(var iStatusGaveta: Integer): Integer; StdCall; External 'DarumaFrameWork.dll';
   function iAcionarGaveta_DUAL_DarumaFramework(): Integer; StdCall; External 'DarumaFrameWork.dll';
@@ -144,8 +146,59 @@ begin
 end;
 
 procedure TfrmPDVMain.OnClickOpcoesPDV(Sender: TObject);
+var
+  P_Create: TParametros;
+begin                            
+  P_Create.Caption := (Sender as TcxButton).Caption;
+  P_Create.Tag     := (Sender as TcxButton).Tag;
+  P_Create.Totalizador_Height := 45;
+  P_Create.btnGravar_Visible  := True;
+  P_Create.panDados_Visible   := False;
+
+  FrmPDV_PDV := TfrmPDV_PDV.PCreate(Self,P_Create);
+  try
+    frmPDV_PDV.ShowModal;
+  finally
+    FreeAndNil(frmPDV_PDV);
+  end;
+end;
+
+procedure TfrmPDVMain.btnDeliveryClick(Sender: TObject);
+var
+  P_Create: TParametros;
 begin
-  //
+  inherited;
+  P_Create.Caption := 'Delivery';
+  P_Create.Tag     := 99999;
+  P_Create.Totalizador_Height := 88;
+  P_Create.btnGravar_Visible  := False;
+  P_Create.panDados_Visible   := True;
+
+  FrmPDV_PDV := TfrmPDV_PDV.PCreate(Self,P_Create);
+  try
+    frmPDV_PDV.ShowModal;
+  finally
+    FreeAndNil(frmPDV_PDV);
+  end;
+end;
+
+procedure TfrmPDVMain.btnBalcaoClick(Sender: TObject);
+var
+  P_Create: TParametros;
+begin
+  inherited;                                       
+  P_Create.Caption := 'Balcão';
+  P_Create.Tag     := 88888;
+  P_Create.Totalizador_Height := 88;
+  P_Create.btnGravar_Visible  := False;
+  P_Create.panDados_Visible   := True;
+
+  FrmPDV_PDV := TfrmPDV_PDV.PCreate(Self,P_Create);
+  try
+    frmPDV_PDV.ShowModal;
+  finally
+    FreeAndNil(frmPDV_PDV);
+  end;
 end;
 
 end.

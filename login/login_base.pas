@@ -54,7 +54,7 @@ implementation
 {$R *.dfm}
 
 uses
-   lib_mensagem;
+   lib_mensagem, lib_db, lib_acesso;
 
 { TfrmLoginBase }
 
@@ -137,9 +137,27 @@ begin
 end;
 
 procedure TfrmLoginBase.btnLoginClick(Sender: TObject);
-begin   
+var
+  tbFuncionario : TObjetoDB;
+begin
+  try
+    tbFuncionario := TObjetoDB.create('funcionario');
+    tbFuncionario.AddParametro('usuario', edtUsuario.Text);
+    tbFuncionario.AddParametro('senha', edtSenha.Text);
+    tbFuncionario.GetRows(['nome, usuario']);
+
+    if(tbFuncionario.Cds.IsEmpty) then
+    begin
+      Aviso('Senha ou usuário inválidos');
+      Abort;
+    end;
+    //aviso(Tcriptografia.MD5('asa'));
+  finally
+    FreeAndNil(tbFuncionario);
+  end;
   FLogado := True;
   Close;
 end;
 
 end.
+
