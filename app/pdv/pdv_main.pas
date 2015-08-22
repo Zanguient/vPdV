@@ -35,12 +35,20 @@ type
     btnBalcao: TcxButton;
     cxButton1: TcxButton;
     sbxOpcoesPDV: TScrollBox;
+    cdsMesa: TClientDataSet;
+    cdsMesaid_mesa: TIntegerField;
+    cdsMesanmmesa: TStringField;
+    cdsMesadsobsmesa: TStringField;
+    cdsMesastatus: TStringField;
+    cdsMesavalor: TFloatField;
+    dtsMesa: TDataSource;
     procedure FrameResize(Sender: TObject);
     procedure btnGavetaClick(Sender: TObject);
   private
     { Private declarations }
   public
     { Public declarations }
+    procedure OnClickOpcoesPDV(Sender: TObject);
   end;
 
 var
@@ -60,13 +68,26 @@ procedure TfrmPDVMain.FrameResize(Sender: TObject);
 var
   iComp: Integer;
   Interface_: TInterface;
-begin                               
+begin
+  Interface_ := TInterface.Create();
+
+  if sbxOpcoesPDV.ControlCount = 0 then
+  begin
+    cdsMesa.First;
+    while not cdsMesa.Eof do
+    begin
+      Interface_.CriaButtonScrollBox(sbxOpcoesPDV, cdsMesa.FieldByName('nmmesa').AsString, OnClickOpcoesPDV, 150, 150);
+
+      cdsMesa.Next;
+    end;
+  end;
+
   if sbxOpcoesPDV.ControlCount > 0 then
   begin
     Interface_ := TInterface.Create();
     Interface_.OrganizaScrollBox(sbxOpcoesPDV,1);
   end;
-  
+
   for iComp := 0 to pred(scbOpcoes.ControlCount) do
   begin
     scbOpcoes.Controls[iComp].Width := Trunc(panLeft.Width/scbOpcoes.ControlCount);
@@ -104,6 +125,11 @@ begin
     end else
       Aviso(GAVETA_ERRO);
   //end;
+end;
+
+procedure TfrmPDVMain.OnClickOpcoesPDV(Sender: TObject);
+begin
+  //
 end;
 
 end.
