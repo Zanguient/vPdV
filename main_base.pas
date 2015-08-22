@@ -48,7 +48,7 @@ implementation
 {$R *.dfm}
 
 uses
-   libframes, pdv_main, uvCadastroClienteFrame;
+   libframes, pdv_main, uvVisaoClienteFrame;
 
 procedure TfrmMainBase.nbgSairClick(Sender: TObject);
 begin
@@ -88,7 +88,7 @@ end;
 
 procedure TfrmMainBase.nbiClienteClick(Sender: TObject);
 begin
-  TAbasNavegacao.CriarAba(pgcPrincipal, TvCadastroClienteFrame);
+  TAbasNavegacao.CriarAba(pgcPrincipal, TvVisaoClienteFrame);
 end;
 
 end.

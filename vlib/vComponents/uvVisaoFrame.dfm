@@ -1,6 +1,53 @@
 inherited vVisaoFrame: TvVisaoFrame
+  inherited panTop: TPanel
+    Height = 29
+    inherited lblNomeFrame: TLabel
+      Left = 119
+      Height = 27
+    end
+    inherited btnFechar: TcxButton
+      Height = 27
+      SpeedButtonOptions.Transparent = False
+    end
+    object cxNavPadrao: TcxDBNavigator
+      Left = 1
+      Top = 1
+      Width = 118
+      Height = 27
+      Buttons.OnButtonClick = cxNavPadraoButtonsButtonClick
+      Buttons.Images = lb_imagens.img16x16
+      Buttons.First.Visible = False
+      Buttons.PriorPage.Visible = False
+      Buttons.Prior.Visible = False
+      Buttons.Next.Visible = False
+      Buttons.NextPage.Visible = False
+      Buttons.Last.Visible = False
+      Buttons.Insert.ImageIndex = 3
+      Buttons.Insert.Visible = True
+      Buttons.Delete.ImageIndex = 13
+      Buttons.Delete.Visible = True
+      Buttons.Edit.Visible = False
+      Buttons.Post.Visible = False
+      Buttons.Cancel.Visible = False
+      Buttons.Refresh.Visible = False
+      Buttons.SaveBookmark.Visible = False
+      Buttons.GotoBookmark.Visible = False
+      Buttons.Filter.Visible = False
+      DataSource = dtsPadrao
+      InfoPanel.Font.Charset = DEFAULT_CHARSET
+      InfoPanel.Font.Color = clDefault
+      InfoPanel.Font.Height = -11
+      InfoPanel.Font.Name = 'MS Sans Serif'
+      InfoPanel.Font.Style = []
+      LookAndFeel.NativeStyle = True
+      Align = alLeft
+      TabOrder = 1
+    end
+  end
   inherited panClient: TPanel
-    object cxVerticalGrid1: TcxVerticalGrid
+    Top = 29
+    Height = 466
+    object cxgridFiltro: TcxVerticalGrid
       Left = 0
       Top = 0
       Width = 477
@@ -13,16 +60,28 @@ inherited vVisaoFrame: TvVisaoFrame
       Left = 0
       Top = 113
       Width = 376
-      Height = 355
+      Height = 353
       Align = alClient
       TabOrder = 1
       LookAndFeel.NativeStyle = True
       LookAndFeel.SkinName = ''
       object cxGrid1DBTableView1: TcxGridDBTableView
         NavigatorButtons.ConfirmDelete = False
+        OnCustomDrawCell = cxGrid1DBTableView1CustomDrawCell
+        DataController.DataSource = dtsPadrao
         DataController.Summary.DefaultGroupSummaryItems = <>
         DataController.Summary.FooterSummaryItems = <>
         DataController.Summary.SummaryGroups = <>
+        OptionsData.CancelOnExit = False
+        OptionsData.Deleting = False
+        OptionsData.DeletingConfirmation = False
+        OptionsData.Editing = False
+        OptionsData.Inserting = False
+        OptionsSelection.InvertSelect = False
+        OptionsSelection.MultiSelect = True
+        OptionsSelection.CellMultiSelect = True
+        OptionsView.GroupByBox = False
+        Styles.Header = cxStyle1
       end
       object cxGrid1Level1: TcxGridLevel
         GridView = cxGrid1DBTableView1
@@ -76,12 +135,14 @@ inherited vVisaoFrame: TvVisaoFrame
       Left = 376
       Top = 113
       Width = 101
-      Height = 355
+      Height = 353
       Align = alRight
       ActiveGroupIndex = 0
       TabOrder = 3
       View = 17
       ViewStyle.ColorSchemeName = 'Silver'
+      OptionsImage.SmallImages = lb_imagens.img16x16
+      OptionsView.Common.ShowGroupCaptions = False
       OptionsView.NavigationPane.OverflowPanelUseSmallImages = False
       OptionsView.NavigationPane.ShowHeader = False
       OptionsView.NavigationPane.ShowOverflowPanel = False
@@ -97,40 +158,38 @@ inherited vVisaoFrame: TvVisaoFrame
             Item = nbLimpar
           end>
       end
-      object nbProcesso: TdxNavBarGroup
-        Caption = 'Processo'
-        SelectedLinkIndex = -1
-        TopVisibleLinkIndex = 0
-        Links = <
-          item
-            Item = nbiIncluir
-          end
-          item
-            Item = nbiExcluir
-          end>
-      end
       object nbiFiltrar: TdxNavBarItem
         Action = actFilttar
       end
       object nbLimpar: TdxNavBarItem
-        Action = acrLimpar
-      end
-      object nbiIncluir: TdxNavBarItem
-        Caption = 'Incluir'
-      end
-      object nbiExcluir: TdxNavBarItem
-        Caption = 'Excluir'
+        Action = actLimpar
       end
     end
   end
+  inherited dtsPadrao: TDataSource
+    AutoEdit = False
+  end
   object ActionList1: TActionList
+    Images = lb_imagens.img16x16
     Left = 424
     Top = 184
     object actFilttar: TAction
-      Caption = 'Filttar'
+      Caption = 'Filtrar'
+      ImageIndex = 0
+      OnExecute = actFilttarExecute
     end
-    object acrLimpar: TAction
+    object actLimpar: TAction
       Caption = 'Limpar'
+      ImageIndex = 1
+      OnExecute = actLimparExecute
+    end
+  end
+  object cxStyleRepository1: TcxStyleRepository
+    Left = 400
+    PixelsPerInch = 96
+    object cxStyle1: TcxStyle
+      AssignedValues = [svColor]
+      Color = clActiveBorder
     end
   end
 end
