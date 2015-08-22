@@ -1,6 +1,6 @@
 object frmMainBase: TfrmMainBase
-  Left = 52
-  Top = 57
+  Left = 163
+  Top = 71
   BorderStyle = bsNone
   ClientHeight = 632
   ClientWidth = 1222

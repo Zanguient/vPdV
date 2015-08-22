@@ -140,21 +140,40 @@ procedure TfrmLoginBase.btnLoginClick(Sender: TObject);
 var
   tbFuncionario : TObjetoDB;
 begin
+  FLogado := False;
+
+    //colocar na tela de controle de acesso
+  TAcesso.AddRotinas;
+
+  if Trim(edtUsuario.Text) = EmptyStr then
+  begin
+    Aviso('Informe o campo Usuário.');
+    edtUsuario.SetFocus;
+    Abort;
+  end;
+  if Trim(edtSenha.Text) = EmptyStr then
+  begin
+    Aviso('Informe o campo Senha.');
+    edtSenha.SetFocus;
+    Abort;
+  end;
+
+  tbFuncionario := TObjetoDB.create('funcionario');
   try
-    tbFuncionario := TObjetoDB.create('funcionario');
     tbFuncionario.AddParametro('usuario', edtUsuario.Text);
     tbFuncionario.AddParametro('senha', edtSenha.Text);
-    tbFuncionario.GetRows(['nome, usuario']);
+    tbFuncionario.Select(['nome, usuario']);
 
     if(tbFuncionario.Cds.IsEmpty) then
     begin
-      Aviso('Senha ou usuário inválidos');
+      Aviso('Senha ou usuário inválidos.');
       Abort;
     end;
     //aviso(Tcriptografia.MD5('asa'));
   finally
     FreeAndNil(tbFuncionario);
   end;
+
   FLogado := True;
   Close;
 end;

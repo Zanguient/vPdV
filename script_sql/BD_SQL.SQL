@@ -498,7 +498,7 @@ CREATE INDEX funcionario_cidade_id ON funcionario(cidade_id);
 CREATE INDEX funcionario_empresa_id ON funcionario(empresa_id);
 CREATE INDEX funcionario_estado_id ON funcionario(estado_id);
 CREATE INDEX funcionario_pais_id ON funcionario(pais_id);
-
+CREATE UNIQUE INDEX funcionario_usuario ON funcionario(usuario);
 
 CREATE TABLE caixa
 (
@@ -557,3 +557,28 @@ CREATE TABLE fechcaixa
   CONSTRAINT fechcaixa_funcionario_fkey FOREIGN KEY(funcifechamento)
      REFERENCES funcionario(id)    
 );
+
+
+CREATE TABLE rotina
+(
+  id integer NOT NULL AUTO_INCREMENT,
+  modulo character varying(255) NOT NULL,
+  descricao character varying(255) NOT NULL,
+  visivel character varying(1) NOT NULL DEFAULT 'S' CHECK(visivel in ('S', 'N')),
+  CONSTRAINT rotina_pkey PRIMARY KEY(ID)  
+);
+
+CREATE UNIQUE INDEX ux_rotina_modulo ON rotina(modulo);
+
+CREATE TABLE permusr
+(
+  id integer NOT NULL AUTO_INCREMENT,
+  id_rotina integer NOT NULL,
+  descricao character varying(255) NOT NULL,
+  funcionario_id integer not null,
+  CONSTRAINT permusr_pkey PRIMARY KEY(id),
+  CONSTRAINT permusr_rotina_fkey FOREIGN KEY(id_rotina)
+    REFERENCES rotina(id)
+);
+CREATE UNIQUE INDEX ux_permusr_descricao ON permusr(id_rotina, descricao);
+

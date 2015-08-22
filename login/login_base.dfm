@@ -1605,7 +1605,7 @@ object frmLoginBase: TfrmLoginBase
     Font.Name = 'Latha'
     Font.Style = [fsBold]
     ParentFont = False
-    TabOrder = 0
+    TabOrder = 2
     OnClick = btnLoginClick
     Colors.NormalText = clBackground
     Colors.Hot = clBackground
@@ -1623,7 +1623,7 @@ object frmLoginBase: TfrmLoginBase
     Height = 26
     AutoSize = True
     Color = clWhite
-    TabOrder = 1
+    TabOrder = 3
     object btnMinimiza: TcxButton
       Left = 1
       Top = 1
@@ -1717,7 +1717,7 @@ object frmLoginBase: TfrmLoginBase
     StyleHot.Color = clSkyBlue
     StyleHot.TextColor = clHighlightText
     StyleHot.TextStyle = [fsBold]
-    TabOrder = 4
+    TabOrder = 1
     OnKeyPress = edtSenhaKeyPress
     Width = 300
   end
@@ -1744,7 +1744,7 @@ object frmLoginBase: TfrmLoginBase
     StyleHot.Color = clSkyBlue
     StyleHot.TextColor = clHighlightText
     StyleHot.TextStyle = [fsBold]
-    TabOrder = 5
+    TabOrder = 0
     OnKeyPress = edtUsuarioKeyPress
     Width = 300
   end

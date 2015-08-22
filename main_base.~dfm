@@ -1,10 +1,10 @@
 object frmMainBase: TfrmMainBase
-  Left = 52
-  Top = 57
+  Left = 163
+  Top = 71
   BorderStyle = bsNone
   ClientHeight = 632
   ClientWidth = 1222
-  Color = clBtnFace
+  Color = clBtnHighlight
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -11
@@ -71,6 +71,7 @@ object frmMainBase: TfrmMainBase
     object nbiCliente: TdxNavBarItem
       Caption = 'Cliente'
       SmallImageIndex = 1
+      OnClick = nbiClienteClick
     end
     object nbiEntrada: TdxNavBarItem
       Caption = 'Entrada'
@@ -87,7 +88,7 @@ object frmMainBase: TfrmMainBase
     Width = 1067
     Height = 632
     Align = alClient
-    Color = clBtnFace
+    Color = clActiveBorder
     LookAndFeel.SkinName = ''
     NavigatorPosition = npLeftBottom
     Options = [pcoAlwaysShowGoDialogButton, pcoCloseButton, pcoGradient, pcoGradientClientArea, pcoRedrawOnResize]
@@ -99,6 +100,7 @@ object frmMainBase: TfrmMainBase
     ClientRectTop = 0
   end
   object cilMenu: TcxImageList
+    DrawingStyle = dsTransparent
     Height = 64
     Width = 64
     FormatVersion = 1
