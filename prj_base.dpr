@@ -17,7 +17,9 @@ uses
   lib_modelo_impressao in 'vlib\lib_modelo_impressao.pas',
   uvCadastroClienteFrame in 'app\cadastro\cliente\uvCadastroClienteFrame.pas' {vCadastroClienteFrame: TFrame},
   pdv_pdv in 'app\pdv\pdv_pdv.pas' {frmPDV_PDV},
-  pdv_adicional in 'app\pdv\pdv_adicional.pas' {frmAdicional};
+  pdv_adicional in 'app\pdv\pdv_adicional.pas' {frmAdicional},
+  lib_acesso in 'vlib\lib_acesso.pas',
+  lib_db in 'vlib\lib_db.pas';
 
 {$R *.res}
 
