@@ -91,10 +91,11 @@ object frmPDV_PDV: TfrmPDV_PDV
     TabOrder = 1
     object scbCategoria: TScrollBox
       Left = 0
-      Top = 0
+      Top = 88
       Width = 361
-      Height = 120
+      Height = 32
       Align = alClient
+      BevelOuter = bvNone
       TabOrder = 0
     end
     object scbProduto: TScrollBox
@@ -104,6 +105,185 @@ object frmPDV_PDV: TfrmPDV_PDV
       Height = 242
       Align = alBottom
       TabOrder = 1
+    end
+    object scbTotalizador: TScrollBox
+      Left = 0
+      Top = 0
+      Width = 361
+      Height = 88
+      Align = alTop
+      AutoSize = True
+      BevelInner = bvNone
+      BevelOuter = bvNone
+      TabOrder = 2
+      object lblFrom: TcxLabel
+        Left = 4
+        Top = 5
+        Caption = 'Mesa'
+        ParentFont = False
+        Style.Font.Charset = DEFAULT_CHARSET
+        Style.Font.Color = clBackground
+        Style.Font.Height = -17
+        Style.Font.Name = 'Latha'
+        Style.Font.Style = [fsBold]
+        Style.TextStyle = [fsBold]
+        Style.IsFontAssigned = True
+        Transparent = True
+      end
+      object panTotal: TPanel
+        Left = 121
+        Top = 0
+        Width = 236
+        Height = 42
+        Align = alRight
+        BevelOuter = bvNone
+        ParentColor = True
+        TabOrder = 1
+        object lblTotal: TcxLabel
+          Left = 11
+          Top = 7
+          Caption = 'Total'
+          ParentFont = False
+          Style.Font.Charset = DEFAULT_CHARSET
+          Style.Font.Color = clBackground
+          Style.Font.Height = -17
+          Style.Font.Name = 'Latha'
+          Style.Font.Style = [fsBold]
+          Style.TextStyle = [fsBold]
+          Style.IsFontAssigned = True
+          Transparent = True
+        end
+        object edtTotal: TcxTextEdit
+          Left = 60
+          Top = 7
+          Hint = 'Total'
+          ParentFont = False
+          Properties.Alignment.Horz = taLeftJustify
+          Style.Font.Charset = DEFAULT_CHARSET
+          Style.Font.Color = clBackground
+          Style.Font.Height = -16
+          Style.Font.Name = 'MS Sans Serif'
+          Style.Font.Style = [fsBold]
+          Style.Shadow = False
+          Style.IsFontAssigned = True
+          StyleDisabled.BorderColor = clActiveCaption
+          StyleDisabled.Color = clSilver
+          StyleDisabled.TextColor = clBtnHighlight
+          StyleFocused.BorderColor = clRed
+          StyleFocused.Color = clBtnHighlight
+          StyleFocused.TextColor = clBackground
+          StyleHot.BorderColor = clBackground
+          StyleHot.Color = clSkyBlue
+          StyleHot.TextColor = clHighlightText
+          StyleHot.TextStyle = [fsBold]
+          TabOrder = 1
+          Width = 168
+        end
+      end
+      object panDados: TPanel
+        Left = 0
+        Top = 42
+        Width = 357
+        Height = 42
+        Align = alBottom
+        BevelOuter = bvNone
+        ParentColor = True
+        TabOrder = 2
+        Visible = False
+        object lblCPF: TcxLabel
+          Left = 6
+          Top = 7
+          Caption = 'CPF'
+          ParentFont = False
+          Style.Font.Charset = DEFAULT_CHARSET
+          Style.Font.Color = clBackground
+          Style.Font.Height = -17
+          Style.Font.Name = 'Latha'
+          Style.Font.Style = [fsBold]
+          Style.TextStyle = [fsBold]
+          Style.IsFontAssigned = True
+          Transparent = True
+        end
+        object edtCPF: TcxTextEdit
+          Left = 51
+          Top = 7
+          Hint = 'Total'
+          ParentFont = False
+          Properties.Alignment.Horz = taLeftJustify
+          Style.Font.Charset = DEFAULT_CHARSET
+          Style.Font.Color = clBackground
+          Style.Font.Height = -16
+          Style.Font.Name = 'MS Sans Serif'
+          Style.Font.Style = [fsBold]
+          Style.Shadow = False
+          Style.IsFontAssigned = True
+          StyleDisabled.BorderColor = clActiveCaption
+          StyleDisabled.Color = clSilver
+          StyleDisabled.TextColor = clBtnHighlight
+          StyleFocused.BorderColor = clRed
+          StyleFocused.Color = clBtnHighlight
+          StyleFocused.TextColor = clBackground
+          StyleHot.BorderColor = clBackground
+          StyleHot.Color = clSkyBlue
+          StyleHot.TextColor = clHighlightText
+          StyleHot.TextStyle = [fsBold]
+          TabOrder = 1
+          Width = 137
+        end
+        object edtNome: TcxTextEdit
+          Left = 250
+          Top = 7
+          Hint = 'Total'
+          ParentFont = False
+          Properties.Alignment.Horz = taLeftJustify
+          Style.Font.Charset = DEFAULT_CHARSET
+          Style.Font.Color = clBackground
+          Style.Font.Height = -16
+          Style.Font.Name = 'MS Sans Serif'
+          Style.Font.Style = [fsBold]
+          Style.Shadow = False
+          Style.IsFontAssigned = True
+          StyleDisabled.BorderColor = clActiveCaption
+          StyleDisabled.Color = clSilver
+          StyleDisabled.TextColor = clBtnHighlight
+          StyleFocused.BorderColor = clRed
+          StyleFocused.Color = clBtnHighlight
+          StyleFocused.TextColor = clBackground
+          StyleHot.BorderColor = clBackground
+          StyleHot.Color = clSkyBlue
+          StyleHot.TextColor = clHighlightText
+          StyleHot.TextStyle = [fsBold]
+          TabOrder = 2
+          Width = 296
+        end
+        object lblNome: TcxLabel
+          Left = 196
+          Top = 4
+          Caption = 'Nome'
+          ParentFont = False
+          Style.Font.Charset = DEFAULT_CHARSET
+          Style.Font.Color = clBackground
+          Style.Font.Height = -17
+          Style.Font.Name = 'Latha'
+          Style.Font.Style = [fsBold]
+          Style.TextStyle = [fsBold]
+          Style.IsFontAssigned = True
+          Transparent = True
+        end
+        object btnPesqCliente: TcxButton
+          Left = 327
+          Top = 0
+          Width = 30
+          Height = 42
+          Caption = '...'
+          TabOrder = 4
+          OnClick = btnCancelarClick
+          Align = alRight
+          SpeedButtonOptions.CanBeFocused = False
+          SpeedButtonOptions.Flat = True
+          SpeedButtonOptions.Transparent = True
+        end
+      end
     end
   end
   object panGrids: TPanel
