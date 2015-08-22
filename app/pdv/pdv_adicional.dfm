@@ -13,6 +13,7 @@ object frmAdicional: TfrmAdicional
   OldCreateOrder = False
   Position = poScreenCenter
   OnCreate = FormCreate
+  OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
   object scbAdicional: TScrollBox
@@ -75,5 +76,30 @@ object frmAdicional: TfrmAdicional
       SpeedButtonOptions.Flat = True
       SpeedButtonOptions.Transparent = True
     end
+  end
+  object cdsAdicional: TClientDataSet
+    Aggregates = <>
+    Params = <>
+    Left = 592
+    Top = 64
+    object cdsAdicionalID: TIntegerField
+      FieldName = 'ID'
+    end
+    object cdsAdicionalNMADICIONAL: TStringField
+      FieldName = 'NMADICIONAL'
+      Size = 250
+    end
+    object cdsAdicionalIDMARCADO: TStringField
+      FieldName = 'IDMARCADO'
+      Size = 1
+    end
+    object cdsAdicionalIDIMG: TIntegerField
+      FieldName = 'IDIMG'
+    end
+  end
+  object dtsAdicional: TDataSource
+    DataSet = cdsAdicional
+    Left = 624
+    Top = 64
   end
 end
