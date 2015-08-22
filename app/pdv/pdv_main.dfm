@@ -29,6 +29,7 @@ inherited frmPDVMain: TfrmPDVMain
         object dtvPedidos: TcxGridDBTableView
           NavigatorButtons.ConfirmDelete = False
           OnCustomDrawCell = dtvPedidosCustomDrawCell
+          DataController.DataSource = dtsMesa
           DataController.Summary.DefaultGroupSummaryItems = <>
           DataController.Summary.FooterSummaryItems = <>
           DataController.Summary.SummaryGroups = <>
@@ -42,14 +43,17 @@ inherited frmPDVMain: TfrmPDVMain
           OptionsView.GroupByBox = False
           object gcpMesa: TcxGridDBColumn
             Caption = 'Mesa'
+            DataBinding.FieldName = 'id_mesa'
             Width = 40
           end
           object gcpStatus: TcxGridDBColumn
             Caption = 'Status'
+            DataBinding.FieldName = 'status'
             Width = 92
           end
           object gcpValor: TcxGridDBColumn
             Caption = 'Valor'
+            DataBinding.FieldName = 'valor'
             Width = 135
           end
         end
@@ -2210,5 +2214,74 @@ inherited frmPDVMain: TfrmPDVMain
         TabOrder = 1
       end
     end
+  end
+  inherited adqPadrao: TADOQuery
+    Connection = nil
+  end
+  object cdsMesa: TClientDataSet
+    Active = True
+    Aggregates = <>
+    FieldDefs = <
+      item
+        Name = 'id_mesa'
+        DataType = ftInteger
+      end
+      item
+        Name = 'nmmesa'
+        DataType = ftString
+        Size = 250
+      end
+      item
+        Name = 'dsobsmesa'
+        DataType = ftString
+        Size = 250
+      end
+      item
+        Name = 'status'
+        DataType = ftString
+        Size = 20
+      end
+      item
+        Name = 'valor'
+        DataType = ftFloat
+      end>
+    IndexDefs = <
+      item
+        Name = 'cdsMesaIndex1'
+        Fields = 'id_mesa'
+      end>
+    IndexFieldNames = 'id_mesa'
+    Params = <>
+    StoreDefs = True
+    Left = 368
+    Top = 80
+    Data = {
+      8C0000009619E0BD0100000018000000050000000000030000008C000769645F
+      6D6573610400010000000000066E6D6D65736101004900000001000557494454
+      4802000200FA000964736F62736D657361010049000000010005574944544802
+      000200FA00067374617475730100490000000100055749445448020002001400
+      0576616C6F7208000400000000000000}
+    object cdsMesaid_mesa: TIntegerField
+      FieldName = 'id_mesa'
+    end
+    object cdsMesanmmesa: TStringField
+      FieldName = 'nmmesa'
+      Size = 250
+    end
+    object cdsMesadsobsmesa: TStringField
+      FieldName = 'dsobsmesa'
+      Size = 250
+    end
+    object cdsMesastatus: TStringField
+      FieldName = 'status'
+    end
+    object cdsMesavalor: TFloatField
+      FieldName = 'valor'
+    end
+  end
+  object dtsMesa: TDataSource
+    DataSet = cdsMesa
+    Left = 400
+    Top = 80
   end
 end

@@ -13,7 +13,8 @@ type
 //   protected
   public
     procedure OrganizaScrollBox(ScrollBox: TScrollBox; inTop: Integer);
-    procedure CriaButtonScrollBox(ScrollBox: TScrollBox; stCaption, stOnClick: String; inHeight, inWidth: Integer);
+    procedure CriaButtonScrollBox(ScrollBox: TScrollBox; stCaption: String; stOnClick: TNotifyEvent;
+      inHeight, inWidth: Integer);
 //   published
 end;    
 
@@ -32,8 +33,8 @@ uses Controls;
 
 { TInterface }
 
-procedure TInterface.CriaButtonScrollBox(ScrollBox: TScrollBox; stCaption,
-  stOnClick: String; inHeight, inWidth: Integer);
+procedure TInterface.CriaButtonScrollBox(ScrollBox: TScrollBox; stCaption: String;
+  stOnClick: TNotifyEvent; inHeight, inWidth: Integer);
 var
    btn: TcxButton;
 begin
@@ -44,7 +45,7 @@ begin
    btn.Caption := stCaption;
    btn.Height  := inHeight;
    btn.Width   := inWidth;
-//   btn.OnClick := stOnClick;
+   btn.OnClick := stOnClick;
    btn.Visible := True;
 end;
 

@@ -83,7 +83,7 @@ end;
 procedure TfrmMainBase.nbgPDVClick(Sender: TObject);
 begin
  //  InvocadordeBpl('TfrmPDV');
-   TAbasNavegacao.CriarAba(pgcPrincipal, TfrmPDVMain);
+  TAbasNavegacao.CriarAba(pgcPrincipal, TfrmPDVMain);
 end;
 
 procedure TfrmMainBase.nbiClienteClick(Sender: TObject);
