@@ -18,7 +18,15 @@ uses
   cxFilter, cxData, cxDataStorage, cxEdit, DB, cxDBData, cxProgressBar,
   cxGridChartView, cxGridLevel, cxGridBandedTableView,
   cxGridDBBandedTableView, cxGridCustomTableView, cxGridTableView,
-  cxGridDBTableView, cxClasses, cxGridCustomView, cxGrid, DBClient;
+  cxGridDBTableView, cxClasses, cxGridCustomView, cxGrid, DBClient,
+  cxContainer, cxTextEdit, cxLabel;
+    
+type
+  TParametros = Record
+  Caption: String;
+  Tag, Totalizador_Height: Integer;
+  btnGravar_Visible, panDados_Visible: Boolean;
+end;
 
 type
   TfrmPDV_PDV = class(TForm)
@@ -85,11 +93,24 @@ type
     dbgAdicionalDBTableView1Column3: TcxGridDBColumn;
     dbgAdicionalDBTableView1Column4: TcxGridDBColumn;
     cdsAddPedidoVRTOTAITEM: TFloatField;
+    scbTotalizador: TScrollBox;
+    lblFrom: TcxLabel;
+    panTotal: TPanel;
+    lblTotal: TcxLabel;
+    edtTotal: TcxTextEdit;
+    panDados: TPanel;
+    lblCPF: TcxLabel;
+    edtCPF: TcxTextEdit;
+    edtNome: TcxTextEdit;
+    lblNome: TcxLabel;
+    btnPesqCliente: TcxButton;
     procedure btnCancelarClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure FormCreate(Sender: TObject);
+    constructor PCreate(Form: TComponent; Parametros: TParametros); Overload;
   private
     { Private declarations }
+    FParametros: TParametros;
   public
     { Public declarations }
     procedure OnClickCategoriaPDV(Sender: TObject);
@@ -112,9 +133,21 @@ end;
 
 procedure TfrmPDV_PDV.FormShow(Sender: TObject);
 var
-  Interface_: TInterface;
+  Interface_: TInterface; 
+  iComp, iGrava: Integer;
 begin
   Interface_ := TInterface.Create();
+
+  lblFrom.Caption := FParametros.Caption;
+  frmPDV_PDV.Tag  := FParametros.Tag;
+  scbTotalizador.Height := FParametros.Totalizador_Height;
+  btnGravar.Visible := FParametros.btnGravar_Visible;
+  iGrava := Integer(not FParametros.btnGravar_Visible);
+  panDados.Visible  := FParametros.panDados_Visible;
+
+  edtNome.Width := (panDados.Width - edtNome.Left) - btnPesqCliente.Width;
+
+  scbProduto.Height := Trunc(scbGrupo.Height/2)-scbTotalizador.Height;
 
   if scbCategoria.ControlCount = 0 then
   begin
@@ -132,13 +165,17 @@ begin
   begin
     Interface_ := TInterface.Create();
     Interface_.OrganizaScrollBox(scbCategoria,1);
+  end; 
+
+  for iComp := 0 to pred(scbMenu.ControlCount) do
+  begin
+    scbMenu.Controls[iComp].Width := Trunc(scbMenu.Width/(scbMenu.ControlCount-iGrava));
   end;
 end;
 
 procedure TfrmPDV_PDV.FormCreate(Sender: TObject);
 var
    region: hrgn;
-   iComp: Integer;
 begin
   Height := Screen.WorkAreaHeight-20;
   Width  := Screen.WorkAreaWidth-20;
@@ -147,14 +184,6 @@ begin
   DoubleBuffered := True;
   region := CreateRoundRectRgn(0, 0, width, height, 15, 15);
   SetWindowRgn(handle, region, true);
-
-  for iComp := 0 to pred(scbMenu.ControlCount) do
-  begin
-    scbMenu.Controls[iComp].Width := Trunc(scbMenu.Width/scbMenu.ControlCount);
-    scbMenu.Controls[iComp].Left  := Trunc(scbMenu.Width/scbMenu.ControlCount)*(iComp+1);
-  end;
-
-  scbProduto.Width := Trunc(scbGrupo.Width/2);
 end;
 
 procedure TfrmPDV_PDV.OnClickCategoriaPDV(Sender: TObject);
@@ -168,6 +197,12 @@ begin
     frmAdicional.Release;
     frmAdicional := nil;
   end;
+end;
+
+constructor TfrmPDV_PDV.PCreate(Form: TComponent; Parametros: TParametros);
+begin
+  inherited Create(frmPDV_PDV);
+  FParametros := Parametros;
 end;
 
 end.
