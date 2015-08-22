@@ -28,9 +28,17 @@ inherited frmPDVMain: TfrmPDVMain
         TabOrder = 0
         object dtvPedidos: TcxGridDBTableView
           NavigatorButtons.ConfirmDelete = False
+          OnCustomDrawCell = dtvPedidosCustomDrawCell
           DataController.Summary.DefaultGroupSummaryItems = <>
           DataController.Summary.FooterSummaryItems = <>
           DataController.Summary.SummaryGroups = <>
+          OptionsBehavior.ImmediateEditor = False
+          OptionsData.Deleting = False
+          OptionsData.Editing = False
+          OptionsData.Inserting = False
+          OptionsSelection.InvertSelect = False
+          OptionsSelection.MultiSelect = True
+          OptionsSelection.CellMultiSelect = True
           OptionsView.GroupByBox = False
           object gcpMesa: TcxGridDBColumn
             Caption = 'Mesa'

@@ -37,6 +37,9 @@ type
     sbxOpcoesPDV: TScrollBox;
     procedure FrameResize(Sender: TObject);
     procedure btnGavetaClick(Sender: TObject);
+    procedure dtvPedidosCustomDrawCell(Sender: TcxCustomGridTableView;
+      ACanvas: TcxCanvas; AViewInfo: TcxGridTableDataCellViewInfo;
+      var ADone: Boolean);
   private
     { Private declarations }
   public
@@ -104,6 +107,19 @@ begin
     end else
       Aviso(GAVETA_ERRO);
   //end;
+end;
+
+procedure TfrmPDVMain.dtvPedidosCustomDrawCell(
+  Sender: TcxCustomGridTableView; ACanvas: TcxCanvas;
+  AViewInfo: TcxGridTableDataCellViewInfo; var ADone: Boolean);
+begin
+  inherited;
+  if AViewInfo.GridRecord.RecordIndex mod 2 = 0 Then
+    ACanvas.Brush.Color := $#9400D3
+  else
+    ACanvas.Brush.Color := $FFFFFF;
+
+  ACanvas.Font.Color := clBlack;
 end;
 
 end.
