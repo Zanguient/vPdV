@@ -138,20 +138,26 @@ end;
 
 procedure TfrmLoginBase.btnLoginClick(Sender: TObject);
 var
-  tblEmpresa : TObjetoDB;
-
+  tbFuncionario : TObjetoDB;
 begin
   try
-{    tblEmpresa := TObjetoDB.create('empresa');
-    tblEmpresa.AddParametro('codigo', '1');
-    tblEmpresa.GetRows(['nmempresa']);
-    Aviso(tblEmpresa.Cds.FieldByName('nmempresa').AsString);}
-    aviso(Tcriptografia.MD5('asa'));
+    tbFuncionario := TObjetoDB.create('funcionario');
+    tbFuncionario.AddParametro('usuario', edtUsuario.Text);
+    tbFuncionario.AddParametro('senha', edtSenha.Text);
+    tbFuncionario.GetRows(['nome, usuario']);
+
+    if(tbFuncionario.Cds.IsEmpty) then
+    begin
+      Aviso('Senha ou usuário inválidos');
+      Abort;
+    end;
+    //aviso(Tcriptografia.MD5('asa'));
   finally
-//    FreeAndNil(tblEmpresa);
+    FreeAndNil(tbFuncionario);
   end;
   FLogado := True;
   Close;
 end;
 
 end.
+
