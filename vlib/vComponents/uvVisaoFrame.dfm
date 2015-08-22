@@ -110,10 +110,10 @@ inherited vVisaoFrame: TvVisaoFrame
           end>
       end
       object nbiFiltrar: TdxNavBarItem
-        Caption = 'Filtrar'
+        Action = actFilttar
       end
       object nbLimpar: TdxNavBarItem
-        Caption = 'Limpar'
+        Action = acrLimpar
       end
       object nbiIncluir: TdxNavBarItem
         Caption = 'Incluir'
@@ -121,6 +121,16 @@ inherited vVisaoFrame: TvVisaoFrame
       object nbiExcluir: TdxNavBarItem
         Caption = 'Excluir'
       end
+    end
+  end
+  object ActionList1: TActionList
+    Left = 424
+    Top = 184
+    object actFilttar: TAction
+      Caption = 'Filttar'
+    end
+    object acrLimpar: TAction
+      Caption = 'Limpar'
     end
   end
 end

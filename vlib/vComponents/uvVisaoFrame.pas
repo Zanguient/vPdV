@@ -20,7 +20,7 @@ uses
   cxDBNavigator, dxNavBar, cxGridLevel, cxClasses, cxGridCustomView,
   cxGridCustomTableView, cxGridTableView, cxGridDBTableView, cxGrid,
   cxInplaceContainer, cxVGrid, dxNavBarCollns, dxNavBarBase, DBClient,
-  Provider, ADODB;
+  Provider, ADODB, ActnList;
 
 type
   TvVisaoFrame = class(TvPadraoFrame)
@@ -37,6 +37,9 @@ type
     nbiExcluir: TdxNavBarItem;
     nbPesquisa: TdxNavBarGroup;
     nbProcesso: TdxNavBarGroup;
+    ActionList1: TActionList;
+    actFilttar: TAction;
+    acrLimpar: TAction;
   private
     { Private declarations }
   public
