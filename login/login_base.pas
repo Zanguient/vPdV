@@ -143,7 +143,7 @@ begin
   FLogado := False;
 
     //colocar na tela de controle de acesso
-  TAcesso.AddRotinas;
+//  TAcesso.AddRotinas;
 
   if Trim(edtUsuario.Text) = EmptyStr then
   begin
