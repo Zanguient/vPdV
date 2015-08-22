@@ -62,7 +62,7 @@ implementation
 {$R *.dfm}
 
 uses
-  lib_interface, lib_mensagem, pdv_pdv;
+  lib_interface, lib_mensagem, pdv_pdv, pdv_adicional;
 
   function rStatusGaveta_DUAL_DarumaFramework(var iStatusGaveta: Integer): Integer; StdCall; External 'DarumaFrameWork.dll';
   function iAcionarGaveta_DUAL_DarumaFramework(): Integer; StdCall; External 'DarumaFrameWork.dll';

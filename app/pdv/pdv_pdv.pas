@@ -41,22 +41,50 @@ type
     dbgAdicionalDBBandedTableView1Column3: TcxGridDBBandedColumn;
     dbgAdicionalDBBandedTableView1Column4: TcxGridDBBandedColumn;
     dbgAdicionalLevel1: TcxGridLevel;
-    dbgAdicionalLevel2: TcxGridLevel;
-    dbgAdicionalLevel3: TcxGridLevel;
     dbgProduto: TcxGrid;
-    una: TcxGridDBTableView;
-    unaColumn1: TcxGridDBColumn;
-    unaColumn2: TcxGridDBColumn;
-    unateste: TcxGridDBColumn;
-    unateste2: TcxGridDBColumn;
+    gdbPedido: TcxGridDBTableView;
+    gdbNmProduto: TcxGridDBColumn;
+    gdbQuantidade: TcxGridDBColumn;
+    gdbVrUnitario: TcxGridDBColumn;
+    gdbVrTotaItem: TcxGridDBColumn;
     dbgProdutoChartView1: TcxGridChartView;
     dbgProdutoLevel1: TcxGridLevel;
     cdsProdutos: TClientDataSet;
     dtsProdutos: TDataSource;
     cdsCategoria: TClientDataSet;
     dtsCategoria: TDataSource;
-    cdsPedido: TClientDataSet;
-    dtsPedido: TDataSource;
+    cdsItemPedido: TClientDataSet;
+    dtsItemPedido: TDataSource;
+    cdsAddPedido: TClientDataSet;
+    dtsAddPedido: TDataSource;
+    cdsProdutosnmproduto: TStringField;
+    cdsProdutosid: TIntegerField;
+    cdsProdutosposarvore: TStringField;
+    cdsProdutosunimedida_id: TIntegerField;
+    cdsProdutoscdbarra: TStringField;
+    cdsProdutosidprodvenda: TIntegerField;
+    cdsProdutosidadicional: TIntegerField;
+    cdsProdutosimgindex: TIntegerField;
+    cdsProdutosid_categoria: TIntegerField;
+    cdsCategoriaid: TIntegerField;
+    cdsCategorianmcategoria: TStringField;
+    cdsCategoriaimgindex: TIntegerField;
+    cdsItemPedidoID: TIntegerField;
+    cdsItemPedidoPEDIDO_ID: TIntegerField;
+    cdsItemPedidoCARDAPIO_ID: TIntegerField;
+    cdsItemPedidoLOTE_ID: TIntegerField;
+    cdsItemPedidoQTITEM: TFloatField;
+    cdsItemPedidoVRVENDA: TFloatField;
+    cdsItemPedidoVRTOTAL: TFloatField;
+    cdsItemPedidoIDADICIONAL: TIntegerField;
+    cdsItemPedidoNMPRODUTO: TStringField;
+    cdsAddPedidoid: TIntegerField;
+    cdsAddPedidoVRUNITARIO: TFloatField;
+    cdsAddPedidoQTITEM: TFloatField;
+    cdsAddPedidoNMPRODUTO: TStringField;
+    dbgAdicionalDBTableView1Column3: TcxGridDBColumn;
+    dbgAdicionalDBTableView1Column4: TcxGridDBColumn;
+    cdsAddPedidoVRTOTAITEM: TFloatField;
     procedure btnCancelarClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -64,6 +92,7 @@ type
     { Private declarations }
   public
     { Public declarations }
+    procedure OnClickCategoriaPDV(Sender: TObject);
   end;
 
 var
@@ -74,7 +103,7 @@ implementation
 {$R *.dfm}   
 
 uses
-  lib_mensagem;
+  lib_mensagem, lib_interface, pdv_adicional;
 
 procedure TfrmPDV_PDV.btnCancelarClick(Sender: TObject);
 begin
@@ -82,8 +111,28 @@ begin
 end;
 
 procedure TfrmPDV_PDV.FormShow(Sender: TObject);
+var
+  Interface_: TInterface;
 begin
-  Caption := IntToStr(frmPDV_PDV.tag);
+  Interface_ := TInterface.Create();
+
+  if scbCategoria.ControlCount = 0 then
+  begin
+    cdsCategoria.First;
+    while not cdsCategoria.Eof do
+    begin
+      Interface_.CriaButtonScrollBox(scbCategoria, cdsCategoria.FieldByName('nmcategoria').AsString,
+        OnClickCategoriaPDV, 150, 150);
+
+      cdsCategoria.Next;
+    end;
+  end;                
+
+  if scbCategoria.ControlCount > 0 then
+  begin
+    Interface_ := TInterface.Create();
+    Interface_.OrganizaScrollBox(scbCategoria,1);
+  end;
 end;
 
 procedure TfrmPDV_PDV.FormCreate(Sender: TObject);
@@ -106,6 +155,19 @@ begin
   end;
 
   scbProduto.Width := Trunc(scbGrupo.Width/2);
+end;
+
+procedure TfrmPDV_PDV.OnClickCategoriaPDV(Sender: TObject);
+begin
+  frmAdicional := TfrmAdicional.Create(Self);
+
+  try
+    frmAdicional.Tag := (Sender as TcxButton).Tag;
+    frmAdicional.ShowModal;
+  finally
+    frmAdicional.Release;
+    frmAdicional := nil;
+  end;
 end;
 
 end.

@@ -4,7 +4,7 @@ object frmAdicional: TfrmAdicional
   BorderStyle = bsNone
   ClientHeight = 453
   ClientWidth = 920
-  Color = clBtnFace
+  Color = clBtnHighlight
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -11
@@ -12,6 +12,7 @@ object frmAdicional: TfrmAdicional
   Font.Style = []
   OldCreateOrder = False
   Position = poScreenCenter
+  OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 13
   object scbAdicional: TScrollBox
@@ -68,6 +69,7 @@ object frmAdicional: TfrmAdicional
       Height = 91
       Caption = 'Cancelar'
       TabOrder = 2
+      OnClick = btnCancelarClick
       Align = alLeft
       SpeedButtonOptions.CanBeFocused = False
       SpeedButtonOptions.Flat = True
