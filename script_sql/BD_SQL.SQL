@@ -380,7 +380,7 @@ CREATE TABLE pedido
   nmcliente character varying(250),
   mesa_id integer null,
   vrpedido double precision NOT NULL,
-  idstatusped character varying(1) NOT NULL check(idstatusped in ('P', 'C')),
+  idstatusped character varying(1) NOT NULL check(idstatusped in ('P', 'C')),/*pendente, concluido*/
   CONSTRAINT pedido_pkey PRIMARY KEY (id),
   CONSTRAINT mesa_id_refs_id_8a44dbc3 FOREIGN KEY (mesa_id)
       REFERENCES mesa(id),
@@ -456,5 +456,104 @@ CREATE TABLE itadicional
 CREATE INDEX frentecaixa_itadicional_item_id ON itadicional(item_id);
 CREATE INDEX frentecaixa_itadicional_itempedido_id ON itadicional(itempedido_id);
 
-  
 
+CREATE TABLE funcionario
+(
+  id integer NOT NULL AUTO_INCREMENT,
+  empresa_id integer,
+  dtcadastro date,
+  nome character varying(255) NOT NULL,
+  usuario character varying(255) NOT NULL,
+  sexo character varying(1) NOT NULL,
+  dtnascimento date NOT NULL,
+  email character varying(255) NOT NULL,
+  senha character varying(128) NOT NULL,
+  confsenha character varying(128) NOT NULL,
+  endereco character varying(255) NOT NULL,
+  numero character varying(20) NOT NULL,
+  complemento character varying(255),
+  cep character varying(9),
+  pais_id integer NOT NULL,
+  estado_id integer NOT NULL,
+  cidade_id integer NOT NULL,
+  bairro_id integer,
+  dtadmissao date,
+  dtdemissao date,
+  pessoa character varying(2) NOT NULL,
+  CONSTRAINT funcionario_pkey PRIMARY KEY (id),
+  CONSTRAINT funcionario_bairro_id_fkey FOREIGN KEY (bairro_id)
+      REFERENCES bairro (id),
+  CONSTRAINT funcionario_cidade_id_fkey FOREIGN KEY (cidade_id)
+      REFERENCES cidade (id),
+  CONSTRAINT funcionario_empresa_id_fkey FOREIGN KEY (empresa_id)
+      REFERENCES empresa (id),
+  CONSTRAINT funcionario_estado_id_fkey FOREIGN KEY (estado_id)
+      REFERENCES estado (id),
+  CONSTRAINT funcionario_pais_id_fkey FOREIGN KEY (pais_id)
+      REFERENCES pais (id)
+);
+
+CREATE INDEX funcionario_bairro_id ON funcionario(bairro_id);
+CREATE INDEX funcionario_cidade_id ON funcionario(cidade_id);
+CREATE INDEX funcionario_empresa_id ON funcionario(empresa_id);
+CREATE INDEX funcionario_estado_id ON funcionario(estado_id);
+CREATE INDEX funcionario_pais_id ON funcionario(pais_id);
+
+
+CREATE TABLE caixa
+(
+  id integer NOT NULL AUTO_INCREMENT,
+  nmcaixa character varying(50),
+  CONSTRAINT caixa_pkey PRIMARY KEY(id)  
+);
+CREATE UNIQUE INDEX ux_caixa_nmcaixa ON caixa(nmcaixa);
+
+CREATE TABLE abercaixa
+(
+  id integer NOT NULL AUTO_INCREMENT,
+  id_caixa integer NOT NULL,
+  vrinicial double precision NOT NULL,
+  vrcorrigido double precision NOT NULL,
+  dtmovi date not null,
+  funciconfabertura integer null,
+  status character varying(1) not null check(status in ('P', 'A')), /*pendente ou aberto*/
+  CONSTRAINT abercaixa_pkey PRIMARY KEY(id),
+  CONSTRAINT abercaixa_funcionario_fkey FOREIGN KEY(funciconfabertura)
+     REFERENCES funcionario(id),
+  CONSTRAINT abercaixa_caixa_fkey FOREIGN KEY(id_caixa)
+     REFERENCES caixa(id)
+);
+
+CREATE TABLE movcaixa
+(
+  id integer NOT NULL AUTO_INCREMENT,
+  id_caixa integer not null,
+  dtmovi date not null,
+  vrmovi double precision not null,
+  tpmovi character varying(1) not null check(tpmovi in ('E, V, S, R')), /*ENTRADA, VENDA, SANGRIA, RETIRADA*/
+  formpgto character varying(2) not null check(formpgto in ('DI', 'DE', 'CR')), /*DINHEIRO, DEBITO, CREDITO*/
+  id_pedido integer null,
+  CONSTRAINT movcaixa_pkey PRIMARY KEY(id),
+  CONSTRAINT movcaixa_caixa_fkey FOREIGN KEY(id_caixa) 
+     REFERENCES caixa(id),
+  CONSTRAINT movcaixa_pedido FOREIGN KEY(id_pedido)
+   REFERENCES pedido(id)  
+);
+
+CREATE TABLE fechcaixa
+(
+  id integer NOT NULL AUTO_INCREMENT,
+  id_abercaixa integer NOT NULL,
+  vrvenda double precision NOT NULL,
+  vrretirada double precision NOT NULL,
+  vrsangria double precision NOT NULL,
+  vrentrada double precision NOT NULL,
+  vrdebio double precision NOT NULL,
+  vrcredito double precision NOT NULL,
+  funcifechamento integer null,
+  CONSTRAINT fechcaixa_pkey PRIMARY KEY(id), 
+  CONSTRAINT fechcaixa_abercaixa_fkey FOREIGN KEY(id_abercaixa)
+     REFERENCES abercaixa(id),
+  CONSTRAINT fechcaixa_funcionario_fkey FOREIGN KEY(funcifechamento)
+     REFERENCES funcionario(id)    
+);

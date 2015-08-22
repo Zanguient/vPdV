@@ -54,7 +54,7 @@ implementation
 {$R *.dfm}
 
 uses
-   lib_mensagem;
+   lib_mensagem, lib_db, lib_acesso;
 
 { TfrmLoginBase }
 
@@ -137,7 +137,19 @@ begin
 end;
 
 procedure TfrmLoginBase.btnLoginClick(Sender: TObject);
-begin   
+var
+  tblEmpresa : TObjetoDB;
+
+begin
+  try
+{    tblEmpresa := TObjetoDB.create('empresa');
+    tblEmpresa.AddParametro('codigo', '1');
+    tblEmpresa.GetRows(['nmempresa']);
+    Aviso(tblEmpresa.Cds.FieldByName('nmempresa').AsString);}
+    aviso(Tcriptografia.MD5('asa'));
+  finally
+//    FreeAndNil(tblEmpresa);
+  end;
   FLogado := True;
   Close;
 end;
