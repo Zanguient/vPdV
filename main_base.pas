@@ -59,6 +59,10 @@ procedure TfrmMainBase.FormCreate(Sender: TObject);
 var
    region: hrgn;
 begin
+   Height := Screen.WorkAreaHeight-20;
+   Width  := Screen.WorkAreaWidth-20;
+   Position := poScreenCenter;
+
    DoubleBuffered := True;
    region := CreateRoundRectRgn(0, 0, width, height, 15, 15);
    SetWindowRgn(handle, region, true);

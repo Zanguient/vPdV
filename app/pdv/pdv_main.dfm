@@ -11,7 +11,7 @@ inherited frmPDVMain: TfrmPDVMain
       Left = 201
       Top = 0
       Width = 276
-      Height = 364
+      Height = 468
       Align = alRight
       BevelInner = bvNone
       BevelOuter = bvNone
@@ -21,7 +21,7 @@ inherited frmPDVMain: TfrmPDVMain
         Left = 0
         Top = 0
         Width = 276
-        Height = 364
+        Height = 468
         Align = alClient
         BevelInner = bvNone
         BevelOuter = bvNone
@@ -54,14 +54,14 @@ inherited frmPDVMain: TfrmPDVMain
       Left = 0
       Top = 0
       Width = 201
-      Height = 364
+      Height = 468
       Align = alClient
       BevelOuter = bvNone
       Color = clHighlightText
       TabOrder = 1
       object scbOpcoes: TScrollBox
         Left = 0
-        Top = 265
+        Top = 369
         Width = 201
         Height = 99
         Align = alBottom
@@ -2194,7 +2194,7 @@ inherited frmPDVMain: TfrmPDVMain
         Left = 0
         Top = 0
         Width = 201
-        Height = 265
+        Height = 369
         Align = alClient
         BevelInner = bvNone
         BevelOuter = bvNone
