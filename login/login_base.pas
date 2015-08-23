@@ -143,7 +143,7 @@ var
 begin
   FLogado := False;
 
-  CadastrosIniciais := TCadastrosIniciais.Create;
+{  CadastrosIniciais := TCadastrosIniciais.Create;
   try
     try
       CadastrosIniciais.Executar;
@@ -152,7 +152,7 @@ begin
     end
   finally
     FreeAndNil(CadastrosIniciais);
-  end;
+  end;}
 
   if Trim(edtUsuario.Text) = EmptyStr then
   begin
