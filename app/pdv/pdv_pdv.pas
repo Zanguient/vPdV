@@ -112,7 +112,6 @@ type
     cdsProdutosCATEGORIA_ID: TIntegerField;
     ADOQuery1: TADOQuery;
     ADOQuery2: TADOQuery;
-    procedure btnCancelarClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     constructor PCreate(Form: TComponent; Parametros: TParametros); Overload;
@@ -131,15 +130,11 @@ var
 
 implementation
 
-{$R *.dfm}   
+{$R *.dfm}
 
 uses
-  lib_mensagem, lib_interface, pdv_adicional, uDmConexao, lib_vmsis;
-
-procedure TfrmPDV_PDV.btnCancelarClick(Sender: TObject);
-begin
-  Close;
-end;
+  lib_mensagem, lib_interface, pdv_adicional, uDmConexao, lib_vmsis, lib_acesso,
+  main_base;
 
 procedure TfrmPDV_PDV.FormShow(Sender: TObject);
 var
@@ -205,21 +200,23 @@ begin
   SetWindowRgn(handle, region, true);
 end;
 
-procedure TfrmPDV_PDV.OnClickCategoriaPDV(Sender: TObject);  
+procedure TfrmPDV_PDV.OnClickCategoriaPDV(Sender: TObject);
 var
   Interface_: TInterface;
-begin          
+  contador, retirados: Integer;
+begin
   cdsProdutos.Filtered := False;
-  if scbProduto.ControlCount > 0 then
+  retirados := 0;
+  
+  for contador := 0 to scbProduto.ControlCount - 1 do
   begin
-    cdsProdutos.First;
-    while not cdsProdutos.Eof do
+    if scbProduto.Controls[contador - retirados].ClassName = 'TcxButton' then
     begin
-//      (Sender as TcxButton).;
-
-      cdsProdutos.Next;
+       scbProduto.Controls[contador - retirados].Destroy;
+       Inc(retirados);
     end;
-  end;   
+  end;
+  
   cdsProdutos.Filter   := ' CATEGORIA_ID = ' + IntToStr((Sender as TcxButton).Tag);
   cdsProdutos.Filtered := True;
 
@@ -233,7 +230,7 @@ begin
 
       cdsProdutos.Next;
     end;
-  end;                
+  end;
 
   if scbProduto.ControlCount > 0 then
   begin
@@ -251,7 +248,7 @@ end;
 procedure TfrmPDV_PDV.OnClickProdutosPDV(Sender: TObject);
 begin
   cdsProdutos.Locate('ID', (Sender as TcxButton).Tag, [loCaseInsensitive]);
-  
+
   if Boolean(cdsProdutosIDADICIONAL.AsInteger) then
   begin
     frmAdicional := TfrmAdicional.Create(Self);
@@ -268,13 +265,22 @@ end;
 procedure TfrmPDV_PDV.btnGavetaClick(Sender: TObject);
 var
   Acesso_Perifericos: TAcesso_Perifericos;
+  AcessoGaveta : TAcessoUsuario;
 begin
   inherited;
-  //Permissao
-  //if PodeMexer(GAVETA_SEM_PERMISSAO) then begin
-    Acesso_Perifericos := TAcesso_Perifericos.Create;
-    Acesso_Perifericos.AbreGaveta;
-  //end;
+  AcessoGaveta := TAcessoUsuario.create(frmMainBase.Fusuario);
+  try
+    if AcessoGaveta.Autenticado('gaveta', TpmProcessar) then
+    begin
+    //Permissao
+    //if PodeMexer(GAVETA_SEM_PERMISSAO) then begin
+      Acesso_Perifericos := TAcesso_Perifericos.Create;
+      Acesso_Perifericos.AbreGaveta;
+    end;
+      //end;
+  finally
+    FreeAndNil(AcessoGaveta);
+  end;
 end;
 
 end.

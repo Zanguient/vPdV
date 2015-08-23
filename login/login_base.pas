@@ -42,6 +42,7 @@ type
     message WM_NChitTest;
   public
     { Public declarations }
+    FUsuario : String;
     function GetLogado: Boolean;
     procedure ArredondarComponente(Componente: TWinControl; const Radius: SmallInt);
   end;
@@ -143,7 +144,7 @@ var
 begin
   FLogado := False;
 
-  CadastrosIniciais := TCadastrosIniciais.Create;
+{  CadastrosIniciais := TCadastrosIniciais.Create;
   try
     try
       CadastrosIniciais.Executar;
@@ -152,7 +153,7 @@ begin
     end
   finally
     FreeAndNil(CadastrosIniciais);
-  end;
+  end;}
 
   if Trim(edtUsuario.Text) = EmptyStr then
   begin
@@ -174,6 +175,7 @@ begin
       Aviso('Senha ou usuário inválidos.');
       Abort;
     end;
+    FUsuario := edtUsuario.Text;
   finally
     FreeAndNil(usrAcesso);
   end;

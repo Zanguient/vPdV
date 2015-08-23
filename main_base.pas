@@ -38,6 +38,7 @@ type
 //    procedure InvocadordeBpl(stClasse: String);
   public
     { Public declarations }
+    Fusuario : string;
   end;
 
 var

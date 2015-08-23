@@ -151,7 +151,7 @@ begin
     #  Produto 1     qdte  valor total item #
     #                                       #
     #                  VMSis                #
-    #                                       #
+    #          dd/mm/yyyy - hh:mi           #
   }
 
   Texto_Impressao.Lines.Add('<sl>3</sl>');

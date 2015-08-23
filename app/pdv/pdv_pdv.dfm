@@ -73,7 +73,6 @@ object frmPDV_PDV: TfrmPDV_PDV
       Height = 91
       Caption = 'Cancelar'
       TabOrder = 3
-      OnClick = btnCancelarClick
       Align = alLeft
       SpeedButtonOptions.CanBeFocused = False
       SpeedButtonOptions.Flat = True
@@ -278,7 +277,6 @@ object frmPDV_PDV: TfrmPDV_PDV
           Height = 42
           Caption = '...'
           TabOrder = 4
-          OnClick = btnCancelarClick
           Align = alRight
           SpeedButtonOptions.CanBeFocused = False
           SpeedButtonOptions.Flat = True

@@ -127,7 +127,6 @@ begin
 
     FDbPermissao := TObjetoDb.create('permusr');
     FdbRotina := TObjetoDb.create('rotina');
-
 end;
 
 destructor TAcessoUsuario.destroy;

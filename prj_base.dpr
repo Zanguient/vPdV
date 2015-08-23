@@ -35,8 +35,10 @@ begin
   try
      if frmLoginBase.GetLogado then
      begin
-       FreeAndNil(frmLoginBase);
+
        Application.CreateForm(TfrmMainBase, frmMainBase);
+       frmMainBase.Fusuario :=  frmLoginBase.FUsuario;
+       FreeAndNil(frmLoginBase);
        Application.Run;
      end;
   finally
