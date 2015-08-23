@@ -23,13 +23,16 @@ uses IdHashMessageDigest, Windows, Messages, sysutils, lib_db, TypInfo;
       FdbRotina : TObjetoDB;
     public
       procedure AddPermissao(const modulo : String; permissao : TPermissoes);
+      function PossuiPermissao(const modulo : String; permissao : TPermissoes) : Boolean;
+      function Autenticado(const modulo : String; permissao : TPermissoes) : Boolean;
+      function Logado(const senha : string) : boolean;
       constructor create(usuario : String);
       destructor destroy; override;
     end;
 
 implementation
 
-uses IdHash;
+uses IdHash, autenticacao, lib_mensagem;
 
 { Tcriptografia }
 
@@ -90,7 +93,6 @@ begin
     raise Exception.Create('O módulo especificado não existe.' + ' Modulo : ' + modulo);
 
   FDbPermissao.RemoverTodosParametros;
-  FDbPermissao.AddParametro('modulo', modulo);
   FDbPermissao.AddParametro('descricao', GetEnumName(TypeInfo(TPermissoes), Integer(permissao)));
 
   FDbPermissao.Select(['id']);
@@ -104,6 +106,12 @@ begin
   
 end;
 
+function TAcessoUsuario.Autenticado(const modulo: String;
+  permissao: TPermissoes): Boolean;
+begin
+  Result := UsuarioAutenticado(modulo, permissao);
+end;
+
 constructor TAcessoUsuario.create(usuario: String);
 
 begin
@@ -112,7 +120,10 @@ begin
     FUsuario.Select(['usuario', 'nome', 'id', 'senha']);
 
     if(FUsuario.Cds.IsEmpty) then
-      raise Exception.Create('Usuário informado não existe.');
+    begin
+      Aviso('Usuário informado não existe.');
+      Abort;
+    end;
 
     FDbPermissao := TObjetoDb.create('permusr');
     FdbRotina := TObjetoDb.create('rotina');
@@ -125,6 +136,31 @@ begin
   FreeAndNil(FdbPermissao);
   FreeAndNil(FUsuario);
   inherited destroy;
+end;
+
+function TAcessoUsuario.Logado(const senha: string): boolean;
+begin
+  Result := (senha = FUsuario.GetVal('senha'));
+end;
+
+function TAcessoUsuario.PossuiPermissao(const modulo: String;
+  permissao: TPermissoes): Boolean;
+begin
+  FdbRotina.RemoverTodosParametros;
+  FdbRotina.AddParametro('modulo', modulo);
+  FdbRotina.Select(['id']);
+  Result := not FdbRotina.Cds.IsEmpty;
+
+  if not Result then
+    Exit;
+
+  FDbPermissao.RemoverTodosParametros;
+  FDbPermissao.AddParametro('id_rotina', FdbRotina.GetVal('id'));
+  FDbPermissao.AddParametro('funcionario_id', FUsuario.GetVal('id'));
+  FDbPermissao.AddParametro('descricao', GetEnumName(TypeInfo(TPermissoes), Integer(permissao)));
+
+  FDbPermissao.Select(['id']);
+  Result := not FDbPermissao.Cds.IsEmpty;
 end;
 
 end.

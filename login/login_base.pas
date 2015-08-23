@@ -138,12 +138,13 @@ end;
 
 procedure TfrmLoginBase.btnLoginClick(Sender: TObject);
 var
-  tbFuncionario : TObjetoDB;
+  usrAcesso :  TAcessoUsuario;
 begin
   FLogado := False;
 
     //colocar na tela de controle de acesso
 //  TAcesso.AddRotinas;
+
 
   if Trim(edtUsuario.Text) = EmptyStr then
   begin
@@ -158,20 +159,15 @@ begin
     Abort;
   end;
 
-  tbFuncionario := TObjetoDB.create('funcionario');
+  usrAcesso := TAcessoUsuario.create(edtUsuario.Text);
   try
-    tbFuncionario.AddParametro('usuario', edtUsuario.Text);
-    tbFuncionario.AddParametro('senha', edtSenha.Text);
-    tbFuncionario.Select(['nome, usuario']);
-
-    if(tbFuncionario.Cds.IsEmpty) then
+    if(not usrAcesso.Logado(edtSenha.Text)) then
     begin
       Aviso('Senha ou usuário inválidos.');
       Abort;
     end;
-    //aviso(Tcriptografia.MD5('asa'));
   finally
-    FreeAndNil(tbFuncionario);
+    FreeAndNil(usrAcesso);
   end;
 
   FLogado := True;

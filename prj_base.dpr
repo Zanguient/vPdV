@@ -21,7 +21,8 @@ uses
   lib_acesso in 'vlib\lib_acesso.pas',
   lib_db in 'vlib\lib_db.pas',
   uvVisaoClienteFrame in 'app\cadastro\cliente\uvVisaoClienteFrame.pas' {vVisaoClienteFrame: TFrame},
-  lib_imagens in 'vlib\lib_imagens.pas' {lb_imagens};
+  lib_imagens in 'vlib\lib_imagens.pas' {lb_imagens},
+  autenticacao in 'login\autenticacao.pas' {frmAutenticacao};
 
 {$R *.res}
 
