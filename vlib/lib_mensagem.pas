@@ -16,6 +16,7 @@ CONST
    { Validações }
    INFORMAR_USUARIO = 'Usuário deve ser informado.';
    INFORMAR_SENHA   = 'Senha deve ser informada.';
+   INFORMAR_VALOR   = 'Valor deve ser informado.';
    OPCAO_N_IDENTIFICADA = 'Opção não identificada.';
 
    { Gaveta / Impressora não fiscal }

@@ -113,7 +113,7 @@ begin
   begin
     if (edtValor.Text = '') then
     begin
-      Aviso(INFORMAR_SENHA);
+      Aviso(INFORMAR_VALOR);
       edtValor.SetFocus;
     end
     else

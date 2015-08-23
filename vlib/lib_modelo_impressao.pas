@@ -15,7 +15,7 @@ type
    public
      function Verif_Impressora: Boolean;
      procedure Layout_Finaliza_Pedido(cdsInfo: TClientDataSet);
-     procedure Layout_Pedido(cdsInfo: TClientDataSet);
+     procedure Layout_Pedido(cdsPedido, cdsProduto, cdsAdicionais: TClientDataSet);
 //   published
 end;
 
@@ -127,7 +127,7 @@ begin
   FreeAndNil(cdsInfo);
 end;
 
-procedure TImpressao_Nao_Fiscal.Layout_Pedido(cdsInfo: TClientDataSet);
+procedure TImpressao_Nao_Fiscal.Layout_Pedido(cdsPedido, cdsProduto, cdsAdicionais: TClientDataSet);
 var
   Texto_Impressao: TMemo;
 begin
@@ -155,24 +155,28 @@ begin
   }
 
   Texto_Impressao.Lines.Add('<sl>3</sl>');
-  Texto_Impressao.Lines.Add('<e><ce><b>'+cdsInfo.FieldByName('EMPRESA').AsString+'</b></ce></e>');
-  Texto_Impressao.Lines.Add('<ce>'+cdsInfo.FieldByName('UNIDADE').AsString+'<ce>');
+  Texto_Impressao.Lines.Add('<e><ce><b>'+cdsPedido.FieldByName('EMPRESA').AsString+'</b></ce></e>');
+  Texto_Impressao.Lines.Add('<ce>'+cdsPedido.FieldByName('UNIDADE').AsString+'<ce>');
   Texto_Impressao.Lines.Add('<l></l>');
   Texto_Impressao.Lines.Add('<n>Delivery</n>');
-  Texto_Impressao.Lines.Add('<n>Rua Dois mais Cinco, 15, Bairro</n>');
-  Texto_Impressao.Lines.Add('<n>Referencia</n>');
+  Texto_Impressao.Lines.Add('<n>'+cdsPedido.FieldByName('ENDERECO').AsString+'</n>');
+  Texto_Impressao.Lines.Add('<n>'+cdsPedido.FieldByName('REFERENCIA').AsString+'</n>');
   Texto_Impressao.Lines.Add('<l></l>');
   Texto_Impressao.Lines.Add('<b>Produto<tb><tb><tb>Qtde<tb>Valor</b>');
-  Texto_Impressao.Lines.Add('Produto 1<tb><tb><tb>5.000<tb>400,00');
-  Texto_Impressao.Lines.Add('Produto 2<tb><tb><tb>5.000<tb>400,00');
-  Texto_Impressao.Lines.Add('Produto 3<tb><tb><tb>5.000<tb>400,00'); 
-  Texto_Impressao.Lines.Add('<tb>Adicional<tb><tb>5.000<tb>400,00');
-  Texto_Impressao.Lines.Add('<tb>Adicional<tb><tb>5.000<tb>400,00');
-  Texto_Impressao.Lines.Add('<tb>Adicional<tb><tb>5.000<tb>400,00');
-  Texto_Impressao.Lines.Add('Produto 4<tb><tb><tb>5.000<tb>400,00');
-  Texto_Impressao.Lines.Add('Produto 5<tb><tb><tb>5.000<tb>400,00');
-  Texto_Impressao.Lines.Add('Produto 6<tb><tb><tb>5.000<tb>400,00');
-  Texto_Impressao.Lines.Add('<tb><tb><tb><tb><tb>700,00');
+  cdsProduto.First;
+  while not cdsProduto.Eof do begin
+    Texto_Impressao.Lines.Add(cdsProduto.FieldByName('NMPRODUTO').AsString+'<tb><tb><tb>'+cdsProduto.FieldByName('QUANTIDADE').AsString+'<tb>'+cdsProduto.FieldByName('VRTOTAL').AsString);
+    cdsAdicionais.Filtered := False;
+    cdsAdicionais.Filter := ' ID_PRODUTO = '+cdsProduto.FieldByName('ID').AsString;
+    cdsAdicionais.Filtered := False;
+    cdsAdicionais.First;
+    while not cdsAdicionais.Eof do begin
+      Texto_Impressao.Lines.Add('<tb>'+cdsProduto.FieldByName('NMADICIONAL').AsString+'<tb><tb>'+cdsProduto.FieldByName('QUANTIDADE').AsString+'<tb>'+cdsProduto.FieldByName('VRTOTAL').AsString);
+      cdsAdicionais.Next;
+    end;
+    cdsProduto.Next;
+  end;
+  Texto_Impressao.Lines.Add('<tb><tb><tb><tb><tb>'+cdsPedido.FieldByName('VRPEDIDO').AsString);
   Texto_Impressao.Lines.Add('<l></l>');
   Texto_Impressao.Lines.Add('<ce>Documento sem valor fiscal</ce>');
   Texto_Impressao.Lines.Add('<ce>VMSis</ce>');
@@ -187,7 +191,9 @@ begin
     raise;
   end;
 
-  FreeAndNil(cdsInfo);
+  FreeAndNil(cdsPedido);  
+  FreeAndNil(cdsProduto);
+  FreeAndNil(cdsAdicionais);
 end;
 
 function TImpressao_Nao_Fiscal.Verif_Impressora: Boolean;
