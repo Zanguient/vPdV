@@ -66,7 +66,8 @@ implementation
 {$R *.dfm}
 
 uses
-  lib_interface, lib_mensagem, pdv_pdv, pdv_adicional, uDmConexao, lib_vmsis;
+  lib_interface, lib_mensagem, pdv_pdv, pdv_adicional, uDmConexao, lib_vmsis,
+  lib_acesso, main_base;
 
 procedure TfrmPDVMain.FrameResize(Sender: TObject);
 var
@@ -107,13 +108,20 @@ end;
 procedure TfrmPDVMain.btnGavetaClick(Sender: TObject);
 var
   Acesso_Perifericos: TAcesso_Perifericos;
+  AcessoGaveta: TAcessoUsuario;
 begin
   inherited;
-  //Permissao
-  //if PodeMexer(GAVETA_SEM_PERMISSAO) then begin
-    Acesso_Perifericos := TAcesso_Perifericos.Create;
-    Acesso_Perifericos.AbreGaveta;
-  //end;
+  AcessoGaveta := TAcessoUsuario.create(frmMainBase.Fusuario);
+  Acesso_Perifericos := TAcesso_Perifericos.Create;
+  try
+    if AcessoGaveta.Autenticado('gaveta', TpmProcessar) then
+    begin
+      Acesso_Perifericos.AbreGaveta;
+    end;
+  finally
+    FreeAndNil(AcessoGaveta);
+    FreeAndNil(Acesso_Perifericos);
+  end;
 end;
 
 procedure TfrmPDVMain.dtvPedidosCustomDrawCell(

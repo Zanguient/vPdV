@@ -49,6 +49,7 @@ object frmPDV_PDV: TfrmPDV_PDV
       Height = 91
       Caption = 'Finalizar '
       TabOrder = 1
+      OnClick = btnFinalizarPedidoClick
       Align = alLeft
       SpeedButtonOptions.CanBeFocused = False
       SpeedButtonOptions.Flat = True

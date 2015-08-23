@@ -49,7 +49,7 @@ implementation
 {$R *.dfm}
 
 uses
-   libframes, pdv_main, uvVisaoClienteFrame;
+   libframes, pdv_main, uvVisaoClienteFrame, pdv_aberturacaixa;
 
 procedure TfrmMainBase.nbgSairClick(Sender: TObject);
 begin
@@ -83,8 +83,14 @@ end;
 
 procedure TfrmMainBase.nbgPDVClick(Sender: TObject);
 begin
- //  InvocadordeBpl('TfrmPDV');
-  TAbasNavegacao.CriarAba(pgcPrincipal, TfrmPDVMain);
+  Application.CreateForm(TfrmAberturaCaixa, frmAberturaCaixa);
+  frmAberturaCaixa.ShowModal;
+  try
+    if frmAberturaCaixa.GetCaixaAberto then
+      TAbasNavegacao.CriarAba(pgcPrincipal, TfrmPDVMain);
+  finally
+    FreeAndNil(frmAberturaCaixa);
+  end;
 end;
 
 procedure TfrmMainBase.nbiClienteClick(Sender: TObject);

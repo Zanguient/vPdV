@@ -23,7 +23,8 @@ uses
   uvVisaoClienteFrame in 'app\cadastro\cliente\uvVisaoClienteFrame.pas' {vVisaoClienteFrame: TFrame},
   lib_imagens in 'vlib\lib_imagens.pas' {lb_imagens},
   autenticacao in 'login\autenticacao.pas' {frmAutenticacao},
-  lib_cadastros_iniciais in 'vlib\lib_cadastros_iniciais.pas';
+  lib_cadastros_iniciais in 'vlib\lib_cadastros_iniciais.pas',
+  pdv_aberturacaixa in 'app\pdv\pdv_aberturacaixa.pas' {frmAberturaCaixa};
 
 {$R *.res}
 
@@ -35,7 +36,6 @@ begin
   try
      if frmLoginBase.GetLogado then
      begin
-
        Application.CreateForm(TfrmMainBase, frmMainBase);
        frmMainBase.Fusuario :=  frmLoginBase.FUsuario;
        FreeAndNil(frmLoginBase);

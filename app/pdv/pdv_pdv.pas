@@ -116,6 +116,7 @@ type
     procedure FormCreate(Sender: TObject);
     constructor PCreate(Form: TComponent; Parametros: TParametros); Overload;
     procedure btnGavetaClick(Sender: TObject);
+    procedure btnFinalizarPedidoClick(Sender: TObject);
   private
     { Private declarations }
     FParametros: TParametros;
@@ -269,17 +270,28 @@ var
 begin
   inherited;
   AcessoGaveta := TAcessoUsuario.create(frmMainBase.Fusuario);
+  Acesso_Perifericos := TAcesso_Perifericos.Create;
   try
     if AcessoGaveta.Autenticado('gaveta', TpmProcessar) then
     begin
-    //Permissao
-    //if PodeMexer(GAVETA_SEM_PERMISSAO) then begin
-      Acesso_Perifericos := TAcesso_Perifericos.Create;
       Acesso_Perifericos.AbreGaveta;
     end;
-      //end;
   finally
     FreeAndNil(AcessoGaveta);
+    FreeAndNil(Acesso_Perifericos);
+  end;
+end;
+
+procedure TfrmPDV_PDV.btnFinalizarPedidoClick(Sender: TObject);
+var
+  Acesso_Perifericos: TAcesso_Perifericos;
+begin
+  inherited;
+  Acesso_Perifericos := TAcesso_Perifericos.Create;
+  try
+    Acesso_Perifericos.AbreGaveta;
+  finally
+    FreeAndNil(Acesso_Perifericos);
   end;
 end;
 
