@@ -18,7 +18,7 @@ uses
   dxSkinXmas2008Blue, dxSkinscxPCPainter, cxCustomData, cxFilter, cxData,
   cxDataStorage, cxEdit, cxDBData, cxGridLevel, cxGridCustomTableView,
   cxGridTableView, cxGridDBTableView, cxClasses, cxGridCustomView, cxGrid,
-  Provider;
+  Provider, cxImageComboBox;
 
 type
   TfrmPDVMain = class(TvPadraoFrame)
@@ -44,6 +44,8 @@ type
     cdsMesadsobsmesa: TStringField;
     cdsMesastatus: TStringField;
     cdsMesavalor: TBCDField;
+    cxStyleRepository1: TcxStyleRepository;
+    cxStyle1: TcxStyle;
     procedure FrameResize(Sender: TObject);
     procedure btnGavetaClick(Sender: TObject);
     procedure dtvPedidosCustomDrawCell(Sender: TcxCustomGridTableView;

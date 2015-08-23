@@ -25,11 +25,15 @@ type
     procedure FormCreate(Sender: TObject);
     procedure btnCancelarClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
+    procedure btnSemAddClick(Sender: TObject);
+    procedure btnConfirmaClick(Sender: TObject);
   private
     { Private declarations }
+    FOk: Boolean;
   public
     { Public declarations }
     procedure OnClickAdicionalPDV(Sender: TObject);
+    function GetBlz: Boolean;
   end;
 
 var
@@ -57,6 +61,7 @@ end;
 
 procedure TfrmAdicional.btnCancelarClick(Sender: TObject);
 begin
+  FOk := False;
   Close;
 end;
 
@@ -95,6 +100,24 @@ end;
 procedure TfrmAdicional.OnClickAdicionalPDV(Sender: TObject);
 begin
   (Sender as TcxButton).CanBeFocused := not (Sender as TcxButton).CanBeFocused;
+end;
+
+function TfrmAdicional.GetBlz: Boolean;
+begin
+  Result := FOk;
+end;
+
+procedure TfrmAdicional.btnSemAddClick(Sender: TObject);
+begin
+  FOk := True;
+  Close;
+end;
+
+procedure TfrmAdicional.btnConfirmaClick(Sender: TObject);
+begin
+  FOk := False;
+  //
+  FOk := True;
 end;
 
 end.

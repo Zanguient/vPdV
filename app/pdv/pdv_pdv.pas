@@ -112,11 +112,14 @@ type
     cdsProdutosCATEGORIA_ID: TIntegerField;
     ADOQuery1: TADOQuery;
     ADOQuery2: TADOQuery;
+    cdsItemPedidoPRODUTO_ID: TIntegerField;
+    cdsAddPedidoPRODUTO_ID: TIntegerField;
     procedure FormShow(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     constructor PCreate(Form: TComponent; Parametros: TParametros); Overload;
     procedure btnGavetaClick(Sender: TObject);
     procedure btnFinalizarPedidoClick(Sender: TObject);
+    procedure btnCancelarClick(Sender: TObject);
   private
     { Private declarations }
     FParametros: TParametros;
@@ -247,6 +250,48 @@ begin
 end;
 
 procedure TfrmPDV_PDV.OnClickProdutosPDV(Sender: TObject);
+  procedure ConfirmaProduto;
+  begin
+    if cdsItemPedido.Locate('PRODUTO_ID', cdsProdutosID.AsInteger, [loCaseInsensitive]) then
+    begin
+      cdsItemPedido.Edit;
+      cdsItemPedidoQTITEM.AsFloat := cdsItemPedidoQTITEM.AsFloat+1.0; 
+      cdsItemPedido.Post;
+    end else
+    begin
+      cdsItemPedido.Insert;
+  {    cdsItemPedidoPEDIDO_ID: TIntegerField
+      cdsItemPedidoCARDAPIO_ID: TIntegerField
+      cdsItemPedidoLOTE_ID: TIntegerField
+      cdsItemPedidoVRVENDA: TFloatField
+      cdsItemPedidoVRTOTAL: TFloatField
+      cdsItemPedidoIDADICIONAL: TIntegerField}
+      cdsItemPedidoQTITEM.AsFloat := 1.0;
+      cdsItemPedidoPRODUTO_ID.AsInteger := cdsProdutosID.AsInteger;
+      cdsItemPedidoNMPRODUTO.AsString := cdsProdutosNMPRODUTO.AsString;
+      cdsItemPedido.Post;
+    end;
+  end;
+  procedure ConfirmaAdicional;
+  begin
+    if cdsAddPedido.Locate('PRODUTO_ID', cdsProdutosID.AsInteger, [loCaseInsensitive]) then
+    begin
+      cdsAddPedido.Edit;
+      cdsAddPedidoQTITEM.AsFloat := cdsAddPedidoQTITEM.AsFloat+1.0; 
+      cdsAddPedido.Post;
+    end else
+    begin
+      cdsAddPedido.Insert;
+      {cdsAddPedidoid: TIntegerField
+      cdsAddPedidoNMPRODUTO: TStringField
+      cdsAddPedidoVRUNITARIO: TFloatField
+      cdsAddPedidoVRTOTAITEM: TFloatField}
+      cdsAddPedidoQTITEM.AsFloat := 1.0;
+      cdsAddPedidoPRODUTO_ID.AsInteger := cdsProdutosID.AsInteger;
+      cdsAddPedidoNMPRODUTO.AsString := cdsProdutosNMPRODUTO.AsString;
+      cdsAddPedido.Post;
+    end;
+  end;
 begin
   cdsProdutos.Locate('ID', (Sender as TcxButton).Tag, [loCaseInsensitive]);
 
@@ -257,10 +302,16 @@ begin
     try
       frmAdicional.Tag := (Sender as TcxButton).Tag;
       frmAdicional.ShowModal;
+
+      if frmAdicional.GetBlz then begin
+        ConfirmaProduto;
+        //ConfirmaAdicional;
+      end;
     finally
       FreeAndNil(frmAdicional);
     end;
-  end;
+  end else
+    ConfirmaProduto;
 end;
 
 procedure TfrmPDV_PDV.btnGavetaClick(Sender: TObject);
@@ -293,6 +344,11 @@ begin
   finally
     FreeAndNil(Acesso_Perifericos);
   end;
+end;
+
+procedure TfrmPDV_PDV.btnCancelarClick(Sender: TObject);
+begin
+  Close;
 end;
 
 end.

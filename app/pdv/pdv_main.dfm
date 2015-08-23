@@ -49,6 +49,14 @@ inherited frmPDVMain: TfrmPDVMain
           object gcpStatus: TcxGridDBColumn
             Caption = 'Status'
             DataBinding.FieldName = 'status'
+            PropertiesClassName = 'TcxImageComboBoxProperties'
+            Properties.Items = <
+              item
+                Description = 'Valor exibido na tela'
+                ImageIndex = 0
+                Value = 'Campo no banco'
+              end>
+            Styles.Header = cxStyle1
             Width = 92
           end
           object gcpValor: TcxGridDBColumn
@@ -2270,5 +2278,12 @@ inherited frmPDVMain: TfrmPDVMain
     DataSet = adqPadrao
     Left = 336
     Top = 40
+  end
+  object cxStyleRepository1: TcxStyleRepository
+    Left = 400
+    Top = 120
+    PixelsPerInch = 96
+    object cxStyle1: TcxStyle
+    end
   end
 end

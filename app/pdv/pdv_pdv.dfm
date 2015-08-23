@@ -74,6 +74,7 @@ object frmPDV_PDV: TfrmPDV_PDV
       Height = 91
       Caption = 'Cancelar'
       TabOrder = 3
+      OnClick = btnCancelarClick
       Align = alLeft
       SpeedButtonOptions.CanBeFocused = False
       SpeedButtonOptions.Flat = True
@@ -578,6 +579,10 @@ object frmPDV_PDV: TfrmPDV_PDV
         Name = 'NMPRODUTO'
         DataType = ftString
         Size = 250
+      end
+      item
+        Name = 'PRODUTO_ID'
+        DataType = ftInteger
       end>
     IndexDefs = <>
     Params = <>
@@ -585,12 +590,13 @@ object frmPDV_PDV: TfrmPDV_PDV
     Left = 847
     Top = 190
     Data = {
-      BC0000009619E0BD010000001800000009000000000003000000BC0002494404
+      CF0000009619E0BD01000000180000000A000000000003000000CF0002494404
       000100000000000950454449444F5F494404000100000000000B434152444150
       494F5F49440400010000000000074C4F54455F49440400010000000000065154
       4954454D080004000000000007565256454E4441080004000000000007565254
       4F54414C08000400000000000B494441444943494F4E414C0400010000000000
-      094E4D50524F4455544F010049000000010005574944544802000200FA000000}
+      094E4D50524F4455544F010049000000010005574944544802000200FA000A50
+      524F4455544F5F494404000100000000000000}
     object cdsItemPedidoID: TIntegerField
       FieldName = 'ID'
     end
@@ -619,6 +625,9 @@ object frmPDV_PDV: TfrmPDV_PDV
       FieldName = 'NMPRODUTO'
       Size = 250
     end
+    object cdsItemPedidoPRODUTO_ID: TIntegerField
+      FieldName = 'PRODUTO_ID'
+    end
   end
   object dtsItemPedido: TDataSource
     DataSet = cdsItemPedido
@@ -628,14 +637,43 @@ object frmPDV_PDV: TfrmPDV_PDV
   object cdsAddPedido: TClientDataSet
     Active = True
     Aggregates = <>
+    FieldDefs = <
+      item
+        Name = 'id'
+        DataType = ftInteger
+      end
+      item
+        Name = 'NMPRODUTO'
+        DataType = ftString
+        Size = 250
+      end
+      item
+        Name = 'QTITEM'
+        DataType = ftFloat
+      end
+      item
+        Name = 'VRUNITARIO'
+        DataType = ftFloat
+      end
+      item
+        Name = 'VRTOTAITEM'
+        DataType = ftFloat
+      end
+      item
+        Name = 'PRODUTO_ID'
+        DataType = ftInteger
+      end>
+    IndexDefs = <>
     Params = <>
+    StoreDefs = True
     Left = 847
     Top = 222
     Data = {
-      780000009619E0BD010000001800000005000000000003000000780002696404
+      8B0000009619E0BD0100000018000000060000000000030000008B0002696404
       00010000000000094E4D50524F4455544F010049000000010005574944544802
       000200FA000651544954454D08000400000000000A5652554E49544152494F08
-      000400000000000A5652544F54414954454D08000400000000000000}
+      000400000000000A5652544F54414954454D08000400000000000A50524F4455
+      544F5F494404000100000000000000}
     object cdsAddPedidoid: TIntegerField
       FieldName = 'id'
     end
@@ -651,6 +689,9 @@ object frmPDV_PDV: TfrmPDV_PDV
     end
     object cdsAddPedidoVRTOTAITEM: TFloatField
       FieldName = 'VRTOTAITEM'
+    end
+    object cdsAddPedidoPRODUTO_ID: TIntegerField
+      FieldName = 'PRODUTO_ID'
     end
   end
   object dtsAddPedido: TDataSource

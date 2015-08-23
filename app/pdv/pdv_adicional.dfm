@@ -46,6 +46,7 @@ object frmAdicional: TfrmAdicional
       Height = 91
       Caption = 'Confirmar'
       TabOrder = 0
+      OnClick = btnConfirmaClick
       Align = alLeft
       SpeedButtonOptions.CanBeFocused = False
       SpeedButtonOptions.Flat = True
@@ -58,6 +59,7 @@ object frmAdicional: TfrmAdicional
       Height = 91
       Caption = 'Sem adicional'
       TabOrder = 1
+      OnClick = btnSemAddClick
       Align = alLeft
       SpeedButtonOptions.CanBeFocused = False
       SpeedButtonOptions.Flat = True

@@ -12,7 +12,6 @@ object frmAberturaCaixa: TfrmAberturaCaixa
   Font.Style = []
   OldCreateOrder = False
   Position = poScreenCenter
-  OnCreate = FormCreate
   OnKeyPress = FormKeyPress
   OnShow = FormShow
   PixelsPerInch = 96
@@ -80,32 +79,16 @@ object frmAberturaCaixa: TfrmAberturaCaixa
       Style.IsFontAssigned = True
       Transparent = True
     end
-    object edtValor: TcxTextEdit
+    object edtValor: TcxCurrencyEdit
       Left = 173
-      Top = 14
-      Hint = 'Total'
-      ParentFont = False
+      Top = 18
       Properties.Alignment.Horz = taRightJustify
-      Style.Font.Charset = DEFAULT_CHARSET
-      Style.Font.Color = clBackground
-      Style.Font.Height = -16
-      Style.Font.Name = 'MS Sans Serif'
-      Style.Font.Style = [fsBold]
-      Style.Shadow = False
-      Style.IsFontAssigned = True
-      StyleDisabled.BorderColor = clActiveCaption
-      StyleDisabled.Color = clSilver
-      StyleDisabled.TextColor = clBtnHighlight
-      StyleFocused.BorderColor = clRed
-      StyleFocused.Color = clBtnHighlight
-      StyleFocused.TextColor = clBackground
-      StyleHot.BorderColor = clBackground
-      StyleHot.Color = clSkyBlue
-      StyleHot.TextColor = clHighlightText
-      StyleHot.TextStyle = [fsBold]
+      Properties.AssignedValues.MaxValue = True
+      Properties.DisplayFormat = 'R$ ,0.00;-R$ ,0.00'
+      Properties.MaxLength = 13
       TabOrder = 1
       OnKeyPress = edtValorKeyPress
-      Width = 175
+      Width = 163
     end
   end
   object adqPadrao: TADOQuery
