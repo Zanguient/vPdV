@@ -36,6 +36,7 @@ object frmPDV_PDV: TfrmPDV_PDV
       Height = 91
       Caption = 'Gaveta'
       TabOrder = 0
+      OnClick = btnGavetaClick
       Align = alLeft
       SpeedButtonOptions.CanBeFocused = False
       SpeedButtonOptions.Flat = True
@@ -419,47 +420,92 @@ object frmPDV_PDV: TfrmPDV_PDV
   object cdsProdutos: TClientDataSet
     Active = True
     Aggregates = <>
+    FieldDefs = <
+      item
+        Name = 'ID'
+        Attributes = [faReadonly]
+        DataType = ftAutoInc
+      end
+      item
+        Name = 'NMPRODUTO'
+        DataType = ftString
+        Size = 200
+      end
+      item
+        Name = 'POSARVORE'
+        DataType = ftString
+        Size = 40
+      end
+      item
+        Name = 'UNIMEDIDA_ID'
+        DataType = ftInteger
+      end
+      item
+        Name = 'CDBARRA'
+        DataType = ftString
+        Size = 100
+      end
+      item
+        Name = 'IDPRODVENDA'
+        DataType = ftSmallint
+      end
+      item
+        Name = 'IDADICIONAL'
+        DataType = ftSmallint
+      end
+      item
+        Name = 'IMGINDEX'
+        DataType = ftInteger
+      end
+      item
+        Name = 'CATEGORIA_ID'
+        DataType = ftInteger
+      end>
+    IndexDefs = <>
     Params = <>
+    StoreDefs = True
     Left = 847
     Top = 128
     Data = {
-      E00000009619E0BD010000001800000009000000000003000000E000096E6D70
-      726F6475746F010049000000010005574944544802000200C800026964040001
-      000000000009706F736172766F72650100490000000100055749445448020002
-      0028000C756E696D65646964615F696404000100000000000763646261727261
-      01004900000001000557494454480200020064000B696470726F6476656E6461
-      04000100000000000B696461646963696F6E616C040001000000000008696D67
-      696E64657804000100000000000C69645F63617465676F726961040001000000
-      00000000}
-    object cdsProdutosnmproduto: TStringField
-      FieldName = 'nmproduto'
+      0B0100009619E0BD0100000018000000090000000000030000000B0102494404
+      0001000200010007535542545950450200490008004175746F696E6300094E4D
+      50524F4455544F010049000000010005574944544802000200C80009504F5341
+      52564F524501004900000001000557494454480200020028000C554E494D4544
+      4944415F49440400010000000000074344424152524101004900000001000557
+      494454480200020064000B494450524F4456454E444102000100000000000B49
+      4441444943494F4E414C020001000000000008494D47494E4445580400010000
+      0000000C43415445474F5249415F4944040001000000000001000C4155544F49
+      4E4356414C55450400010001000000}
+    object cdsProdutosID: TAutoIncField
+      FieldName = 'ID'
+      ReadOnly = True
+    end
+    object cdsProdutosNMPRODUTO: TStringField
+      FieldName = 'NMPRODUTO'
       Size = 200
     end
-    object cdsProdutosid: TIntegerField
-      FieldName = 'id'
-    end
-    object cdsProdutosposarvore: TStringField
-      FieldName = 'posarvore'
+    object cdsProdutosPOSARVORE: TStringField
+      FieldName = 'POSARVORE'
       Size = 40
     end
-    object cdsProdutosunimedida_id: TIntegerField
-      FieldName = 'unimedida_id'
+    object cdsProdutosUNIMEDIDA_ID: TIntegerField
+      FieldName = 'UNIMEDIDA_ID'
     end
-    object cdsProdutoscdbarra: TStringField
-      FieldName = 'cdbarra'
+    object cdsProdutosCDBARRA: TStringField
+      FieldName = 'CDBARRA'
       Size = 100
     end
-    object cdsProdutosidprodvenda: TIntegerField
-      FieldName = 'idprodvenda'
+    object cdsProdutosIDPRODVENDA: TSmallintField
+      FieldName = 'IDPRODVENDA'
     end
-    object cdsProdutosidadicional: TIntegerField
-      FieldName = 'idadicional'
+    object cdsProdutosIDADICIONAL: TSmallintField
+      FieldName = 'IDADICIONAL'
     end
-    object cdsProdutosimgindex: TIntegerField
-      FieldName = 'imgindex'
+    object cdsProdutosIMGINDEX: TIntegerField
+      FieldName = 'IMGINDEX'
     end
-    object cdsProdutosid_categoria: TIntegerField
-      FieldName = 'id_categoria'
+    object cdsProdutosCATEGORIA_ID: TIntegerField
+      FieldName = 'CATEGORIA_ID'
     end
   end
   object dtsProdutos: TDataSource
@@ -612,5 +658,74 @@ object frmPDV_PDV: TfrmPDV_PDV
     DataSet = cdsAddPedido
     Left = 875
     Top = 222
+  end
+  object DataSetProvider1: TDataSetProvider
+    Left = 759
+    Top = 128
+  end
+  object dspCategoria: TDataSetProvider
+    DataSet = adqCategoria
+    Left = 759
+    Top = 160
+  end
+  object dspProdutos: TDataSetProvider
+    DataSet = adqProdutos
+    Left = 759
+    Top = 192
+  end
+  object DataSetProvider4: TDataSetProvider
+    Left = 759
+    Top = 224
+  end
+  object adqCategoria: TADOQuery
+    Connection = dmConexao.adoConexaoBd
+    Parameters = <>
+    SQL.Strings = (
+      'SELECT id, nmcategoria, imgindex'
+      '  FROM CATEGORIA')
+    Left = 728
+    Top = 160
+  end
+  object adqProdutos: TADOQuery
+    Connection = dmConexao.adoConexaoBd
+    Parameters = <>
+    SQL.Strings = (
+      
+        'SELECT P.ID, P.NMPRODUTO, P.POSARVORE, P.UNIMEDIDA_ID, P.CDBARRA' +
+        ','
+      '       P.IDPRODVENDA, P.IDADICIONAL, P.IMGINDEX, IC.CATEGORIA_ID'
+      
+        '  FROM PRODUTO P INNER JOIN ITEMCATEGORIA IC ON IC.PRODUTO_ID = ' +
+        'P.ID')
+    Left = 728
+    Top = 192
+  end
+  object ADOQuery1: TADOQuery
+    Connection = dmConexao.adoConexaoBd
+    Parameters = <>
+    SQL.Strings = (
+      
+        'SELECT P.ID, P.NMPRODUTO, P.POSARVORE, P.UNIMEDIDA_ID, P.CDBARRA' +
+        ','
+      '       P.IDPRODVENDA, P.IDADICIONAL, P.IMGINDEX, IC.CATEGORIA_ID'
+      
+        '  FROM PRODUTO P INNER JOIN ITEMCATEGORIA IC ON IC.PRODUTO_ID = ' +
+        'P.ID')
+    Left = 728
+    Top = 224
+  end
+  object ADOQuery2: TADOQuery
+    Connection = dmConexao.adoConexaoBd
+    Parameters = <>
+    SQL.Strings = (
+      
+        'SELECT P.ID, P.NMPRODUTO, P.POSARVORE, P.UNIMEDIDA_ID, P.CDBARRA' +
+        ','
+      '       P.IDPRODVENDA, P.IDADICIONAL, P.IMGINDEX, IC.CATEGORIA_ID'
+      
+        '  FROM PRODUTO P INNER JOIN ITEMCATEGORIA IC ON IC.PRODUTO_ID = ' +
+        'P.ID')
+    Left = 728
+    Top = 128
   end
 end

@@ -78,10 +78,16 @@ object frmAdicional: TfrmAdicional
     end
   end
   object cdsAdicional: TClientDataSet
+    Active = True
     Aggregates = <>
     Params = <>
     Left = 592
     Top = 64
+    Data = {
+      710000009619E0BD010000001800000004000000000003000000710002494404
+      000100000000000B4E4D41444943494F4E414C01004900000001000557494454
+      4802000200FA000949444D41524341444F010049000000010005574944544802
+      0002000100054944494D4704000100000000000000}
     object cdsAdicionalID: TIntegerField
       FieldName = 'ID'
     end
@@ -100,6 +106,22 @@ object frmAdicional: TfrmAdicional
   object dtsAdicional: TDataSource
     DataSet = cdsAdicional
     Left = 624
+    Top = 64
+  end
+  object dspAdicional: TDataSetProvider
+    Left = 528
+    Top = 64
+  end
+  object adqPadrao: TADOQuery
+    Connection = dmConexao.adoConexaoBd
+    Parameters = <>
+    SQL.Strings = (
+      
+        'SELECT id id_mesa, nmmesa, dsobsmesa, idmesaativ status, 0.00 va' +
+        'lor'
+      '  FROM MESA'
+      '')
+    Left = 560
     Top = 64
   end
 end

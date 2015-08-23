@@ -7,9 +7,13 @@ uses
    IdBaseComponent, IdComponent, IdRawBase, IdRawClient, IdIcmpClient;
 
 type
+   TAcesso_Perifericos = Class(TPersistent)
+   public
+      function AbreGaveta: Boolean;
+end;
+
+type
    TAcesso_Online = Class(TPersistent)
-//   private
-//   protected
    public
       function Verif_Net: Integer;
       function Verif_Site(stUrl: String): Boolean;
@@ -17,6 +21,12 @@ type
 end;
 
 implementation
+
+uses
+  lib_mensagem; 
+
+  function rStatusGaveta_DUAL_DarumaFramework(var iStatusGaveta: Integer): Integer; StdCall; External 'DarumaFrameWork.dll';
+  function iAcionarGaveta_DUAL_DarumaFramework(): Integer; StdCall; External 'DarumaFrameWork.dll';
 
 { Acesso_Online }
 
@@ -54,6 +64,37 @@ begin
    finally
       IdICMPClient.Free;
    end
+end;
+
+{ TAcesso_Perifericos }   
+
+function TAcesso_Perifericos.AbreGaveta: Boolean;
+  procedure AcionaGaveta;
+  var
+    iRetorno: Integer;
+  begin
+    iRetorno := iAcionarGaveta_DUAL_DarumaFramework();
+    if (iRetorno = 1) then
+      Aviso(GAVETA_ACIONADA)
+    else
+      Erro(GAVETA_ERRO);
+  end;
+var
+  iRetorno: Integer;
+  iStatusGaveta: Integer;
+begin
+  iRetorno := rStatusGaveta_DUAL_DarumaFramework(iStatusGaveta);
+  if (iRetorno = 1) then
+  begin
+    case iStatusGaveta of
+      0: AcionaGaveta;
+      1: Aviso(GAVETA_ABERTA);
+    else
+      Aviso(GAVETA_ERRO);
+    end;
+  end else
+    Aviso(GAVETA_ERRO);
+  result := Boolean(iStatusGaveta);
 end;
 
 end.

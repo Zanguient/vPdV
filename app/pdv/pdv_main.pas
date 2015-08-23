@@ -17,7 +17,8 @@ uses
   dxSkinSummer2008, dxSkinsDefaultPainters, dxSkinValentine,
   dxSkinXmas2008Blue, dxSkinscxPCPainter, cxCustomData, cxFilter, cxData,
   cxDataStorage, cxEdit, cxDBData, cxGridLevel, cxGridCustomTableView,
-  cxGridTableView, cxGridDBTableView, cxClasses, cxGridCustomView, cxGrid;
+  cxGridTableView, cxGridDBTableView, cxClasses, cxGridCustomView, cxGrid,
+  Provider;
 
 type
   TfrmPDVMain = class(TvPadraoFrame)
@@ -36,12 +37,13 @@ type
     cxButton1: TcxButton;
     sbxOpcoesPDV: TScrollBox;
     cdsMesa: TClientDataSet;
-    cdsMesaid_mesa: TIntegerField;
+    dtsMesa: TDataSource;
+    dspPadrao: TDataSetProvider;
+    cdsMesaid_mesa: TAutoIncField;
     cdsMesanmmesa: TStringField;
     cdsMesadsobsmesa: TStringField;
     cdsMesastatus: TStringField;
-    cdsMesavalor: TFloatField;
-    dtsMesa: TDataSource;
+    cdsMesavalor: TBCDField;
     procedure FrameResize(Sender: TObject);
     procedure btnGavetaClick(Sender: TObject);
     procedure dtvPedidosCustomDrawCell(Sender: TcxCustomGridTableView;
@@ -64,10 +66,7 @@ implementation
 {$R *.dfm}
 
 uses
-  lib_interface, lib_mensagem, pdv_pdv, pdv_adicional;
-
-  function rStatusGaveta_DUAL_DarumaFramework(var iStatusGaveta: Integer): Integer; StdCall; External 'DarumaFrameWork.dll';
-  function iAcionarGaveta_DUAL_DarumaFramework(): Integer; StdCall; External 'DarumaFrameWork.dll';
+  lib_interface, lib_mensagem, pdv_pdv, pdv_adicional, uDmConexao, lib_vmsis;
 
 procedure TfrmPDVMain.FrameResize(Sender: TObject);
 var
@@ -75,6 +74,11 @@ var
   Interface_: TInterface;
 begin
   Interface_ := TInterface.Create();
+
+  adqPadrao.Close;
+  adqPadrao.Open;
+
+  cdsMesa.Data := dspPadrao.Data;
 
   if sbxOpcoesPDV.ControlCount = 0 then
   begin
@@ -101,34 +105,14 @@ begin
 end;
 
 procedure TfrmPDVMain.btnGavetaClick(Sender: TObject);
-  procedure AcionaGaveta;
-  var
-    iRetorno: Integer;
-  begin
-    iRetorno := iAcionarGaveta_DUAL_DarumaFramework();
-    if (iRetorno = 1) then
-      Aviso(GAVETA_ACIONADA)
-    else
-      Erro(GAVETA_ERRO);
-  end;
 var
-  iRetorno: Integer;
-  iStatusGaveta: Integer;
+  Acesso_Perifericos: TAcesso_Perifericos;
 begin
   inherited;
   //Permissao
   //if PodeMexer(GAVETA_SEM_PERMISSAO) then begin
-    iRetorno := rStatusGaveta_DUAL_DarumaFramework(iStatusGaveta);
-    if (iRetorno = 1) then
-    begin
-      case iStatusGaveta of
-        0: AcionaGaveta;
-        1: Aviso(GAVETA_ABERTA);
-      else
-        Aviso(GAVETA_ERRO);
-      end;
-    end else
-      Aviso(GAVETA_ERRO);
+    Acesso_Perifericos := TAcesso_Perifericos.Create;
+    Acesso_Perifericos.AbreGaveta;
   //end;
 end;
 
