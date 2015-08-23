@@ -5,7 +5,7 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, cxGraphics, cxLookAndFeels, cxLookAndFeelPainters, Menus,
-  StdCtrls, cxButtons, DB, DBClient;
+  StdCtrls, cxButtons, DB, DBClient, Provider, ADODB;
 
 type
   TfrmAdicional = class(TForm)
@@ -20,6 +20,8 @@ type
     cdsAdicionalID: TIntegerField;
     cdsAdicionalIDMARCADO: TStringField;
     cdsAdicionalIDIMG: TIntegerField;
+    dspAdicional: TDataSetProvider;
+    adqPadrao: TADOQuery;
     procedure FormCreate(Sender: TObject);
     procedure btnCancelarClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -38,7 +40,7 @@ implementation
 {$R *.dfm}
 
 uses
-  lib_interface;
+  lib_interface, uDmConexao;
 
 procedure TfrmAdicional.FormCreate(Sender: TObject);
 var

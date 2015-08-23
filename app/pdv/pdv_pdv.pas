@@ -19,7 +19,7 @@ uses
   cxGridChartView, cxGridLevel, cxGridBandedTableView,
   cxGridDBBandedTableView, cxGridCustomTableView, cxGridTableView,
   cxGridDBTableView, cxClasses, cxGridCustomView, cxGrid, DBClient,
-  cxContainer, cxTextEdit, cxLabel;
+  cxContainer, cxTextEdit, cxLabel, Provider, ADODB;
     
 type
   TParametros = Record
@@ -65,15 +65,6 @@ type
     dtsItemPedido: TDataSource;
     cdsAddPedido: TClientDataSet;
     dtsAddPedido: TDataSource;
-    cdsProdutosnmproduto: TStringField;
-    cdsProdutosid: TIntegerField;
-    cdsProdutosposarvore: TStringField;
-    cdsProdutosunimedida_id: TIntegerField;
-    cdsProdutoscdbarra: TStringField;
-    cdsProdutosidprodvenda: TIntegerField;
-    cdsProdutosidadicional: TIntegerField;
-    cdsProdutosimgindex: TIntegerField;
-    cdsProdutosid_categoria: TIntegerField;
     cdsCategoriaid: TIntegerField;
     cdsCategorianmcategoria: TStringField;
     cdsCategoriaimgindex: TIntegerField;
@@ -104,16 +95,35 @@ type
     edtNome: TcxTextEdit;
     lblNome: TcxLabel;
     btnPesqCliente: TcxButton;
+    DataSetProvider1: TDataSetProvider;
+    dspCategoria: TDataSetProvider;
+    dspProdutos: TDataSetProvider;
+    DataSetProvider4: TDataSetProvider;
+    adqCategoria: TADOQuery;
+    adqProdutos: TADOQuery;
+    cdsProdutosID: TAutoIncField;
+    cdsProdutosNMPRODUTO: TStringField;
+    cdsProdutosPOSARVORE: TStringField;
+    cdsProdutosUNIMEDIDA_ID: TIntegerField;
+    cdsProdutosCDBARRA: TStringField;
+    cdsProdutosIDPRODVENDA: TSmallintField;
+    cdsProdutosIDADICIONAL: TSmallintField;
+    cdsProdutosIMGINDEX: TIntegerField;
+    cdsProdutosCATEGORIA_ID: TIntegerField;
+    ADOQuery1: TADOQuery;
+    ADOQuery2: TADOQuery;
     procedure btnCancelarClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     constructor PCreate(Form: TComponent; Parametros: TParametros); Overload;
+    procedure btnGavetaClick(Sender: TObject);
   private
     { Private declarations }
     FParametros: TParametros;
   public
     { Public declarations }
     procedure OnClickCategoriaPDV(Sender: TObject);
+    procedure OnClickProdutosPDV(Sender: TObject);
   end;
 
 var
@@ -124,7 +134,7 @@ implementation
 {$R *.dfm}   
 
 uses
-  lib_mensagem, lib_interface, pdv_adicional;
+  lib_mensagem, lib_interface, pdv_adicional, uDmConexao, lib_vmsis;
 
 procedure TfrmPDV_PDV.btnCancelarClick(Sender: TObject);
 begin
@@ -147,7 +157,16 @@ begin
 
   edtNome.Width := (panDados.Width - edtNome.Left) - btnPesqCliente.Width;
 
-  scbProduto.Height := Trunc(scbGrupo.Height/2)-scbTotalizador.Height;
+  scbProduto.Height := Trunc(scbGrupo.Height/2)-scbTotalizador.Height; 
+
+  adqCategoria.Close;
+  adqCategoria.Open;
+
+  adqProdutos.Close;
+  adqProdutos.Open;
+
+  cdsCategoria.Data := dspCategoria.Data;
+  cdsProdutos.Data  := dspProdutos.Data;
 
   if scbCategoria.ControlCount = 0 then
   begin
@@ -155,7 +174,7 @@ begin
     while not cdsCategoria.Eof do
     begin
       Interface_.CriaButtonScrollBox(scbCategoria, cdsCategoria.FieldByName('nmcategoria').AsString,
-        OnClickCategoriaPDV, 150, 150);
+        OnClickCategoriaPDV, 150, 150, cdsCategoriaid.AsInteger);
 
       cdsCategoria.Next;
     end;
@@ -186,16 +205,40 @@ begin
   SetWindowRgn(handle, region, true);
 end;
 
-procedure TfrmPDV_PDV.OnClickCategoriaPDV(Sender: TObject);
-begin
-  frmAdicional := TfrmAdicional.Create(Self);
+procedure TfrmPDV_PDV.OnClickCategoriaPDV(Sender: TObject);  
+var
+  Interface_: TInterface;
+begin          
+  cdsProdutos.Filtered := False;
+  if scbProduto.ControlCount > 0 then
+  begin
+    cdsProdutos.First;
+    while not cdsProdutos.Eof do
+    begin
+//      (Sender as TcxButton).;
 
-  try
-    frmAdicional.Tag := (Sender as TcxButton).Tag;
-    frmAdicional.ShowModal;
-  finally
-    frmAdicional.Release;
-    frmAdicional := nil;
+      cdsProdutos.Next;
+    end;
+  end;   
+  cdsProdutos.Filter   := ' CATEGORIA_ID = ' + IntToStr((Sender as TcxButton).Tag);
+  cdsProdutos.Filtered := True;
+
+  if scbProduto.ControlCount = 0 then
+  begin
+    cdsProdutos.First;
+    while not cdsProdutos.Eof do
+    begin
+      Interface_.CriaButtonScrollBox(scbProduto, cdsProdutos.FieldByName('NMPRODUTO').AsString,
+        OnClickProdutosPDV, 150, 150, cdsProdutos.FieldByName('ID').AsInteger);
+
+      cdsProdutos.Next;
+    end;
+  end;                
+
+  if scbProduto.ControlCount > 0 then
+  begin
+    Interface_ := TInterface.Create();
+    Interface_.OrganizaScrollBox(scbProduto,1);
   end;
 end;
 
@@ -203,6 +246,35 @@ constructor TfrmPDV_PDV.PCreate(Form: TComponent; Parametros: TParametros);
 begin
   inherited Create(frmPDV_PDV);
   FParametros := Parametros;
+end;
+
+procedure TfrmPDV_PDV.OnClickProdutosPDV(Sender: TObject);
+begin
+  cdsProdutos.Locate('ID', (Sender as TcxButton).Tag, [loCaseInsensitive]);
+  
+  if Boolean(cdsProdutosIDADICIONAL.AsInteger) then
+  begin
+    frmAdicional := TfrmAdicional.Create(Self);
+
+    try
+      frmAdicional.Tag := (Sender as TcxButton).Tag;
+      frmAdicional.ShowModal;
+    finally
+      FreeAndNil(frmAdicional);
+    end;
+  end;
+end;
+
+procedure TfrmPDV_PDV.btnGavetaClick(Sender: TObject);
+var
+  Acesso_Perifericos: TAcesso_Perifericos;
+begin
+  inherited;
+  //Permissao
+  //if PodeMexer(GAVETA_SEM_PERMISSAO) then begin
+    Acesso_Perifericos := TAcesso_Perifericos.Create;
+    Acesso_Perifericos.AbreGaveta;
+  //end;
 end;
 
 end.
