@@ -54,7 +54,7 @@ implementation
 {$R *.dfm}
 
 uses
-   lib_mensagem, lib_db, lib_acesso;
+   lib_mensagem, lib_db, lib_acesso, lib_cadastros_iniciais;
 
 { TfrmLoginBase }
 
@@ -139,12 +139,20 @@ end;
 procedure TfrmLoginBase.btnLoginClick(Sender: TObject);
 var
   usrAcesso :  TAcessoUsuario;
+  CadastrosIniciais : TCadastrosIniciais;
 begin
   FLogado := False;
 
-    //colocar na tela de controle de acesso
-//  TAcesso.AddRotinas;
-
+  CadastrosIniciais := TCadastrosIniciais.Create;
+  try
+    try
+      CadastrosIniciais.Executar;
+    except
+      //cala boca
+    end
+  finally
+    FreeAndNil(CadastrosIniciais);
+  end;
 
   if Trim(edtUsuario.Text) = EmptyStr then
   begin
