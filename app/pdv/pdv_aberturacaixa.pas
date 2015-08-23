@@ -48,6 +48,7 @@ type
     procedure btnConfirmarClick(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure edtValorKeyPress(Sender: TObject; var Key: Char);
+    procedure FormCreate(Sender: TObject);
   private
     { Private declarations }
     FAberto: Boolean;
@@ -124,8 +125,14 @@ end;
 procedure TfrmAberturaCaixa.edtValorKeyPress(Sender: TObject;
   var Key: Char);
 begin
-  if not (key in ['0'..'9',',',#8]) then
+  if not (key in ['0'..'9',',',#8]) or ((key in [',']) and (Pos(',', edtValor.Text) > 0)) then
     key := #0;
+end;
+
+procedure TfrmAberturaCaixa.FormCreate(Sender: TObject);
+begin
+  SysLocale.MiddleEast := True;
+  edtValor.BiDiMode := bdRightToLeft;
 end;
 
 end.
