@@ -18,12 +18,15 @@ CONST
    INFORMAR_SENHA   = 'Senha deve ser informada.';
    INFORMAR_VALOR   = 'Valor deve ser informado.';
    OPCAO_N_IDENTIFICADA = 'Opção não identificada.';
+   EXISTENCIA_CAIXA_ABERTO = 'O caixa não foi fechado. Feche antes de prosseguir.';
+   FALHA_ABRIR_CAIXA = 'Ocorreu uma falha ao abrir o caixa.';
 
    { Gaveta / Impressora não fiscal }
    GAVETA_ACIONADA = 'A gaveta foi aberta.';
    GAVETA_ERRO = 'Verifique conexão com a gaveta.';
    GAVETA_ABERTA = 'A gaveta já está aberta.';
    GAVETA_SEM_PERMISSAO = 'Você não tem permissão para abrir a gaveta sem chave.';
+
 
    IMPRESSORA_DESLIGADA = 'Impressora desligada.';
    IMPRESSORA_OFFLINE   = 'Impressora OFFLINE.';

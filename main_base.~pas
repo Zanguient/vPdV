@@ -38,6 +38,8 @@ type
 //    procedure InvocadordeBpl(stClasse: String);
   public
     { Public declarations }
+    Fusuario : string;
+    FidUsuario : Integer;
   end;
 
 var
@@ -48,7 +50,7 @@ implementation
 {$R *.dfm}
 
 uses
-   libframes, pdv_main, uvCadastroClienteFrame;
+   libframes, pdv_main, uvVisaoClienteFrame, pdv_aberturacaixa, pdv_abertura_fechamento_caixa;
 
 procedure TfrmMainBase.nbgSairClick(Sender: TObject);
 begin
@@ -82,13 +84,13 @@ end;
 
 procedure TfrmMainBase.nbgPDVClick(Sender: TObject);
 begin
- //  InvocadordeBpl('TfrmPDV');
-  TAbasNavegacao.CriarAba(pgcPrincipal, TfrmPDVMain);
+  if CaixaAberto then
+    TAbasNavegacao.CriarAba(pgcPrincipal, TfrmPDVMain);
 end;
 
 procedure TfrmMainBase.nbiClienteClick(Sender: TObject);
 begin
-  TAbasNavegacao.CriarAba(pgcPrincipal, TvCadastroClienteFrame);
+  TAbasNavegacao.CriarAba(pgcPrincipal, TvVisaoClienteFrame);
 end;
 
 end.

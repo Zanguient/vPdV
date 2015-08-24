@@ -20,13 +20,14 @@ uses Windows, Messages, SysUtils;
        procedure AddCidade;
        procedure AddAbairro;
        procedure AddFuncionario;
+       procedure AddCaixa;
      public
        procedure Executar;
 
      end;
 implementation
 
-uses lib_acesso, lib_db;
+uses lib_acesso, lib_db, Classes;
 
 { TCadastrosIniciais }
 
@@ -62,6 +63,24 @@ begin
   finally
     FreeAndNil(tbBairro);
   end
+
+end;
+
+procedure TCadastrosIniciais.AddCaixa;
+var
+  tbCaixa : TObjetoDB;
+begin
+  tbCaixa := TObjetoDB.create('caixa');
+  try
+    tbCaixa.Select(['id']);
+    if tbCaixa.Cds.IsEmpty then
+    begin
+      tbCaixa.AddParametro('nmcaixa', 'CAIXA');
+      tbCaixa.Insert;
+    end;
+  finally
+    FreeAndNil(tbCaixa);
+  end;
 
 end;
 
@@ -241,6 +260,7 @@ begin
    AddCidade;
    AddAbairro;
    AddFuncionario;
+   AddCaixa;
    TAcesso.AddRotinas;
 
    UsrAce := TAcessoUsuario.create(Fusuario);

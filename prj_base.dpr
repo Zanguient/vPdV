@@ -24,7 +24,8 @@ uses
   lib_imagens in 'vlib\lib_imagens.pas' {lb_imagens},
   autenticacao in 'login\autenticacao.pas' {frmAutenticacao},
   lib_cadastros_iniciais in 'vlib\lib_cadastros_iniciais.pas',
-  pdv_aberturacaixa in 'app\pdv\pdv_aberturacaixa.pas' {frmAberturaCaixa};
+  pdv_aberturacaixa in 'app\pdv\pdv_aberturacaixa.pas' {frmAberturaCaixa},
+  pdv_abertura_fechamento_caixa in 'app\pdv\pdv_abertura_fechamento_caixa.pas' {frmAberturaFechamentoCaixa};
 
 {$R *.res}
 
@@ -37,7 +38,8 @@ begin
      if frmLoginBase.GetLogado then
      begin
        Application.CreateForm(TfrmMainBase, frmMainBase);
-       frmMainBase.Fusuario :=  frmLoginBase.FUsuario;
+       frmMainBase.Fusuario := frmLoginBase.Usuario;
+       frmMainBase.FidUsuario := frmLoginBase.IdUsuario;
        FreeAndNil(frmLoginBase);
        Application.Run;
      end;

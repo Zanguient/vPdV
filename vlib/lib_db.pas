@@ -1,7 +1,7 @@
 unit lib_db;
 
 interface
-uses Windows, Messages, SysUtils, Variants, Classes, ADODB, uDmConexao, DBClient, Provider;
+uses Windows, Messages, SysUtils, Variants, Classes, ADODB, uDmConexao, DBClient, Provider, DB;
 
   type
     TMapaValor = class
@@ -35,6 +35,7 @@ uses Windows, Messages, SysUtils, Variants, Classes, ADODB, uDmConexao, DBClient
       FTabela : String;
       FParametros : TListaMapaValor;
       Fdsp : TDataSetProvider;
+      FSqlAdicional : TStringList;
       function GetSQLWhere : String;
       function GetSQlInsert : String;
       procedure SetParams;
@@ -44,9 +45,14 @@ uses Windows, Messages, SysUtils, Variants, Classes, ADODB, uDmConexao, DBClient
       procedure RemoverParametro(const index : Integer); overload;
       procedure RemoverParametro(const chave : String); overload;
       procedure RemoverTodosParametros;
+      procedure AddSqlAdicional(sql : String);
+      procedure ClearSqlAdicional;
+      procedure Reset;
       procedure Select(fields : array of string);
       procedure Insert();
       function GetVal(const field : String): variant;
+      procedure ChangeValue(const field : String; newvalue : Variant);
+      procedure SaveChanges;
       constructor create(const NomeTabela : String);
       destructor destroy; override;
     end;
@@ -69,11 +75,12 @@ begin
   Fquery := TADOQuery.Create(nil);
   Fdsp := TDataSetProvider.Create(nil);
   Cds := TClientDataSet.Create(nil);
+  FSqlAdicional := TStringList.Create;
   FParametros := TListaMapaValor.create;
   Fquery.Connection := dmConexao.adoConexaoBd;
-
-  Fdsp.DataSet := Fquery;
+  Fdsp.Name := 'dspConexao';
   Cds.ProviderName := Fdsp.Name;
+  Fdsp.DataSet := Fquery;
 end;
 
 destructor TObjetoDB.destroy;
@@ -82,6 +89,8 @@ begin
   FreeAndNil(FParametros);
   FreeAndNil(fdsp);
   FreeAndNil(Cds);
+  FSqlAdicional.Clear;
+  FreeAndNil(FSqlAdicional);
   inherited destroy;
 end;
 
@@ -97,19 +106,18 @@ var
  key : string;
 begin
   Result := EmptyStr;
-  try
-    if FParametros.Count > 0 then
-      sql := ' WHERE ';
 
-    for contador := 0 to FParametros.Count - 1 do
-    begin
-      key := FParametros.GetKey(contador);
-      sql := sql + Format(' %s = :%s AND ', [key, key]);
-    end;
-    Result := sql;
-    Result := Copy(Result, 1, Length(Result) - 4);
-  finally
+  if FParametros.Count > 0 then
+    sql := ' WHERE ';
+
+  for contador := 0 to FParametros.Count - 1 do
+  begin
+    key := FParametros.GetKey(contador);
+    sql := sql + Format(' %s = :%s AND ', [key, key]);
   end;
+  Result := sql;
+  Result := Copy(Result, 1, Length(Result) - 4);
+
 end;
 
 procedure TObjetoDB.RemoverParametro(const chave : String);
@@ -134,6 +142,10 @@ begin
   Fquery.SQL.Add(Format('SELECT %s', [sql_fields]));
   Fquery.SQL.Add(Format(' FROM %S', [FTabela]));
   Fquery.SQL.Add(GetSQLWhere);
+
+  if FSqlAdicional.Count > 0 then
+    Fquery.SQL.AddStrings(FSqlAdicional);
+
   SetParams;
   Fquery.Open;
   Cds.Data := Fdsp.Data;
@@ -154,6 +166,12 @@ var
   contador : Integer;
   sql_fields, sql_param, field : string;
 begin
+  if (FSqlAdicional.Count > 0)  then
+  begin
+    Result := FSqlAdicional.GetText;
+    Exit;
+  end;
+
   sql_fields := Format('INSERT INTO %s( ', [FTabela]);
   sql_param := 'values( ';
   for contador := 0 to FParametros.Count - 1 do
@@ -170,7 +188,7 @@ end;
 
 procedure TObjetoDB.Insert;
 begin
-  if FParametros.Count = 0 then
+  if (FParametros.Count = 0) and (FSqlAdicional.Count = 0) then
      raise Exception.Create('Não será possível inserir, pois nenhum parametro foi fornecido');
 
   Fquery.close;
@@ -189,6 +207,35 @@ end;
 function TObjetoDB.GetVal(const field: String): variant;
 begin
   Result := Cds.FieldByName(field).Value;
+end;
+
+procedure TObjetoDB.AddSqlAdicional(sql: String);
+begin
+   FSqlAdicional.Add(sql);
+end;
+
+procedure TObjetoDB.ClearSqlAdicional;
+begin
+   FSqlAdicional.Clear;
+end;
+
+procedure TObjetoDB.Reset;
+begin
+   ClearSqlAdicional;
+   RemoverTodosParametros;
+   Fquery.Close;
+end;
+
+procedure TObjetoDB.ChangeValue(const field: String; newvalue: Variant);
+begin
+   if Fquery.State in [dsBrowse, dsInactive] then
+     Fquery.Edit;
+   Fquery.FieldByName(field).Value := newvalue;
+end;
+
+procedure TObjetoDB.SaveChanges;
+begin
+   Fquery.Post;
 end;
 
 { TMapaValor }

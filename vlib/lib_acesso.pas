@@ -21,7 +21,12 @@ uses IdHashMessageDigest, Windows, Messages, sysutils, lib_db, TypInfo;
       FUsuario : TObjetoDB;
       FDbPermissao : TObjetoDB;
       FdbRotina : TObjetoDB;
+      FUsuarioLogin : String;
+      FIdUsuario : Integer;
     public
+      property Usuario : String read FUsuarioLogin;
+      property IdUsuario : Integer read FIdUsuario;
+      
       procedure AddPermissao(const modulo : String; permissao : TPermissoes);
       function PossuiPermissao(const modulo : String; permissao : TPermissoes) : Boolean;
       function Autenticado(const modulo : String; permissao : TPermissoes) : Boolean;
@@ -124,6 +129,9 @@ begin
       Aviso('Usuário informado não existe.');
       Abort;
     end;
+
+    FUsuarioLogin := FUsuario.GetVal('usuario');
+    FIdUsuario := FUsuario.GetVal('id');
 
     FDbPermissao := TObjetoDb.create('permusr');
     FdbRotina := TObjetoDb.create('rotina');

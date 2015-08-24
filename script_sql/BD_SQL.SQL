@@ -174,7 +174,7 @@ CREATE TABLE unimedida
   dtcadastro date,
   nmmedida character varying(100) NOT NULL,
   sgmedida character varying(5) NOT NULL,
-  qtfatorconv double precision NOT NULL,
+  qtfatorconv FLOAT(14,2) NOT NULL,
   idtipomed character varying(1) NOT NULL,
   CONSTRAINT unimedida_pkey PRIMARY KEY (id),
   CONSTRAINT unimedida_empresa_id_fkey FOREIGN KEY (empresa_id)
@@ -262,7 +262,7 @@ CREATE TABLE posestoque
   dtcadastro date NULL,
   produto_id integer NOT NULL,
   lote_id integer,
-  qtdeproduto double precision NOT NULL,
+  qtdeproduto FLOAT(14,2) NOT NULL,
   CONSTRAINT posestoque_pkey PRIMARY KEY (id),
   CONSTRAINT lote_id_refs_id_7787491a FOREIGN KEY (lote_id)
       REFERENCES lote (id),
@@ -280,7 +280,7 @@ CREATE TABLE AgrupAdicional
 (
   id INTEGER NOT NULL AUTO_INCREMENT,
   nmagrupadic character varying(250) NOT NULL,
-  vragrupadic double precision NOT NULL,
+  vragrupadic FLOAT(14,2) NOT NULL,
   idagrupativ character varying(1) NOT NULL,
   CONSTRAINT AgrupAdicional_pkey PRIMARY KEY (id),
   CONSTRAINT AgrupAdicional_nmagrupadic_key UNIQUE (nmagrupadic)
@@ -305,7 +305,7 @@ CREATE TABLE ComposicaoProd
   id serial NOT NULL,
   produto_id integer NOT NULL,
   prodcomp_id integer NOT NULL,
-  qtcomp double precision NOT NULL,
+  qtcomp FLOAT(14,2) NOT NULL,
   unimedida_id integer NOT NULL,
   CONSTRAINT ComposicaoProd_pkey PRIMARY KEY (id),
   CONSTRAINT ComposicaoProd_prodcomp_id_fkey FOREIGN KEY (prodcomp_id)
@@ -326,8 +326,8 @@ CREATE TABLE ItemCategoria
   id integer NOT NULL AUTO_INCREMENT,
   categoria_id integer NOT NULL,
   produto_id integer NOT NULL,
-  vrvenda double precision NOT NULL,
-  qtvenda double precision NOT NULL,
+  vrvenda FLOAT(14,2) NOT NULL,
+  qtvenda FLOAT(14,2) NOT NULL,
   qtadicgratis integer NOT NULL,
   CONSTRAINT ItemCategoria_pkey PRIMARY KEY (id),
   CONSTRAINT ItemCategoria_categoria_id_fkey FOREIGN KEY (categoria_id)
@@ -379,7 +379,7 @@ CREATE TABLE pedido
   cliente_id integer NULL,
   nmcliente character varying(250),
   mesa_id integer null,
-  vrpedido double precision NOT NULL,
+  vrpedido FLOAT(14,2) NOT NULL,
   idstatusped character varying(1) NOT NULL check(idstatusped in ('P', 'C')),/*pendente, concluido*/
   CONSTRAINT pedido_pkey PRIMARY KEY (id),
   CONSTRAINT mesa_id_refs_id_8a44dbc3 FOREIGN KEY (mesa_id)
@@ -400,9 +400,9 @@ CREATE TABLE itempedido
   pedido_id integer NOT NULL,
   cardapio_id integer NOT NULL,
   lote_id integer NULL,
-  qtitem double precision NOT NULL,
-  vrvenda double precision NOT NULL,
-  vrtotal double precision NOT NULL,
+  qtitem FLOAT(14,2) NOT NULL,
+  vrvenda FLOAT(14,2) NOT NULL,
+  vrtotal FLOAT(14,2) NOT NULL,
   idadicional boolean NOT NULL,
   CONSTRAINT itempedido_pkey PRIMARY KEY (id),
   CONSTRAINT cardapio_id_refs_id_23fd3cc8 FOREIGN KEY (cardapio_id)
@@ -427,8 +427,8 @@ CREATE TABLE adicionais
   id INTEGER NOT NULL AUTO_INCREMENT,
   agrupadicional_id integer NOT NULL,
   item_id integer NOT NULL,
-  valor double precision NOT NULL,
-  quantidade double precision NOT NULL,
+  valor FLOAT(14,2) NOT NULL,
+  quantidade FLOAT(14,2) NOT NULL,
   CONSTRAINT agrupadicional_adicionais_pkey PRIMARY KEY (id),
   CONSTRAINT agrupadicional_adicionais_agrupadicional_id_fkey FOREIGN KEY (agrupadicional_id)
       REFERENCES AgrupAdicional (id),
@@ -445,7 +445,7 @@ CREATE TABLE itadicional
   id integer NOT NULL AUTO_INCREMENT,
   itempedido_id integer NOT NULL,
   item_id integer NOT NULL,
-  qtitem double precision NOT NULL,
+  qtitem FLOAT(14,2) NOT NULL,
   CONSTRAINT itadicional_pkey PRIMARY KEY (id),
   CONSTRAINT itadicional_itempedido_id_fkey FOREIGN KEY (itempedido_id)
       REFERENCES itempedido(id) ON DELETE CASCADE,
@@ -504,59 +504,56 @@ CREATE TABLE caixa
 (
   id integer NOT NULL AUTO_INCREMENT,
   nmcaixa character varying(50),
-  CONSTRAINT caixa_pkey PRIMARY KEY(id)  
+  CONSTRAINT caixa_pkey PRIMARY KEY(id)
 );
 CREATE UNIQUE INDEX ux_caixa_nmcaixa ON caixa(nmcaixa);
 
-CREATE TABLE abercaixa
+CREATE TABLE aberfechcaixa
 (
   id integer NOT NULL AUTO_INCREMENT,
   id_caixa integer NOT NULL,
-  vrinicial double precision NOT NULL,
-  vrcorrigido double precision NOT NULL,
+  vrinicial FLOAT(14,2) NOT NULL,
+  vrcorrigido FLOAT(14,2) NULL,
   dtmovi date not null,
   funciconfabertura integer null,
-  status character varying(1) not null check(status in ('P', 'A')), /*pendente ou aberto*/
+  funcipreabertura integer null,
+  vrvenda FLOAT(14,2) NULL,
+  vrretirada FLOAT(14,2) NULL,
+  vrsangria FLOAT(14,2) NULL,
+  vrentrada FLOAT(14,2) NULL,
+  vrdebio FLOAT(14,2) NULL,
+  vrcredito FLOAT(14,2) NULL,
+  funcifechamento integer null,
+  status character varying(1) not null check(status in ('P', 'A', 'F')), /*pendente, aberto, Fechado*/
   CONSTRAINT abercaixa_pkey PRIMARY KEY(id),
   CONSTRAINT abercaixa_funcionario_fkey FOREIGN KEY(funciconfabertura)
      REFERENCES funcionario(id),
+  CONSTRAINT abercaixa_funcionariopre_fkey FOREIGN KEY(funcipreabertura)
+     REFERENCES funcionario(id),
   CONSTRAINT abercaixa_caixa_fkey FOREIGN KEY(id_caixa)
-     REFERENCES caixa(id)
+     REFERENCES caixa(id),
+  CONSTRAINT fechcaixa_funcionario_fkey FOREIGN KEY(funcifechamento)
+     REFERENCES funcionario(id)
+
 );
+
 
 CREATE TABLE movcaixa
 (
   id integer NOT NULL AUTO_INCREMENT,
   id_caixa integer not null,
   dtmovi date not null,
-  vrmovi double precision not null,
+  vrmovi FLOAT(14,2) not null,
   tpmovi character varying(1) not null check(tpmovi in ('E, V, S, R')), /*ENTRADA, VENDA, SANGRIA, RETIRADA*/
   formpgto character varying(2) not null check(formpgto in ('DI', 'DE', 'CR')), /*DINHEIRO, DEBITO, CREDITO*/
   id_pedido integer null,
   CONSTRAINT movcaixa_pkey PRIMARY KEY(id),
-  CONSTRAINT movcaixa_caixa_fkey FOREIGN KEY(id_caixa) 
+  CONSTRAINT movcaixa_caixa_fkey FOREIGN KEY(id_caixa)
      REFERENCES caixa(id),
   CONSTRAINT movcaixa_pedido FOREIGN KEY(id_pedido)
-   REFERENCES pedido(id)  
+   REFERENCES pedido(id)
 );
 
-CREATE TABLE fechcaixa
-(
-  id integer NOT NULL AUTO_INCREMENT,
-  id_abercaixa integer NOT NULL,
-  vrvenda double precision NOT NULL,
-  vrretirada double precision NOT NULL,
-  vrsangria double precision NOT NULL,
-  vrentrada double precision NOT NULL,
-  vrdebio double precision NOT NULL,
-  vrcredito double precision NOT NULL,
-  funcifechamento integer null,
-  CONSTRAINT fechcaixa_pkey PRIMARY KEY(id), 
-  CONSTRAINT fechcaixa_abercaixa_fkey FOREIGN KEY(id_abercaixa)
-     REFERENCES abercaixa(id),
-  CONSTRAINT fechcaixa_funcionario_fkey FOREIGN KEY(funcifechamento)
-     REFERENCES funcionario(id)    
-);
 
 
 CREATE TABLE rotina
@@ -565,7 +562,7 @@ CREATE TABLE rotina
   modulo character varying(255) NOT NULL,
   descricao character varying(255) NOT NULL,
   visivel character varying(1) NOT NULL DEFAULT 'S' CHECK(visivel in ('S', 'N')),
-  CONSTRAINT rotina_pkey PRIMARY KEY(ID)  
+  CONSTRAINT rotina_pkey PRIMARY KEY(ID)
 );
 
 CREATE UNIQUE INDEX ux_rotina_modulo ON rotina(modulo);

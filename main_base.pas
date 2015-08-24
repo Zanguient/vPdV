@@ -39,6 +39,7 @@ type
   public
     { Public declarations }
     Fusuario : string;
+    FidUsuario : Integer;
   end;
 
 var
@@ -49,7 +50,7 @@ implementation
 {$R *.dfm}
 
 uses
-   libframes, pdv_main, uvVisaoClienteFrame, pdv_aberturacaixa;
+   libframes, pdv_main, uvVisaoClienteFrame, pdv_aberturacaixa, pdv_abertura_fechamento_caixa;
 
 procedure TfrmMainBase.nbgSairClick(Sender: TObject);
 begin
@@ -83,14 +84,8 @@ end;
 
 procedure TfrmMainBase.nbgPDVClick(Sender: TObject);
 begin
-  Application.CreateForm(TfrmAberturaCaixa, frmAberturaCaixa);
-  frmAberturaCaixa.ShowModal;
-  try
-    if frmAberturaCaixa.GetCaixaAberto then
-      TAbasNavegacao.CriarAba(pgcPrincipal, TfrmPDVMain);
-  finally
-    FreeAndNil(frmAberturaCaixa);
-  end;
+  if CaixaAberto then
+    TAbasNavegacao.CriarAba(pgcPrincipal, TfrmPDVMain);
 end;
 
 procedure TfrmMainBase.nbiClienteClick(Sender: TObject);

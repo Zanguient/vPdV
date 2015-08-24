@@ -6,24 +6,26 @@ uses
    Classes, WinInet, Dialogs, Windows, Forms,
    IdBaseComponent, IdComponent, IdRawBase, IdRawClient, IdIcmpClient;
 
-type
-   TAcesso_Perifericos = Class(TPersistent)
-   public
+  type
+    TAcesso_Perifericos = Class(TPersistent)
+    public
       function AbreGaveta: Boolean;
-end;
+    end;
 
-type
    TAcesso_Online = Class(TPersistent)
    public
       function Verif_Net: Integer;
       function Verif_Site(stUrl: String): Boolean;
 //   published
-end;
-
+   end;
+   TUtilidades = class
+   public
+     class function GetDateToMySql(date : TDateTime) : string;
+   end;
 implementation
 
 uses
-  lib_mensagem; 
+  lib_mensagem, SysUtils;
 
   function rStatusGaveta_DUAL_DarumaFramework(var iStatusGaveta: Integer): Integer; StdCall; External 'DarumaFrameWork.dll';
   function iAcionarGaveta_DUAL_DarumaFramework(): Integer; StdCall; External 'DarumaFrameWork.dll';
@@ -95,6 +97,13 @@ begin
   end else
     Aviso(GAVETA_ERRO);
   result := Boolean(iStatusGaveta);
+end;
+
+{ TUtilidades }
+
+class function TUtilidades.GetDateToMySql(date : TDateTime): string;
+begin
+   Result := FormatDateTime('yyyy-MM-dd', date);
 end;
 
 end.
