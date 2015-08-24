@@ -42,6 +42,7 @@ type
     { Private declarations }
   public
     { Public declarations }
+    constructor Create(AOwner: TComponent); override;    
   end;
 
 var
@@ -49,6 +50,20 @@ var
 
 implementation
 
+uses
+  uvCadastroClienteFrame;
+
 {$R *.dfm}
+
+{ TvVisaoClienteFrame }
+
+constructor TvVisaoClienteFrame.Create(AOwner: TComponent);
+var
+  frame: TFrame;
+begin
+  inherited;
+  frame := TvCadastroClienteFrame.Create(AOwner);
+  vCadastroFrame := frame;
+end;
 
 end.

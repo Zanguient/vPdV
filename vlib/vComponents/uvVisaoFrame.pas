@@ -50,12 +50,15 @@ type
   private
     { Private declarations }
     stSql:String;
+    frvCadastroFrame:TFrame;
+    procedure setvCadastroFrame(frame: TFrame);
   protected
     procedure addFilter(filter: String);
     procedure DoFilterExecute(); virtual;
   public
     { Public declarations }
-    constructor Create(AOwner: TComponent); override;    
+    constructor Create(AOwner: TComponent); override;
+    property vCadastroFrame: TFrame write setvCadastroFrame;
   end;
 
 var
@@ -82,10 +85,11 @@ procedure TvVisaoFrame.cxNavPadraoButtonsButtonClick(Sender: TObject; AButtonInd
 begin
   if AButtonIndex = 6 then
   begin
-  
+    vVisaoFrame.Visible := False;
+    frvCadastroFrame.Create(vVisaoFrame.Owner);
   end
   else
-  inherited;
+    inherited;
 end;
 
 procedure TvVisaoFrame.actFilttarExecute(Sender: TObject);
@@ -104,13 +108,21 @@ var
 begin
   for i := 0 to cxgridFiltro.Rows.Count - 1 do
   begin
-    if adqPadrao.FieldByName(cxgridFiltro.Rows.Items[i].Name).Origin = '' then
-      stfield := adqPadrao.FieldByName(cxgridFiltro.Rows.Items[i].Name).FieldName
-    else
-      stfield := adqPadrao.FieldByName(cxgridFiltro.Rows.Items[i].Name).Origin;
-
     if not VarIsNull(TcxEditorRow(cxgridFiltro.Rows.Items[i]).Properties.Value) then
-      addFilter(stfield +' = '+ TcxEditorRowItemProperties(cxgridFiltro.Rows.Items[i]).Value);
+    begin
+      if adqPadrao.FieldByName(cxgridFiltro.Rows.Items[i].Name).Origin = '' then
+        stfield := adqPadrao.FieldByName(cxgridFiltro.Rows.Items[i].Name).FieldName
+      else
+        stfield := adqPadrao.FieldByName(cxgridFiltro.Rows.Items[i].Name).Origin;
+      if (adqPadrao.FieldByName(cxgridFiltro.Rows.Items[i].Name).DataType = ftInteger) or
+         (adqPadrao.FieldByName(cxgridFiltro.Rows.Items[i].Name).DataType = ftFloat) then
+        addFilter(stfield +' = '+ TcxEditorRow(cxgridFiltro.Rows.Items[i]).Properties.Value)
+//      else if (adqPadrao.FieldByName(cxgridFiltro.Rows.Items[i].Name).DataType = ftDate) or
+//         (adqPadrao.FieldByName(cxgridFiltro.Rows.Items[i].Name).DataType = ftDateTime) then
+//        addFilter(stfield +' = '+ StrToDateTime(TcxEditorRow(cxgridFiltro.Rows.Items[i]).Properties.Value))
+      else
+        addFilter(stfield +' like '''+ (TcxEditorRow(cxgridFiltro.Rows.Items[i]).Properties.Value)+'''');
+    end;
   end;
 end;
 
@@ -135,6 +147,11 @@ constructor TvVisaoFrame.Create(AOwner: TComponent);
 begin
   inherited;
   stSql := adqPadrao.SQL.Text;
+end;
+
+procedure TvVisaoFrame.setvCadastroFrame(frame: TFrame);
+begin
+   frvCadastroFrame := frame;
 end;
 
 end.

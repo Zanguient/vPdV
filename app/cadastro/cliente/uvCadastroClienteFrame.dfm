@@ -1,13 +1,5 @@
 inherited vCadastroClienteFrame: TvCadastroClienteFrame
   Height = 443
-  inherited panTop: TPanel
-    inherited lblNomeFrame: TLabel
-      Left = 253
-    end
-    inherited cxDBNavigator2: TcxDBNavigator
-      Width = 252
-    end
-  end
   inherited panClient: TPanel
     Height = 414
     inherited cxvGrid1: TcxDBVerticalGrid
