@@ -53,6 +53,7 @@ type
       var ADone: Boolean);
     procedure btnDeliveryClick(Sender: TObject);
     procedure btnBalcaoClick(Sender: TObject);
+    procedure cxButton1Click(Sender: TObject);
   private
     { Private declarations }
   public
@@ -69,7 +70,7 @@ implementation
 
 uses
   lib_interface, lib_mensagem, pdv_pdv, pdv_adicional, uDmConexao, lib_vmsis,
-  lib_acesso, main_base;
+  lib_acesso, main_base, pdv_abertura_fechamento_caixa;
 
 procedure TfrmPDVMain.FrameResize(Sender: TObject);
 var
@@ -193,6 +194,13 @@ begin
   finally
     FreeAndNil(frmPDV_PDV);
   end;
+end;
+
+procedure TfrmPDVMain.cxButton1Click(Sender: TObject);
+begin
+  inherited;
+  //colocar aqui o fechamento(a ser implementado)
+  CaixaPreAberto;
 end;
 
 end.

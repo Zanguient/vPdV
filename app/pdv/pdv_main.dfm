@@ -1691,6 +1691,7 @@ inherited frmPDVMain: TfrmPDVMain
           Hint = 'Fechar caixa'
           Caption = 'Fechar caixa'
           TabOrder = 3
+          OnClick = cxButton1Click
           Align = alLeft
           Glyph.Data = {
             36400000424D3640000000000000360000002800000040000000400000000100
