@@ -54,12 +54,15 @@ type
   private
     { Private declarations }
     FConfirmado : Boolean;
-    procedure RedimencionarTela;
+    procedure PrepararTelas;
     procedure ValidarCampo(edit : TcxCurrencyEdit; const MaiorQueZero : Boolean = False);
     procedure GravarValorPreAbertura;
     procedure GravarValorAbertura;
+    procedure GravarValorFechamento;
+    procedure BuscarValorFechamento;
   protected
     FTipoLancamento : TTipoLancamentoCaixa;
+    FidCaixa : Integer;
   public
     property Confirmado : Boolean read FConfirmado;
     { Public declarations }
@@ -101,7 +104,7 @@ begin
   try
     tbAberFechCaixa.AddParametro('status', 'A');
     tbAberFechCaixa.Select(['id']);
-    if not tbAberFechCaixa.Cds.IsEmpty then
+    if not tbAberFechCaixa.IsEmpty then
     begin
       Result := True;
       Exit;
@@ -135,7 +138,7 @@ begin
 end;
 procedure TfrmAberturaFechamentoCaixa.FormShow(Sender: TObject);
 begin
-  RedimencionarTela;
+  PrepararTelas;
   edtValorPreAbertura.Value := 0;
   edtValorAbertura.Value := 0;
 //  edtValorAbertura.Text
@@ -147,7 +150,7 @@ begin
    Close;
 end;
 
-procedure TfrmAberturaFechamentoCaixa.RedimencionarTela;
+procedure TfrmAberturaFechamentoCaixa.PrepararTelas;
 const
  VALOR_ADICIONAL = 31;
 begin
@@ -169,6 +172,7 @@ begin
       panFechamento.Visible := True;
       frmAberturaFechamentoCaixa.Height := panFechamento.Height + panBotoes.Height + VALOR_ADICIONAL;;
       frmAberturaFechamentoCaixa.Caption := 'Fechamento do caixa';
+      BuscarValorFechamento;
     end;
   end;
   panBotoes.Visible := True;
@@ -198,44 +202,31 @@ begin
 
   tbAberFechCaixa := TobjetoDB.create('aberfechcaixa');
   try
-    try
-      tbAberFechCaixa.AddSqlAdicional(' where status in (''P'', ''A'') ');
-      tbAberFechCaixa.Select(['ID']);
+    tbAberFechCaixa.AddSqlAdicional(' where status in (''P'', ''A'') ');
+    tbAberFechCaixa.Select(['ID']);
 
-      if not tbAberFechCaixa.cds.IsEmpty then
-      begin
-        Aviso(EXISTENCIA_CAIXA_ABERTO);
-        Abort;
-      end;
-
-      tbAberFechCaixa.Reset;
-
-      tbCaixa := TObjetoDB.create('caixa');
-      try
-        tbCaixa.Select(['id']);
-        tbCaixa.Cds.First;
-        tbAberFechCaixa.AddParametro('id_caixa', tbCaixa.GetVal('id'));
-      finally
-        FreeAndNil(tbCaixa);
-      end;
-      tbAberFechCaixa.AddParametro('vrinicial',(StringReplace(edtValorPreAbertura.Text, ',', '.', [rfReplaceAll])));
-      tbAberFechCaixa.AddParametro('funcipreabertura', frmMainBase.FidUsuario);
-      tbAberFechCaixa.AddParametro('dtmovi', TUtilidades.GetDateToMySql(Date));
-      tbAberFechCaixa.AddParametro('status', 'P');
-      tbAberFechCaixa.Insert;
-      FConfirmado := True;
-    except
-      on E:Exception do
-      begin
-        if E.ClassType <> EAbstractError then
-        begin
-          Aviso('Ocorreu um erro ao abrir o caixa.' + #13 + E.Message);
-          Exit;
-        end
-        else
-          Abort;
-      end
+    if not tbAberFechCaixa.IsEmpty then
+    begin
+      Aviso(EXISTENCIA_CAIXA_ABERTO);
+      Abort;
     end;
+
+    tbAberFechCaixa.Reset;
+
+    tbCaixa := TObjetoDB.create('caixa');
+    try
+      tbCaixa.Select(['id']);
+      tbCaixa.First;
+      tbAberFechCaixa.AddParametro('id_caixa', tbCaixa.GetVal('id'));
+    finally
+      FreeAndNil(tbCaixa);
+    end;
+    tbAberFechCaixa.AddParametro('vrinicial',(StringReplace(edtValorPreAbertura.Text, ',', '.', [rfReplaceAll])));
+    tbAberFechCaixa.AddParametro('funcipreabertura', frmMainBase.FidUsuario);
+    tbAberFechCaixa.AddParametro('dtmovi', TUtilidades.GetDateToMySql(Date));
+    tbAberFechCaixa.AddParametro('status', 'P');
+    tbAberFechCaixa.Insert;
+    FConfirmado := True;
   finally
     FreeAndNil(tbAberFechCaixa);
   end;
@@ -246,6 +237,7 @@ begin
    case FTipoLancamento of
      tlPreAbertura: GravarValorPreAbertura;
      tlAbertura: GravarValorAbertura;
+     tlFechamento: GravarValorFechamento;
    end;
    close;
 end;
@@ -259,7 +251,7 @@ begin
   try
     tbAberFechCaixa.AddParametro('status', 'A');
     tbAberFechCaixa.Select(['ID']);
-    if not tbAberFechCaixa.Cds.IsEmpty then
+    if not tbAberFechCaixa.IsEmpty then
     begin
       FConfirmado := True;
       Exit;
@@ -269,12 +261,12 @@ begin
     tbAberFechCaixa.AddParametro('status', 'P');
     tbAberFechCaixa.Select(['vrcorrigido', 'dtmovi', 'funciconfabertura', 'status']);
 
-    if tbAberFechCaixa.Cds.IsEmpty then
+    if tbAberFechCaixa.IsEmpty then
     begin
       GravarValorPreAbertura;
       tbAberFechCaixa.Select(['vrcorrigido', 'dtmovi', 'funciconfabertura', 'status']);
 
-      if tbAberFechCaixa.Cds.IsEmpty then
+      if tbAberFechCaixa.IsEmpty then
       begin
         Aviso(FALHA_ABRIR_CAIXA);
         Abort;
@@ -290,6 +282,122 @@ begin
 
   finally
     FreeAndNil(tbAberFechCaixa);
+  end;
+end;
+
+procedure TfrmAberturaFechamentoCaixa.GravarValorFechamento;
+var
+
+  tbAberFechCaixa : TObjetoDB;
+begin
+
+
+  tbAberFechCaixa := TobjetoDB.create('aberfechcaixa');
+  try
+    tbAberFechCaixa.AddParametro('status', 'A');
+    tbAberFechCaixa.AddParametro('id_caixa', FidCaixa);
+    tbAberFechCaixa.Select(['*']);
+
+    tbAberFechCaixa.ChangeValue('vrvenda', edtVendasConf.Value);
+    tbAberFechCaixa.ChangeValue('vrretirada', edtRetiradasConf.Value);
+    tbAberFechCaixa.ChangeValue('vrsangria', edtSangriaConf.Value);
+    tbAberFechCaixa.ChangeValue('vrentrada', edtEntradaConf.Value);
+    tbAberFechCaixa.ChangeValue('vrdebio', edtDebitoConf.Value);
+    tbAberFechCaixa.ChangeValue('vrcredito', edtCreditoConf.Value);
+    tbAberFechCaixa.ChangeValue('status', 'F');
+    tbAberFechCaixa.ChangeValue('funcifechamento', frmMainBase.FidUsuario);
+    tbAberFechCaixa.SaveChanges;
+    FConfirmado := True;
+  finally
+    FreeAndNil(tbAberFechCaixa);
+  end;
+end;
+
+procedure TfrmAberturaFechamentoCaixa.BuscarValorFechamento;
+var
+  tbAberFechCaixa : TObjetoDB;
+  tbMovCaixa : TObjetoDB;
+  tbCaixa : TObjetoDB;
+  IdCaixa : Integer;
+  DataMovimento : TDate;
+const
+  ENTRADA = 'E';
+  VENDA = 'V';
+  SANGRIA = 'S';
+  RETIRADA = 'R';
+  CREDITO = 'CR';
+  DEBITO = 'DE';
+begin
+
+  tbCaixa := TObjetoDB.create('caixa');
+  try
+    tbCaixa.Select(['id']);
+    IdCaixa := tbCaixa.GetVal('id');
+  finally
+    FreeAndNil(tbCaixa);
+  end;
+
+  tbAberFechCaixa := TobjetoDB.create('aberfechcaixa');
+  try
+    tbAberFechCaixa.AddParametro('status', 'A');
+    tbAberFechCaixa.AddParametro('id_caixa', IdCaixa);
+    tbAberFechCaixa.Select(['dtmovi']);
+    DataMovimento := VarToDateTime(tbAberFechCaixa.GetVal('dtmovi'));
+  finally
+    FreeAndNil(tbAberFechCaixa);
+  end;
+
+  tbMovCaixa := TObjetoDB.create('movcaixa');
+  try
+    //valores por tipo
+  //  tbMovCaixa.AddParametro('dtmovi', DataMovimento, ' >= ');
+    tbMovCaixa.AddSqlAdicional(' group by tpmovi');
+    tbMovCaixa.Select(['sum(vrmovi) as vrmovi', 'tpmovi']);
+
+    if tbMovCaixa.Find('tpmovi', VENDA) then
+      edtVendasCalc.Value := tbMovCaixa.GetVal('vrmovi')
+    else
+      edtVendasCalc.Value := 0;
+
+    if tbMovCaixa.Find('tpmovi', RETIRADA) then
+      edtRetiradasCalc.Value := tbMovCaixa.GetVal('vrmovi')
+    else
+      edtRetiradasCalc.Value := 0;
+
+    if tbMovCaixa.Find('tpmovi', SANGRIA) then
+      edtSangriaCalc.Value := tbMovCaixa.GetVal('vrmovi')
+    else
+      edtSangriaCalc.Value := 0;
+
+    if tbMovCaixa.Find('tpmovi', ENTRADA) then
+      edtEntradaCalc.Value := tbMovCaixa.GetVal('vrmovi')
+    else
+      edtEntradaCalc.Value := 0;
+
+    //valores por forma de pagamento
+    tbMovCaixa.ClearSqlAdicional;
+    tbMovCaixa.AddSqlAdicional(' group by formpgto');
+    tbMovCaixa.Select(['sum(vrmovi) as vrmovi', 'formpgto']);
+
+    if tbMovCaixa.Find('formpgto', DEBITO) then
+      edtDebitoCalc.Value := tbMovCaixa.GetVal('vrmovi')
+    else
+      edtDebitoCalc.Value := 0;
+
+    if tbMovCaixa.Find('formpgto', CREDITO) then
+      edtCreditoCalc.Value := tbMovCaixa.GetVal('vrmovi')
+    else
+      edtCreditoCalc.Value := 0;
+
+    edtVendasConf.Value := edtVendasCalc.Value;
+    edtSangriaConf.Value := edtSangriaCalc.Value;
+    edtRetiradasConf.Value := edtRetiradasCalc.Value;
+    edtEntradaConf.Value := edtEntradaCalc.Value;
+    edtDebitoConf.Value := edtDebitoCalc.Value;
+    edtCreditoConf.Value := edtCreditoCalc.Value;
+    FidCaixa := IdCaixa;
+  finally
+    FreeAndNil(tbMovCaixa);
   end;
 end;
 

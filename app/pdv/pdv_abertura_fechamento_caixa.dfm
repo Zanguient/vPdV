@@ -1,11 +1,10 @@
 object frmAberturaFechamentoCaixa: TfrmAberturaFechamentoCaixa
   Left = 441
   Top = 136
-  AutoScroll = False
+  Width = 490
+  Height = 329
   BorderIcons = []
   BorderStyle = bsSizeToolWin
-  ClientHeight = 298
-  ClientWidth = 482
   Color = clWhite
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -159,7 +158,7 @@ object frmAberturaFechamentoCaixa: TfrmAberturaFechamentoCaixa
       Properties.AssignedValues.MinValue = True
       Properties.DisplayFormat = 'R$ ,0.00;-R$ ,0.00'
       Properties.MaxLength = 13
-      TabOrder = 1
+      TabOrder = 7
       Width = 154
     end
     object cxLabel3: TcxLabel
@@ -185,7 +184,7 @@ object frmAberturaFechamentoCaixa: TfrmAberturaFechamentoCaixa
       Properties.AssignedValues.MinValue = True
       Properties.DisplayFormat = 'R$ ,0.00;-R$ ,0.00'
       Properties.MaxLength = 13
-      TabOrder = 3
+      TabOrder = 9
       Width = 154
     end
     object cxLabel4: TcxLabel
@@ -211,7 +210,7 @@ object frmAberturaFechamentoCaixa: TfrmAberturaFechamentoCaixa
       Properties.AssignedValues.MinValue = True
       Properties.DisplayFormat = 'R$ ,0.00;-R$ ,0.00'
       Properties.MaxLength = 13
-      TabOrder = 5
+      TabOrder = 11
       Width = 154
     end
     object cxLabel5: TcxLabel
@@ -237,7 +236,7 @@ object frmAberturaFechamentoCaixa: TfrmAberturaFechamentoCaixa
       Properties.AssignedValues.MinValue = True
       Properties.DisplayFormat = 'R$ ,0.00;-R$ ,0.00'
       Properties.MaxLength = 13
-      TabOrder = 7
+      TabOrder = 13
       Width = 154
     end
     object cxLabel6: TcxLabel
@@ -263,7 +262,7 @@ object frmAberturaFechamentoCaixa: TfrmAberturaFechamentoCaixa
       Properties.AssignedValues.MinValue = True
       Properties.DisplayFormat = 'R$ ,0.00;-R$ ,0.00'
       Properties.MaxLength = 13
-      TabOrder = 9
+      TabOrder = 15
       Width = 154
     end
     object cxLabel7: TcxLabel
@@ -289,7 +288,7 @@ object frmAberturaFechamentoCaixa: TfrmAberturaFechamentoCaixa
       Properties.AssignedValues.MinValue = True
       Properties.DisplayFormat = 'R$ ,0.00;-R$ ,0.00'
       Properties.MaxLength = 13
-      TabOrder = 11
+      TabOrder = 17
       Width = 154
     end
     object edtVendasConf: TcxCurrencyEdit
@@ -300,7 +299,7 @@ object frmAberturaFechamentoCaixa: TfrmAberturaFechamentoCaixa
       Properties.AssignedValues.MinValue = True
       Properties.DisplayFormat = 'R$ ,0.00;-R$ ,0.00'
       Properties.MaxLength = 13
-      TabOrder = 12
+      TabOrder = 1
       Width = 154
     end
     object edtSangriaConf: TcxCurrencyEdit
@@ -311,7 +310,7 @@ object frmAberturaFechamentoCaixa: TfrmAberturaFechamentoCaixa
       Properties.AssignedValues.MinValue = True
       Properties.DisplayFormat = 'R$ ,0.00;-R$ ,0.00'
       Properties.MaxLength = 13
-      TabOrder = 13
+      TabOrder = 3
       Width = 154
     end
     object edtRetiradasConf: TcxCurrencyEdit
@@ -322,7 +321,7 @@ object frmAberturaFechamentoCaixa: TfrmAberturaFechamentoCaixa
       Properties.AssignedValues.MinValue = True
       Properties.DisplayFormat = 'R$ ,0.00;-R$ ,0.00'
       Properties.MaxLength = 13
-      TabOrder = 14
+      TabOrder = 2
       Width = 154
     end
     object edtEntradaConf: TcxCurrencyEdit
@@ -333,7 +332,7 @@ object frmAberturaFechamentoCaixa: TfrmAberturaFechamentoCaixa
       Properties.AssignedValues.MinValue = True
       Properties.DisplayFormat = 'R$ ,0.00;-R$ ,0.00'
       Properties.MaxLength = 13
-      TabOrder = 15
+      TabOrder = 4
       Width = 154
     end
     object edtDebitoConf: TcxCurrencyEdit
@@ -344,7 +343,7 @@ object frmAberturaFechamentoCaixa: TfrmAberturaFechamentoCaixa
       Properties.AssignedValues.MinValue = True
       Properties.DisplayFormat = 'R$ ,0.00;-R$ ,0.00'
       Properties.MaxLength = 13
-      TabOrder = 16
+      TabOrder = 5
       Width = 154
     end
     object edtCreditoConf: TcxCurrencyEdit
@@ -355,7 +354,7 @@ object frmAberturaFechamentoCaixa: TfrmAberturaFechamentoCaixa
       Properties.AssignedValues.MinValue = True
       Properties.DisplayFormat = 'R$ ,0.00;-R$ ,0.00'
       Properties.MaxLength = 13
-      TabOrder = 17
+      TabOrder = 6
       Width = 154
     end
   end

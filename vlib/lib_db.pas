@@ -8,8 +8,9 @@ uses Windows, Messages, SysUtils, Variants, Classes, ADODB, uDmConexao, DBClient
     protected
        FChave : String;
        FValor : Variant;
+       FComparador : String;
     public
-       constructor create(const chave : string; valor : variant);
+       constructor create(const chave : string; valor : variant; comparador : String);
        destructor destroy;override;
     end;
 
@@ -17,19 +18,20 @@ uses Windows, Messages, SysUtils, Variants, Classes, ADODB, uDmConexao, DBClient
     private
       FlistaValor : TList;
     public
-      procedure Add(const chave : string; valor : Variant);
+      procedure Add(const chave : string; valor : Variant; comparador : String);
       procedure Remove(const index : Integer); overload;
       procedure Remove(const chave : string); overload;
       function GetValue(const index : Integer): Variant; overload;
       function GetValue(const chave : string): Variant; overload;
       function GetKey(const index : integer): string;
+      function GetComparador(const index : integer) : string;
       function Count : Integer;
       procedure Clear;
       constructor create;
       destructor destroy; override;
     end;
 
-    TObjetoDB = class(TObject)
+    TObjetoDB = class(Tobject)
     private
       Fquery : TADOQuery;
       FTabela : String;
@@ -40,8 +42,7 @@ uses Windows, Messages, SysUtils, Variants, Classes, ADODB, uDmConexao, DBClient
       function GetSQlInsert : String;
       procedure SetParams;
     public
-      Cds : TClientDataSet;
-      procedure AddParametro(const field : string; valor : variant);
+      procedure AddParametro(const field : string; valor : variant; comparador : String = '=');
       procedure RemoverParametro(const index : Integer); overload;
       procedure RemoverParametro(const chave : String); overload;
       procedure RemoverTodosParametros;
@@ -53,6 +54,12 @@ uses Windows, Messages, SysUtils, Variants, Classes, ADODB, uDmConexao, DBClient
       function GetVal(const field : String): variant;
       procedure ChangeValue(const field : String; newvalue : Variant);
       procedure SaveChanges;
+      procedure Next;
+      procedure Prior;
+      procedure Last;
+      procedure First;
+      function IsEmpty : Boolean;
+      function Find(Field : String; Value : Variant) : Boolean;
       constructor create(const NomeTabela : String);
       destructor destroy; override;
     end;
@@ -64,23 +71,25 @@ implementation
 
 { TObjetoDB }
 
-procedure TObjetoDB.AddParametro(const field: string; valor: variant);
+procedure TObjetoDB.AddParametro(const field: string; valor: variant; comparador : String = '=');
 begin
-  FParametros.Add(field, valor);
+  FParametros.Add(field, valor, comparador);
 end;
 
 constructor TObjetoDB.create(const NomeTabela : String);
 begin
+
   FTabela := NomeTabela;
+
   Fquery := TADOQuery.Create(nil);
+  Fquery.Connection := dmConexao.adoConexaoBd;
+
   Fdsp := TDataSetProvider.Create(nil);
-  Cds := TClientDataSet.Create(nil);
+  Fdsp.DataSet := Fquery;
+
   FSqlAdicional := TStringList.Create;
   FParametros := TListaMapaValor.create;
-  Fquery.Connection := dmConexao.adoConexaoBd;
-  Fdsp.Name := 'dspConexao';
-  Cds.ProviderName := Fdsp.Name;
-  Fdsp.DataSet := Fquery;
+
 end;
 
 destructor TObjetoDB.destroy;
@@ -88,7 +97,6 @@ begin
   FreeAndNil(Fquery);
   FreeAndNil(FParametros);
   FreeAndNil(fdsp);
-  FreeAndNil(Cds);
   FSqlAdicional.Clear;
   FreeAndNil(FSqlAdicional);
   inherited destroy;
@@ -104,6 +112,7 @@ var
  contador : Integer;
  sql : string;
  key : string;
+ comparador : string;
 begin
   Result := EmptyStr;
 
@@ -113,7 +122,8 @@ begin
   for contador := 0 to FParametros.Count - 1 do
   begin
     key := FParametros.GetKey(contador);
-    sql := sql + Format(' %s = :%s AND ', [key, key]);
+    comparador := FParametros.GetComparador(contador);
+    sql := sql + Format(' %s %s :%s AND ', [key, comparador, key]);
   end;
   Result := sql;
   Result := Copy(Result, 1, Length(Result) - 4);
@@ -148,7 +158,7 @@ begin
 
   SetParams;
   Fquery.Open;
-  Cds.Data := Fdsp.Data;
+
 end;
 
 procedure TObjetoDB.SetParams;
@@ -206,7 +216,7 @@ end;
 
 function TObjetoDB.GetVal(const field: String): variant;
 begin
-  Result := Cds.FieldByName(field).Value;
+  Result := Fquery.FieldByName(field).Value;
 end;
 
 procedure TObjetoDB.AddSqlAdicional(sql: String);
@@ -238,12 +248,43 @@ begin
    Fquery.Post;
 end;
 
+procedure TObjetoDB.Next;
+begin
+   Fquery.Next;
+end;
+
+procedure TObjetoDB.Prior;
+begin
+  Fquery.Prior;
+end;
+
+procedure TObjetoDB.Last;
+begin
+  Fquery.Last;
+end;
+
+procedure TObjetoDB.First;
+begin
+  Fquery.First;
+end;
+
+function TObjetoDB.IsEmpty : Boolean;
+begin
+  Result := Fquery.IsEmpty;
+end;
+
+function TObjetoDB.Find(Field: String; Value: Variant): Boolean;
+begin
+  Result := Fquery.Locate(Field, Value, [loCaseInsensitive]);
+end;
+
 { TMapaValor }
 
-constructor TMapaValor.create(const chave: string; valor: variant);
+constructor TMapaValor.create(const chave: string; valor: variant; comparador : string);
 begin
   FChave := chave;
   FValor := valor;
+  FComparador := comparador;
 end;
 
 destructor TMapaValor.destroy;
@@ -253,11 +294,11 @@ end;
 
 { TListaMapaValor }
 
-procedure TListaMapaValor.Add(const chave: string; valor: Variant);
+procedure TListaMapaValor.Add(const chave: string; valor: Variant;  comparador : String);
 var
   Mapa : TMapaValor;
 begin
-  Mapa := TMapaValor.create(chave, valor);
+  Mapa := TMapaValor.create(chave, valor, comparador);
   FlistaValor.Add(Mapa);
 end;
 
@@ -331,6 +372,14 @@ end;
 procedure TListaMapaValor.Clear;
 begin
    FlistaValor.Clear;
+end;
+
+function TListaMapaValor.GetComparador(const index : integer): string;
+var
+  mapa : TMapaValor;
+begin
+  mapa := FlistaValor.Items[index];
+  Result := mapa.Fcomparador;
 end;
 
 end.

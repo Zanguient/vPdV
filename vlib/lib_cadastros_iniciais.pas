@@ -45,7 +45,7 @@ begin
 
     tbBairro.Select(['id']);
 
-    if not tbBairro.Cds.IsEmpty then
+    if not tbBairro.IsEmpty then
     begin
       FidBairro := tbBairro.GetVal('id');
       Exit;
@@ -73,7 +73,7 @@ begin
   tbCaixa := TObjetoDB.create('caixa');
   try
     tbCaixa.Select(['id']);
-    if tbCaixa.Cds.IsEmpty then
+    if tbCaixa.IsEmpty then
     begin
       tbCaixa.AddParametro('nmcaixa', 'CAIXA');
       tbCaixa.Insert;
@@ -95,7 +95,7 @@ begin
 
     tbCidade.Select(['id']);
 
-    if not tbCidade.Cds.IsEmpty then
+    if not tbCidade.IsEmpty then
     begin
       FIdCidade := tbCidade.GetVal('id');
       Exit;
@@ -125,7 +125,7 @@ begin
 
     tbEmpresa.Select(['id']);
 
-    if not tbEmpresa.Cds.IsEmpty then
+    if not tbEmpresa.IsEmpty then
     begin
       FidEmpresa := tbEmpresa.GetVal('id');
       Exit;
@@ -153,7 +153,7 @@ begin
 
     tbEstado.Select(['id']);
 
-    if not tbEstado.Cds.IsEmpty then
+    if not tbEstado.IsEmpty then
     begin
       FidEstado := tbEstado.GetVal('id');
       Exit;
@@ -185,7 +185,7 @@ begin
     tbFunc.AddParametro('usuario', 'vmsismaster');
 
     tbFunc.Select(['id', 'usuario']);
-    if not tbFunc.Cds.IsEmpty then
+    if not tbFunc.IsEmpty then
     begin
       FIdFuncionario := tbFunc.GetVal('id');
       Fusuario := tbFunc.GetVal('usuario');
@@ -231,7 +231,7 @@ begin
 
     tbPais.Select(['id']);
 
-    if not tbPais.Cds.IsEmpty then
+    if not tbPais.IsEmpty then
     begin
       FidPais := tbPais.GetVal('id');
       Exit;

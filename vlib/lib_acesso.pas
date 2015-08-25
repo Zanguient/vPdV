@@ -64,7 +64,7 @@ begin
   try
     tbRotina.AddParametro('modulo', modulo);
     tbRotina.Select(['id']);
-    if tbRotina.Cds.IsEmpty then
+    if tbRotina.IsEmpty then
     begin
       tbRotina.AddParametro('descricao', descricao);
 
@@ -94,7 +94,7 @@ begin
   FdbRotina.AddParametro('modulo', modulo);
   FdbRotina.Select(['id']);
 
-  if FdbRotina.Cds.IsEmpty then
+  if FdbRotina.IsEmpty then
     raise Exception.Create('O módulo especificado não existe.' + ' Modulo : ' + modulo);
 
   FDbPermissao.RemoverTodosParametros;
@@ -102,7 +102,7 @@ begin
 
   FDbPermissao.Select(['id']);
 
-  if not FDbPermissao.Cds.IsEmpty then
+  if not FDbPermissao.IsEmpty then
     Exit;
 
   FDbPermissao.AddParametro('funcionario_id', FUsuario.GetVal('id'));
@@ -124,7 +124,7 @@ begin
     FUsuario.AddParametro('usuario', usuario);
     FUsuario.Select(['usuario', 'nome', 'id', 'senha']);
 
-    if(FUsuario.Cds.IsEmpty) then
+    if(FUsuario.IsEmpty) then
     begin
       Aviso('Usuário informado não existe.');
       Abort;
@@ -156,7 +156,7 @@ begin
   FdbRotina.RemoverTodosParametros;
   FdbRotina.AddParametro('modulo', modulo);
   FdbRotina.Select(['id']);
-  Result := not FdbRotina.Cds.IsEmpty;
+  Result := not FdbRotina.IsEmpty;
 
   if not Result then
     Exit;
@@ -167,7 +167,7 @@ begin
   FDbPermissao.AddParametro('descricao', GetEnumName(TypeInfo(TPermissoes), Integer(permissao)));
 
   FDbPermissao.Select(['id']);
-  Result := not FDbPermissao.Cds.IsEmpty;
+  Result := not FDbPermissao.IsEmpty;
 end;
 
 end.
