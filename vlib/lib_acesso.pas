@@ -82,7 +82,7 @@ end;
 
 class procedure TAcesso.AddRotinas;
 begin
-  AddRotina('balanca', 'Abrir balanÁa', False);
+  AddRotina('gaveta', 'Abrir balan√ßa', False);
 end;
 
 { TAcessoUsuario }
@@ -95,7 +95,7 @@ begin
   FdbRotina.Select(['id']);
 
   if FdbRotina.IsEmpty then
-    raise Exception.Create('O mÛdulo especificado n„o existe.' + ' Modulo : ' + modulo);
+    raise Exception.Create('O m√≥dulo especificado n√£o existe.' + ' Modulo : ' + modulo);
 
   FDbPermissao.RemoverTodosParametros;
   FDbPermissao.AddParametro('descricao', GetEnumName(TypeInfo(TPermissoes), Integer(permissao)));
@@ -126,7 +126,7 @@ begin
 
     if(FUsuario.IsEmpty) then
     begin
-      Aviso('Usu·rio informado n„o existe.');
+      Aviso('Usu√°rio informado n√£o existe.');
       Abort;
     end;
 
