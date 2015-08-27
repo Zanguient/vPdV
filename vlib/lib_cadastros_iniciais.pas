@@ -51,7 +51,7 @@ begin
       Exit;
     end;
 
-    tbBairro.AddParametro('nmbairro', 'JARDIM VIT”RIA');
+    tbBairro.AddParametro('nmbairro', 'JARDIM VIT√ìRIA');
     tbBairro.AddParametro('dtcadastro', DATA_PADRAO);
  //   tbBairro.AddParametro('pais_id', FidPais);
 //    tbBairro.AddParametro('estado_id', FidEstado);
@@ -131,7 +131,7 @@ begin
       Exit;
     end;
 
-    tbEmpresa.AddParametro('nmempresa', 'JHOW A«AÕ');
+    tbEmpresa.AddParametro('nmempresa', 'JHOW A√áA√ç');
     tbEmpresa.AddParametro('dtcadastro', '2015-08-22');
     tbEmpresa.Insert;
 
@@ -265,7 +265,7 @@ begin
 
    UsrAce := TAcessoUsuario.create(Fusuario);
    try
-     UsrAce.AddPermissao('balanca', TpmProcessar);
+     UsrAce.AddPermissao('gaveta', TpmProcessar);
    finally
      FreeAndNil(UsrAce);
    end
