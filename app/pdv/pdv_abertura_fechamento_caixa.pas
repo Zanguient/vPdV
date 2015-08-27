@@ -159,7 +159,7 @@ begin
     begin
       panPreAbertura.Visible := True;
       frmAberturaFechamentoCaixa.Height := panPreAbertura.Height + panBotoes.Height + VALOR_ADICIONAL;
-      frmAberturaFechamentoCaixa.Caption := 'Definir valor inicial para próxima abertura';
+      frmAberturaFechamentoCaixa.Caption := 'Definir valor inicial para prÃ³xima abertura';
     end;
     tlAbertura:
     begin
@@ -350,7 +350,7 @@ begin
   tbMovCaixa := TObjetoDB.create('movcaixa');
   try
     //valores por tipo
-  //  tbMovCaixa.AddParametro('dtmovi', DataMovimento, ' >= ');
+    tbMovCaixa.AddParametro('dtmovi', DataMovimento, ' >= ');
     tbMovCaixa.AddSqlAdicional(' group by tpmovi');
     tbMovCaixa.Select(['sum(vrmovi) as vrmovi', 'tpmovi']);
 
