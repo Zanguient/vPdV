@@ -159,7 +159,7 @@ begin
     begin
       panPreAbertura.Visible := True;
       frmAberturaFechamentoCaixa.Height := panPreAbertura.Height + panBotoes.Height + VALOR_ADICIONAL;
-      frmAberturaFechamentoCaixa.Caption := 'Definir valor inicial para prÃ³xima abertura';
+      frmAberturaFechamentoCaixa.Caption := 'Definir valor inicial para próxima abertura';
     end;
     tlAbertura:
     begin
@@ -171,10 +171,12 @@ begin
     begin
       panFechamento.Visible := True;
       frmAberturaFechamentoCaixa.Height := panFechamento.Height + panBotoes.Height + VALOR_ADICIONAL;;
+      frmAberturaFechamentoCaixa.Width := frmAberturaFechamentoCaixa.Width + 3;
       frmAberturaFechamentoCaixa.Caption := 'Fechamento do caixa';
       BuscarValorFechamento;
     end;
   end;
+  frmAberturaFechamentoCaixa.AutoScroll := False;
   panBotoes.Visible := True;
 
 end;
@@ -342,7 +344,7 @@ begin
     tbAberFechCaixa.AddParametro('status', 'A');
     tbAberFechCaixa.AddParametro('id_caixa', IdCaixa);
     tbAberFechCaixa.Select(['dtmovi']);
-    DataMovimento := VarToDateTime(tbAberFechCaixa.GetVal('dtmovi'));
+    DataMovimento := tbAberFechCaixa.GetVal('dtmovi');
   finally
     FreeAndNil(tbAberFechCaixa);
   end;
@@ -350,7 +352,7 @@ begin
   tbMovCaixa := TObjetoDB.create('movcaixa');
   try
     //valores por tipo
-    tbMovCaixa.AddParametro('dtmovi', DataMovimento, ' >= ');
+    tbMovCaixa.AddParametro('dtmovi', FormatDateTime('yyy-MM-dd', DataMovimento), ' >= ');
     tbMovCaixa.AddSqlAdicional(' group by tpmovi');
     tbMovCaixa.Select(['sum(vrmovi) as vrmovi', 'tpmovi']);
 

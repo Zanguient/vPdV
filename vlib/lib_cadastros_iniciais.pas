@@ -51,7 +51,7 @@ begin
       Exit;
     end;
 
-    tbBairro.AddParametro('nmbairro', 'JARDIM VITÃ“RIA');
+    tbBairro.AddParametro('nmbairro', 'JARDIM VITÓRIA');
     tbBairro.AddParametro('dtcadastro', DATA_PADRAO);
  //   tbBairro.AddParametro('pais_id', FidPais);
 //    tbBairro.AddParametro('estado_id', FidEstado);
