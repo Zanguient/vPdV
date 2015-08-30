@@ -579,3 +579,4 @@ CREATE TABLE permusr
 );
 CREATE UNIQUE INDEX ux_permusr_descricao ON permusr(id_rotina, descricao);
 
+alter table endereco add complemento character varying(255) NULL;

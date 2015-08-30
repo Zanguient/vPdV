@@ -50,7 +50,7 @@ implementation
 {$R *.dfm}
 
 uses
-   libframes, pdv_main, uvVisaoClienteFrame, pdv_aberturacaixa, pdv_abertura_fechamento_caixa;
+   libframes, pdv_main, pdv_aberturacaixa, pdv_abertura_fechamento_caixa, uvCadastroClienteFrame;
 
 procedure TfrmMainBase.nbgSairClick(Sender: TObject);
 begin
@@ -90,7 +90,7 @@ end;
 
 procedure TfrmMainBase.nbiClienteClick(Sender: TObject);
 begin
-  TAbasNavegacao.CriarAba(pgcPrincipal, TvVisaoClienteFrame);
+  TAbasNavegacao.CriarAba(pgcPrincipal, TvCadastroCliente);
 end;
 
 end.
