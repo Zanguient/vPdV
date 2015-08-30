@@ -25,7 +25,8 @@ uses
   autenticacao in 'login\autenticacao.pas' {frmAutenticacao},
   lib_cadastros_iniciais in 'vlib\lib_cadastros_iniciais.pas',
   pdv_aberturacaixa in 'app\pdv\pdv_aberturacaixa.pas' {frmAberturaCaixa},
-  pdv_abertura_fechamento_caixa in 'app\pdv\pdv_abertura_fechamento_caixa.pas' {frmAberturaFechamentoCaixa};
+  pdv_abertura_fechamento_caixa in 'app\pdv\pdv_abertura_fechamento_caixa.pas' {frmAberturaFechamentoCaixa},
+  uvPadraoCadastroFrame in 'vlib\vComponents\uvPadraoCadastroFrame.pas' {vPadraoCadastro: TFrame};
 
 {$R *.res}
 
