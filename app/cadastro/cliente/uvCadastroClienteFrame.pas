@@ -31,7 +31,6 @@ type
     adqPadraoidentificador: TWideStringField;
     adqPadraotelcel: TWideStringField;
     adqPadraotelfixo: TWideStringField;
-    cxGrid1DBTableView1id: TcxGridDBColumn;
     cxGrid1DBTableView1nrinscjurd: TcxGridDBColumn;
     cxGrid1DBTableView1nmcliente: TcxGridDBColumn;
     cxGrid1DBTableView1telfixo: TcxGridDBColumn;

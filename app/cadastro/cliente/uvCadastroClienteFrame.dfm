@@ -50,9 +50,6 @@ inherited vCadastroCliente: TvCadastroCliente
           Width = 455
           LookAndFeel.SkinName = ''
           inherited cxGrid1DBTableView1: TcxGridDBTableView
-            object cxGrid1DBTableView1id: TcxGridDBColumn
-              DataBinding.FieldName = 'id'
-            end
             object cxGrid1DBTableView1nrinscjurd: TcxGridDBColumn
               DataBinding.FieldName = 'nrinscjurd'
             end

@@ -122,7 +122,10 @@ CREATE TABLE fornecedor
   nrinscjurd character varying(20) NOT NULL,
   nmfornecedor character varying(250) NOT NULL,
   identificador character varying(1) NOT NULL,
-  idempresa integer not null,  
+u
+  idempresa integer noout null,  
+  telcel character varying(15),
+  telfixo character varying(15),  
   CONSTRAINT fornecedor_pkey PRIMARY KEY (id),
   CONSTRAINT fornecedor_idempresa_empresa FOREIGN KEY(idempresa) 
      REFERENCES empresa(id),  

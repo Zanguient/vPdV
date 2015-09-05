@@ -1,5 +1,5 @@
 object lb_imagens: Tlb_imagens
-  Left = 332
+  Left = 334
   Top = 145
   Width = 256
   Height = 218
