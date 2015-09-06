@@ -1,6 +1,6 @@
 object frmMainBase: TfrmMainBase
-  Left = 136
-  Top = 65
+  Left = 45
+  Top = 57
   BorderStyle = bsNone
   ClientHeight = 632
   ClientWidth = 1222
@@ -58,6 +58,9 @@ object frmMainBase: TfrmMainBase
       Links = <
         item
           Item = nbiCliente
+        end
+        item
+          Item = nbiFornecedor
         end>
     end
     object nbgSair: TdxNavBarGroup
@@ -80,6 +83,10 @@ object frmMainBase: TfrmMainBase
     object nbiSaida: TdxNavBarItem
       Caption = 'Sa'#237'da'
       SmallImageIndex = 4
+    end
+    object nbiFornecedor: TdxNavBarItem
+      Caption = 'Fornecedor'
+      OnClick = nbiFornecedorClick
     end
   end
   object pgcPrincipal: TcxPageControl
