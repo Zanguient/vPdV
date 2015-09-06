@@ -1,6 +1,6 @@
 object frmAdicional: TfrmAdicional
-  Left = 192
-  Top = 103
+  Left = 332
+  Top = 76
   BorderStyle = bsNone
   ClientHeight = 517
   ClientWidth = 920

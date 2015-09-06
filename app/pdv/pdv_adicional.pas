@@ -153,14 +153,14 @@ begin
       frmPDV_PDV.cdsAddPedidoid.AsInteger       := 1
     else
       frmPDV_PDV.cdsAddPedidoid.AsInteger       := Integer(frmPDV_PDV.cdsAddPedidoMAXID.Value)+1;
-    {cdsAddPedidoVRUNITARIO: TFloatField
-    cdsAddPedidoVRTOTAITEM: TFloatField}
+    frmPDV_PDV.cdsAddPedidoVRUNITARIO.AsFloat   := cdsAdicionalVALOR.AsFloat;
+    frmPDV_PDV.cdsAddPedidoVRTOTAITEM.AsFloat   := cdsAdicionalVALOR.AsFloat;
     frmPDV_PDV.cdsAddPedidoQTITEM.AsFloat       := 1.0;
     frmPDV_PDV.cdsAddPedidoPRODUTO_ID.AsInteger := frmPDV_PDV.cdsItemPedidoID.AsInteger;
-    frmPDV_PDV.cdsAddPedidoNMPRODUTO.AsString   := frmPDV_PDV.cdsItemCategoriaNMPRODUTO.AsString;
-    frmPDV_PDV.cdsAddPedidoIMG.AsInteger        := 0;
+    frmPDV_PDV.cdsAddPedidoNMPRODUTO.AsString   := cdsAdicionalNMPRODUTO.AsString;
+    frmPDV_PDV.cdsAddPedidoIMG.AsInteger        := cdsAdicionalIMGINDEX.AsInteger;
     frmPDV_PDV.cdsAddPedido.Post;
-  end;  
+  end;
 end;
 
 function TfrmAdicional.GetBlz: Boolean;
