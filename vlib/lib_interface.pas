@@ -48,6 +48,7 @@ begin
    btn.OnClick := stOnClick;
    btn.Visible := True;
    btn.Tag     := intag;
+//   btn.CanBeFocused := True;
 end;
 
 procedure TInterface.OrganizaScrollBox(ScrollBox: TScrollBox; inTop: Integer);

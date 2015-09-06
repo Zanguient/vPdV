@@ -12,6 +12,7 @@ object frmPDV_PDV: TfrmPDV_PDV
   Font.Height = -11
   Font.Name = 'MS Sans Serif'
   Font.Style = []
+  KeyPreview = True
   OldCreateOrder = False
   Position = poScreenCenter
   OnCreate = FormCreate
@@ -389,6 +390,7 @@ object frmPDV_PDV: TfrmPDV_PDV
       object gdbPedido: TcxGridDBTableView
         NavigatorButtons.ConfirmDelete = False
         OnCellClick = gdbPedidoCellClick
+        OnCellDblClick = gdbPedidoCellDblClick
         DataController.DataSource = dtsItemPedido
         DataController.Summary.DefaultGroupSummaryItems = <>
         DataController.Summary.FooterSummaryItems = <>

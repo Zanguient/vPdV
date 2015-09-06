@@ -140,8 +140,6 @@ end;
 
 procedure TfrmAdicional.OnClickAdicionalPDV(Sender: TObject);
 begin
-  (Sender as TcxButton).CanBeFocused := not (Sender as TcxButton).CanBeFocused;
-
   if frmPDV_PDV.cdsAddPedido.Locate('PRODUTO_ID', frmPDV_PDV.cdsItemCategoriaID.AsInteger, [loCaseInsensitive]) then
   begin
     frmPDV_PDV.cdsAddPedido.Edit;
