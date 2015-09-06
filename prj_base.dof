@@ -137,7 +137,6 @@ Comments=
 [Excluded Packages]
 C:\PROGRA~2\Borland\Delphi7\Bin\DESIGN~2.BPL=Borland Designer IDE Package
 C:\PROGRA~2\Borland\Delphi7\Bin\CLXDES~1.BPL=CLX Form designer and property and component editors
-c:\program files (x86)\borland\delphi7\Bin\dclindy70.bpl=Internet Direct (Indy) for D7 Property and Component Editors
 c:\program files (x86)\borland\delphi7\Bin\DBWEBXPRT.BPL=Borland Web Wizard Package
 C:\Program Files (x86)\Borland\Delphi7\Bin\dclclxstd70.bpl=Borland CLX Standard Components
 C:\Program Files (x86)\Borland\Delphi7\Projects\Bpl\dxSkinscxPCPainterD7.bpl=ExpressSkins Library Painter for PageControl by Developer Express Inc.

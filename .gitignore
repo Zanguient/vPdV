@@ -6,3 +6,5 @@
 *.~dpr
 *.dcu
 *.~pas
+bin/dcu/main_base.dcu
+bin/prj_base.exe

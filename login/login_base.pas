@@ -56,7 +56,7 @@ implementation
 {$R *.dfm}
 
 uses
-   lib_mensagem, lib_db, lib_acesso, lib_cadastros_iniciais;
+   lib_mensagem, lib_db, lib_acesso, lib_cadastros_iniciais, lib_sincronizacao;
 
 { TfrmLoginBase }
 
@@ -178,7 +178,9 @@ begin
     end;
     Usuario := usrAcesso.Usuario;
     IdUsuario := usrAcesso.IdUsuario;
-    //FidUsuario := usrAcesso.
+
+
+    TSincronizarTabelas.Sincronizar;
   finally
     FreeAndNil(usrAcesso);
   end;

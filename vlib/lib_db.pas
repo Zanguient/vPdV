@@ -27,7 +27,7 @@ uses Windows, Messages, SysUtils, Variants, Classes, ADODB, uDmConexao, DBClient
       function GetComparador(const index : integer) : string;
       function Count : Integer;
       procedure Clear;
-      constructor create;
+      constructor create; virtual;
       destructor destroy; override;
     end;
 
@@ -36,13 +36,20 @@ uses Windows, Messages, SysUtils, Variants, Classes, ADODB, uDmConexao, DBClient
       Fquery : TADOQuery;
       FTabela : String;
       FParametros : TListaMapaValor;
+      FParametrosNewValue : TListaMapaValor;
       Fdsp : TDataSetProvider;
       FSqlAdicional : TStringList;
-      function GetSQLWhere : String;
-      function GetSQlInsert : String;
+      FIgnoreParams : TStringList;
+      function GetSQLWhere : string;
+      function GetSQlInsert : string;
+      function GetSQLUpdate : string;
       procedure SetParams;
+      procedure SetNewValueParamUp;
     public
+      procedure AddIgnoreParam(Param : String);
+      procedure ClearIgnoreParam;
       procedure AddParametro(const field : string; valor : variant; comparador : String = '=');
+      procedure AddParametroNewValueUp(const field : string; valor : variant);
       procedure RemoverParametro(const index : Integer); overload;
       procedure RemoverParametro(const chave : String); overload;
       procedure RemoverTodosParametros;
@@ -50,20 +57,22 @@ uses Windows, Messages, SysUtils, Variants, Classes, ADODB, uDmConexao, DBClient
       procedure ClearSqlAdicional;
       procedure Reset;
       procedure Select(fields : array of string);
-      procedure Insert();
-      function GetVal(const field : String): variant;
+      procedure Insert;
+      procedure Update;
       procedure ChangeValue(const field : String; newvalue : Variant);
       procedure SaveChanges;
       procedure Next;
       procedure Prior;
       procedure Last;
       procedure First;
+
+      procedure SetParamsToNewValueUp(const onlyIgnored : Boolean);
       function IsEmpty : Boolean;
       function Find(Field : String; Value : Variant) : Boolean;
+      function GetVal(const field : String): variant;
       constructor create(const NomeTabela : String);
       destructor destroy; override;
     end;
-
 
 
 implementation
@@ -89,6 +98,8 @@ begin
 
   FSqlAdicional := TStringList.Create;
   FParametros := TListaMapaValor.create;
+  FParametrosNewValue := TListaMapaValor.create;
+  FIgnoreParams := TStringList.Create;
 
 end;
 
@@ -99,6 +110,8 @@ begin
   FreeAndNil(fdsp);
   FSqlAdicional.Clear;
   FreeAndNil(FSqlAdicional);
+  FreeAndNil(FIgnoreParams);
+  FreeAndNil(FParametrosNewValue);
   inherited destroy;
 end;
 
@@ -116,15 +129,19 @@ var
 begin
   Result := EmptyStr;
 
-  if FParametros.Count > 0 then
-    sql := ' WHERE ';
-
   for contador := 0 to FParametros.Count - 1 do
   begin
     key := FParametros.GetKey(contador);
-    comparador := FParametros.GetComparador(contador);
-    sql := sql + Format(' %s %s :%s AND ', [key, comparador, key]);
+    if FIgnoreParams.IndexOf(key) = -1 then
+    begin
+      comparador := FParametros.GetComparador(contador);
+      sql := sql + Format(' %s %s :%s AND ', [key, comparador, key]);
+    end
   end;
+
+  if sql <> EmptyStr then
+    sql := ' WHERE ' + sql;
+
   Result := sql;
   Result := Copy(Result, 1, Length(Result) - 4);
 
@@ -164,10 +181,15 @@ end;
 procedure TObjetoDB.SetParams;
 var
  contador : Integer;
+ key : string;
 begin
   for contador := 0 to FParametros.Count - 1 do
   begin
-    Fquery.Parameters.ParamByName(FParametros.GetKey(contador)).Value := FParametros.GetValue(contador);
+    key := FParametros.GetKey(contador);
+    if FIgnoreParams.IndexOf(key) = -1 then
+    begin
+      Fquery.Parameters.ParamByName(key).Value := FParametros.GetValue(contador);
+    end
   end;
 end;
 
@@ -206,6 +228,7 @@ begin
   Fquery.SQL.Text := GetSQlInsert;
   SetParams;
   Fquery.ExecSQL;
+  FParametros.Clear;
 end;
 
 procedure TObjetoDB.RemoverTodosParametros;
@@ -238,14 +261,19 @@ end;
 
 procedure TObjetoDB.ChangeValue(const field: String; newvalue: Variant);
 begin
-   if Fquery.State in [dsBrowse, dsInactive] then
-     Fquery.Edit;
-   Fquery.FieldByName(field).Value := newvalue;
+  if Fquery.State in [dsBrowse, dsInactive] then
+  begin
+    Fquery.Edit;
+  end;
+  Fquery.FieldByName(field).Value := newvalue;
 end;
 
 procedure TObjetoDB.SaveChanges;
 begin
-   Fquery.Post;
+  if Fquery.State in [dsInsert, dsEdit] then
+  begin
+    Fquery.Post;
+  end
 end;
 
 procedure TObjetoDB.Next;
@@ -276,6 +304,87 @@ end;
 function TObjetoDB.Find(Field: String; Value: Variant): Boolean;
 begin
   Result := Fquery.Locate(Field, Value, [loCaseInsensitive]);
+end;
+
+procedure TObjetoDB.AddIgnoreParam(Param : String);
+begin
+  FIgnoreParams.Add(Param);
+end;
+
+procedure TObjetoDB.ClearIgnoreParam;
+begin
+   FIgnoreParams.Clear;
+end;
+
+
+procedure TObjetoDB.AddParametroNewValueUp(const field: string;
+  valor: variant);
+begin
+  FParametrosNewValue.Add(field, valor, '');
+end;
+
+procedure TObjetoDB.Update;
+begin
+  if ((FParametros.Count = 0) and (FSqlAdicional.Count = 0)) or (FParametrosNewValue.Count = 0) then
+     raise Exception.Create('Não será possível inserir, pois nenhum parametro foi fornecido');
+
+  Fquery.close;
+  Fquery.Parameters.Clear;
+  Fquery.SQL.Clear;
+  Fquery.SQL.Text := GetSQLUpdate;
+  SetParams;
+  SetNewValueParamUp;
+  Fquery.ExecSQL;
+  FParametros.Clear;
+  FParametrosNewValue.Clear;
+
+end;
+
+function TObjetoDB.GetSQLUpdate: string;
+var
+  contador : Integer;
+  sql_param, field : string;
+begin
+
+  sql_param := Format('update %s set ', [FTabela]);
+
+  for contador := 0 to FParametrosNewValue.Count - 1 do
+  begin
+    field := FParametrosNewValue.GetKey(contador);
+    sql_param := sql_param + Format(' %s = :new_%s and ', [field, field ])
+  end;
+  sql_param := Copy(sql_param, 1, Length(sql_param) - 4);
+  sql_param := sql_param + GetSQLWhere;
+
+  Result := sql_param;
+
+end;
+
+procedure TObjetoDB.SetNewValueParamUp;
+var
+ contador : Integer;
+ key : string;
+begin
+  for contador := 0 to FParametrosNewValue.Count - 1 do
+  begin
+    key := FParametrosNewValue.GetKey(contador);
+    Fquery.Parameters.ParamByName('new_' + key).Value := FParametrosNewValue.GetValue(contador);
+  end;
+
+end;
+
+procedure TObjetoDB.SetParamsToNewValueUp(const onlyIgnored: Boolean);
+var
+ contador : Integer;
+ key : string;
+begin
+  FParametrosNewValue.Clear;
+  for contador := 0 to FParametros.Count - 1 do
+  begin
+    key := FParametros.GetKey(contador);
+    FParametrosNewValue.Add(key, FParametros.GetValue(contador), '');
+  end;
+
 end;
 
 { TMapaValor }
@@ -351,12 +460,13 @@ var
   contador : Integer;
   mapa : TMapaValor;
 begin
-  for contador := 0 to FlistaValor.Count do
+  for contador := 0 to FlistaValor.Count - 1 do
   begin
     mapa := FlistaValor.Items[contador];
     if UpperCase(mapa.FChave) = UpperCase(chave) then
     begin
       Result := mapa.FValor;
+      Break;
     end;
   end;
 end;
