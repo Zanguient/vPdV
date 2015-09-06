@@ -56,6 +56,8 @@ type
     cxGridDBTableView1dtcadastro: TcxGridDBColumn;
     cxGridDBTableView1cdbairro_id: TcxGridDBColumn;
     cxGridDBTableView1complemento: TcxGridDBColumn;
+    procedure adqPadraoidentificadorChange(Sender: TField);
+    procedure adqDetailNewRecord(DataSet: TDataSet);
   private
     { Private declarations }
   public
@@ -68,5 +70,20 @@ var
 implementation
 
 {$R *.dfm}
+
+procedure TvCadastroFornecedorFrame.adqPadraoidentificadorChange(Sender: TField);
+begin
+  inherited;
+  if Sender.AsString = 'F' then
+    adqPadraonrinscjurd.EditMask := '000.000.000-00;0; '
+  else
+    adqPadraonrinscjurd.EditMask := '00.000.000/0000-00;0; ';
+end;
+
+procedure TvCadastroFornecedorFrame.adqDetailNewRecord(DataSet: TDataSet);
+begin
+  inherited;
+  adqDetailempresa_id.AsInteger := 1;
+end;
 
 end.

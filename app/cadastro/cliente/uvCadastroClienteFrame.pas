@@ -62,6 +62,7 @@ type
     cxGridDBTableView1dtcadastro: TcxGridDBColumn;
     procedure adqPadraoidentificadorChange(Sender: TField);
     procedure adqPadraoNewRecord(DataSet: TDataSet);
+    procedure adqDetailNewRecord(DataSet: TDataSet);
   private
     { Private declarations }
   public
@@ -89,6 +90,12 @@ begin
   inherited;
   adqPadraoidempresa.AsInteger := 1;
   adqPadraoidentificador.AsString := 'F';
+end;
+
+procedure TvCadastroCliente.adqDetailNewRecord(DataSet: TDataSet);
+begin
+  inherited;
+  adqDetailempresa_id.AsInteger := 1;
 end;
 
 end.

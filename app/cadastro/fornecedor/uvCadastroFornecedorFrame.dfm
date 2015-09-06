@@ -1,5 +1,6 @@
 inherited vCadastroFornecedorFrame: TvCadastroFornecedorFrame
   inherited pgcPadrao: TcxPageControl
+    ActivePage = tabVisao
     inherited tabVisao: TcxTabSheet
       inherited panClient: TPanel
         inherited cxgridFiltro: TcxVerticalGrid
@@ -93,21 +94,25 @@ inherited vCadastroFornecedorFrame: TvCadastroFornecedorFrame
             inherited cxGridDBTableView1: TcxGridDBTableView
               object cxGridDBTableView1nmrua: TcxGridDBColumn
                 DataBinding.FieldName = 'nmrua'
+                Width = 150
               end
               object cxGridDBTableView1cdnumero: TcxGridDBColumn
                 DataBinding.FieldName = 'cdnumero'
+                Width = 50
+              end
+              object cxGridDBTableView1complemento: TcxGridDBColumn
+                DataBinding.FieldName = 'complemento'
+                Width = 100
               end
               object cxGridDBTableView1cdcep: TcxGridDBColumn
                 DataBinding.FieldName = 'cdcep'
               end
-              object cxGridDBTableView1dtcadastro: TcxGridDBColumn
-                DataBinding.FieldName = 'dtcadastro'
-              end
               object cxGridDBTableView1cdbairro_id: TcxGridDBColumn
                 DataBinding.FieldName = 'cdbairro_id'
               end
-              object cxGridDBTableView1complemento: TcxGridDBColumn
-                DataBinding.FieldName = 'complemento'
+              object cxGridDBTableView1dtcadastro: TcxGridDBColumn
+                DataBinding.FieldName = 'dtcadastro'
+                Width = 80
               end
             end
           end
@@ -123,18 +128,19 @@ inherited vCadastroFornecedorFrame: TvCadastroFornecedorFrame
       FieldName = 'id'
       Visible = False
     end
-    object adqPadraonrinscjurd: TWideStringField
-      DisplayLabel = 'CPF/CNPJ'
-      FieldName = 'nrinscjurd'
-    end
     object adqPadraonmfornecedor: TWideStringField
       DisplayLabel = 'Nome'
       FieldName = 'nmfornecedor'
       Size = 250
     end
+    object adqPadraonrinscjurd: TWideStringField
+      DisplayLabel = 'CPF/CNPJ'
+      FieldName = 'nrinscjurd'
+    end
     object adqPadraoidentificador: TWideStringField
       DisplayLabel = 'Tipo'
       FieldName = 'identificador'
+      OnChange = adqPadraoidentificadorChange
       Size = 1
     end
     object adqPadraoidempresa: TIntegerField
@@ -172,14 +178,17 @@ inherited vCadastroFornecedorFrame: TvCadastroFornecedorFrame
       ReadOnly = True
     end
     object adqDetailnmrua: TWideStringField
+      DisplayLabel = 'Logradouro'
       FieldName = 'nmrua'
       Size = 200
     end
     object adqDetailcdnumero: TWideStringField
+      DisplayLabel = 'N'#250'mero'
       FieldName = 'cdnumero'
       Size = 30
     end
     object adqDetailcdcep: TWideStringField
+      DisplayLabel = 'CEP'
       FieldName = 'cdcep'
       Size = 10
     end
@@ -187,9 +196,11 @@ inherited vCadastroFornecedorFrame: TvCadastroFornecedorFrame
       FieldName = 'empresa_id'
     end
     object adqDetaildtcadastro: TDateField
+      DisplayLabel = 'Data cadastro'
       FieldName = 'dtcadastro'
     end
     object adqDetailcdbairro_id: TIntegerField
+      DisplayLabel = 'Bairro'
       FieldName = 'cdbairro_id'
     end
     object adqDetailcliente_id: TIntegerField
@@ -199,6 +210,7 @@ inherited vCadastroFornecedorFrame: TvCadastroFornecedorFrame
       FieldName = 'fornecedor_id'
     end
     object adqDetailcomplemento: TWideStringField
+      DisplayLabel = 'Complemento'
       FieldName = 'complemento'
       Size = 255
     end

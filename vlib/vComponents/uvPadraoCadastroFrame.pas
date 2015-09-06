@@ -81,7 +81,7 @@ type
     { Private declarations }
     stSql:String;
   protected
-    stpk, stDescricao: String;
+    stpk, stfk, stDescricao: String;
     procedure addFilter(filter: String); virtual;
     procedure DoFilterExecute(); virtual;
     procedure setCadastroCaption; virtual;
@@ -141,6 +141,7 @@ begin
   inherited;
   stSql := adqPadrao.SQL.Text;
   stpk := adqPadrao.Fields[0].FieldName;
+  stfk := adqDetail.Parameters.Items[0].Name;
   stDescricao := adqPadrao.Fields[1].FieldName;
   pgcPadrao.ActivePageIndex := 0;
   tabCadastro.TabVisible := False;
@@ -197,7 +198,7 @@ end;
 
 procedure TvPadraoCadastro.adqDetailNewRecord(DataSet: TDataSet);
 begin
-   adqDetail.Fields[0].Value := adqPadrao.FieldValues[stpk];
+   adqDetail.Fields.FieldByName(stfk).Value := adqPadrao.FieldValues[stpk];
 end;
 
 procedure TvPadraoCadastro.adqDetailBeforeOpen(DataSet: TDataSet);
@@ -219,7 +220,7 @@ procedure TvPadraoCadastro.setCadastroCaption;
 begin
   if pgcPadrao.ActivePageIndex = 1 then
   begin
-    if (adqPadrao.State = dsInsert) or (adqPadrao.RecordCount > 1) then
+    if (adqPadrao.State = dsInsert) or (adqPadrao.RecordCount < 1) then
       tabCadastro.Caption := lblNomeFrame.Caption
     else
       tabCadastro.Caption := lblNomeFrame.Caption + adqPadrao.FieldValues[stDescricao];
@@ -229,6 +230,7 @@ end;
 procedure TvPadraoCadastro.pgcPadraoChange(Sender: TObject);
 begin
   setCadastroCaption;
+  openDetail;
 end;
 
 procedure TvPadraoCadastro.openDetail;
