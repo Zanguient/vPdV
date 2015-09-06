@@ -146,11 +146,14 @@ type
     procedure cdsItemPedidoAfterScroll(DataSet: TDataSet);
     procedure gdbExcluirPropertiesButtonClick(Sender: TObject;
       AButtonIndex: Integer);
+    procedure btnGravarClick(Sender: TObject);
+    procedure cdsItemPedidoAfterPost(DataSet: TDataSet);
+    procedure gdbPedidoCellDblClick(Sender: TcxCustomGridTableView;
+      ACellViewInfo: TcxGridTableDataCellViewInfo; AButton: TMouseButton;
+      AShift: TShiftState; var AHandled: Boolean);
     procedure gdbPedidoCellClick(Sender: TcxCustomGridTableView;
       ACellViewInfo: TcxGridTableDataCellViewInfo; AButton: TMouseButton;
       AShift: TShiftState; var AHandled: Boolean);
-    procedure btnGravarClick(Sender: TObject);
-    procedure cdsItemPedidoAfterPost(DataSet: TDataSet);
   private
     { Private declarations }
     FParametros: TParametros;
@@ -313,7 +316,7 @@ procedure TfrmPDV_PDV.OnClickProdutosPDV(Sender: TObject);
         flRetConfirmaQtdePeso := ConfirmaQtdePeso(cdsItemCategoriaVRVENDA.AsFloat);
       if flRetConfirmaQtdePeso = 0 then begin
         cdsItemPedido.Cancel;
-        Exit;
+        Abort;
       end;
       cdsItemPedidoCARDAPIO_ID.AsInteger := (Sender as TcxButton).Tag;
       cdsItemPedidoQTITEM.AsFloat := RoundTo(flRetConfirmaQtdePeso, -3);
@@ -411,45 +414,6 @@ begin
   cdsItemPedido.Delete;}
 end;
 
-procedure TfrmPDV_PDV.gdbPedidoCellClick(Sender: TcxCustomGridTableView;
-  ACellViewInfo: TcxGridTableDataCellViewInfo; AButton: TMouseButton;
-  AShift: TShiftState; var AHandled: Boolean);
-begin
-  if ACellViewInfo.Item.Name = 'gdbExcluir' then
-  begin
-    if Confirma(EXCLUIR_ITEM) then
-    begin
-      while not cdsAddPedido.Eof do
-        cdsAddPedido.Delete;
-      cdsItemPedido.Delete;
-    end;
-  end else
-  begin
-    adqVerifAdicional.Close;
-    adqVerifAdicional.Parameters.ParamByName('P_PRODUTO').Value := cdsItemPedidoCARDAPIO_ID.AsInteger;
-    adqVerifAdicional.Open;
-
-    if not adqVerifAdicional.IsEmpty then
-    begin
-      if cdsAgrupAdicional.IsEmpty then
-      begin
-        adqAgrupAdicional.Close;
-        adqAgrupAdicional.Open;
-        cdsAgrupAdicional.Data := dspAgrupAdicional.Data;
-        adqAgrupAdicional.Close;
-      end;
-
-      frmAdicional := TfrmAdicional.Create(Self);
-
-      try
-        frmAdicional.ShowModal;
-      finally
-        FreeAndNil(frmAdicional);
-      end;
-    end;
-  end;
-end;
-
 procedure TfrmPDV_PDV.btnGravarClick(Sender: TObject);
 begin
   {adqInsPedido.Close;
@@ -495,6 +459,52 @@ begin
     edtTotal.Text := '0,00'
   else
     edtTotal.Text := cdsItemPedidoSUMVRTOTAL.Value;
+end;
+
+procedure TfrmPDV_PDV.gdbPedidoCellDblClick(Sender: TcxCustomGridTableView;
+  ACellViewInfo: TcxGridTableDataCellViewInfo; AButton: TMouseButton;
+  AShift: TShiftState; var AHandled: Boolean);
+begin
+  if not (ACellViewInfo.Item.Name = 'gdbExcluir') then
+  begin
+    adqVerifAdicional.Close;
+    adqVerifAdicional.Parameters.ParamByName('P_PRODUTO').Value := cdsItemPedidoCARDAPIO_ID.AsInteger;
+    adqVerifAdicional.Open;
+
+    if not adqVerifAdicional.IsEmpty then
+    begin
+      if cdsAgrupAdicional.IsEmpty then
+      begin
+        adqAgrupAdicional.Close;
+        adqAgrupAdicional.Open;
+        cdsAgrupAdicional.Data := dspAgrupAdicional.Data;
+        adqAgrupAdicional.Close;
+      end;
+
+      frmAdicional := TfrmAdicional.Create(Self);
+
+      try
+        frmAdicional.ShowModal;
+      finally
+        FreeAndNil(frmAdicional);
+      end;
+    end;
+  end;
+end;
+
+procedure TfrmPDV_PDV.gdbPedidoCellClick(Sender: TcxCustomGridTableView;
+  ACellViewInfo: TcxGridTableDataCellViewInfo; AButton: TMouseButton;
+  AShift: TShiftState; var AHandled: Boolean);
+begin 
+  if ACellViewInfo.Item.Name = 'gdbExcluir' then
+  begin
+    if Confirma(EXCLUIR_ITEM) then
+    begin
+      while not cdsAddPedido.Eof do
+        cdsAddPedido.Delete;
+      cdsItemPedido.Delete;
+    end;
+  end;
 end;
 
 end.
