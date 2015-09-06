@@ -65,7 +65,7 @@ CREATE TABLE cidade
   pais_id integer NOT NULL,
   estado_id integer NOT NULL,
   CONSTRAINT cidade_pkey PRIMARY KEY (id),
-  CONSTRAINT cidade_empresa_id_fkey FOREIGN KEY (empresa_id) 
+  CONSTRAINT cidade_empresa_id_fkey FOREIGN KEY (empresa_id)
       REFERENCES empresa (id),
   CONSTRAINT estado_id_refs_id_e254ed43 FOREIGN KEY (estado_id)
       REFERENCES estado (id),
@@ -108,9 +108,9 @@ CREATE TABLE cliente
   nmcliente character varying(250) NOT NULL,
   identificador character varying(1) NOT NULL,
   telcel character varying(15),
-  telfixo character varying(15),  
+  telfixo character varying(15),
   CONSTRAINT cliente_pkey PRIMARY KEY (id),
-  CONSTRAINT cliente_idempresa_empresa FOREIGN KEY(idempresa) 
+  CONSTRAINT cliente_idempresa_empresa FOREIGN KEY(idempresa)
      REFERENCES empresa(id),
   CONSTRAINT cliente_nmcliente_key UNIQUE (nmcliente)
 );
@@ -122,10 +122,10 @@ CREATE TABLE fornecedor
   nrinscjurd character varying(20) NOT NULL,
   nmfornecedor character varying(250) NOT NULL,
   identificador character varying(1) NOT NULL,
-  idempresa integer not null,  
+  idempresa integer not null,
   CONSTRAINT fornecedor_pkey PRIMARY KEY (id),
-  CONSTRAINT fornecedor_idempresa_empresa FOREIGN KEY(idempresa) 
-     REFERENCES empresa(id),  
+  CONSTRAINT fornecedor_idempresa_empresa FOREIGN KEY(idempresa)
+     REFERENCES empresa(id),
   CONSTRAINT fornecedor_nmfornecedor_key UNIQUE (nmfornecedor)
 );
 
@@ -139,20 +139,20 @@ CREATE TABLE endereco
   cdnumero character varying(30) NOT NULL,
   cdcep character varying(10) NOT NULL,
   empresa_id integer NOT NULL,
-  dtcadastro date NULL,  
+  dtcadastro date NULL,
   cdbairro_id integer NOT NULL,
   cliente_id integer NULL,
   fornecedor_id integer NULL,
-  CONSTRAINT endereco_pkey PRIMARY KEY (id),  
+  CONSTRAINT endereco_pkey PRIMARY KEY (id),
   CONSTRAINT endereco_cdbairro_id_fkey FOREIGN KEY(cdbairro_id)
       REFERENCES bairro(id),
   CONSTRAINT endereco_cliente_id FOREIGN KEY(cliente_id)
       REFERENCES cliente(id),
   CONSTRAINT endereco_forne_id_id FOREIGN KEY(fornecedor_id)
-      REFERENCES fornecedor(id)  
-	  
+      REFERENCES fornecedor(id)
+
 );
-  
+
 CREATE TABLE unidade
 (
   id integer NOT NULL AUTO_INCREMENT,
@@ -232,7 +232,7 @@ CREATE TABLE moviest
   CONSTRAINT smoviest_cliente_id_fkey FOREIGN KEY (cliente_id)
       REFERENCES cliente (id),
   CONSTRAINT moviest_finalidade_id_fkey FOREIGN KEY (finalidade_id)
-      REFERENCES finalidade (id)      
+      REFERENCES finalidade (id)
 );
 
 CREATE INDEX moviest_cliente_id ON moviest (cliente_id);
@@ -331,7 +331,7 @@ CREATE TABLE ItemCategoria
   qtadicgratis integer NOT NULL,
   CONSTRAINT ItemCategoria_pkey PRIMARY KEY (id),
   CONSTRAINT ItemCategoria_categoria_id_fkey FOREIGN KEY (categoria_id)
-      REFERENCES categoria (id),
+      REFERENCES categoria (id) ,
   CONSTRAINT ItemCategoria_produto_id_fkey FOREIGN KEY (produto_id)
       REFERENCES produto (id)
 );
@@ -429,6 +429,7 @@ CREATE TABLE adicionais
   item_id integer NOT NULL,
   valor FLOAT(14,2) NOT NULL,
   quantidade FLOAT(14,2) NOT NULL,
+  id_web integer null,
   CONSTRAINT agrupadicional_adicionais_pkey PRIMARY KEY (id),
   CONSTRAINT agrupadicional_adicionais_agrupadicional_id_fkey FOREIGN KEY (agrupadicional_id)
       REFERENCES AgrupAdicional (id),
@@ -439,13 +440,14 @@ CREATE TABLE adicionais
 CREATE INDEX agrupadicional_adicionais_agrupadicional_id ON adicionais(agrupadicional_id);
 CREATE INDEX agrupadicional_adicionais_item_id ON adicionais(item_id);
 
-  
+
 CREATE TABLE itadicional
 (
   id integer NOT NULL AUTO_INCREMENT,
   itempedido_id integer NOT NULL,
   item_id integer NOT NULL,
   qtitem FLOAT(14,2) NOT NULL,
+  id_web integer null,
   CONSTRAINT itadicional_pkey PRIMARY KEY (id),
   CONSTRAINT itadicional_itempedido_id_fkey FOREIGN KEY (itempedido_id)
       REFERENCES itempedido(id) ON DELETE CASCADE,
@@ -480,6 +482,7 @@ CREATE TABLE funcionario
   dtadmissao date,
   dtdemissao date,
   pessoa character varying(2) NOT NULL,
+  id_web integer null,
   CONSTRAINT funcionario_pkey PRIMARY KEY (id),
   CONSTRAINT funcionario_bairro_id_fkey FOREIGN KEY (bairro_id)
       REFERENCES bairro (id),
@@ -504,6 +507,7 @@ CREATE TABLE caixa
 (
   id integer NOT NULL AUTO_INCREMENT,
   nmcaixa character varying(50),
+  id_web integer null,
   CONSTRAINT caixa_pkey PRIMARY KEY(id)
 );
 CREATE UNIQUE INDEX ux_caixa_nmcaixa ON caixa(nmcaixa);
@@ -580,3 +584,27 @@ CREATE TABLE permusr
 CREATE UNIQUE INDEX ux_permusr_descricao ON permusr(id_rotina, descricao);
 
 alter table endereco add complemento character varying(255) NULL;
+alter table empresa add id_web integer NULL;
+alter table pais add id_web integer NULL;
+alter table estado add id_web integer NULL;
+alter table cidade add id_web integer NULL;
+alter table bairro add id_web integer NULL;
+alter table cliente add id_web integer NULL;
+alter table fornecedor add id_web integer NULL;
+alter table endereco add id_web integer NULL;
+alter table unidade add id_web integer NULL;
+alter table unimedida add id_web integer NULL;
+alter table produto add id_web integer NULL;
+alter table finalidade add id_web integer NULL;
+alter table moviest add id_web integer NULL;
+alter table finalidade add id_web integer NULL;
+alter table lote add id_web integer NULL;
+alter table posestoque add id_web integer NULL;
+alter table AgrupAdicional add id_web integer NULL;
+alter table categoria add id_web integer NULL;
+alter table ComposicaoProd add id_web integer NULL;
+alter table ItemCategoria add id_web integer NULL;
+alter table itagrupadicional add id_web integer NULL;
+alter table mesa add id_web integer NULL;
+alter table cliente add dtcadastro datetime not NULL DEFAULT CURRENT_TIMESTAMP
+alter table fornecedor add dtcadastro datetime not NULL DEFAULT CURRENT_TIMESTAMP

@@ -199,9 +199,9 @@ end;
 procedure TfrmPDVMain.cxButton1Click(Sender: TObject);
 begin
   inherited;
-  //colocar aqui o fechamento(a ser implementado)
   if CaixaFechado then
     CaixaPreAberto;
 end;
 
 end.
+

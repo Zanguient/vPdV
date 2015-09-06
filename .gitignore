@@ -8,3 +8,8 @@
 *.~pas
 bin/dcu/main_base.dcu
 bin/prj_base.exe
+bin/prj_base.exe
+prj_base.~dpr
+*.~dpr
+script_sql/BD_SQL.~SQL
+*.dcu

@@ -5,7 +5,6 @@ interface
 uses IdHTTP, SysUtils, Windows, Classes, Variants, Dialogs, lib_db, XMLDoc, XMLIntf;
 
 type
-  TChaveEValor = class of TMapaValor;
   TSincronizacao = class(TObject)
   private
     FUrlToGetXML: string;
@@ -19,7 +18,7 @@ type
   protected
 
   public
-    procedure Save; virtual;
+    procedure GetWebData; virtual;
     constructor create(const model, module: string; const CamposWebLocal: TListaMapaValor; const ChavesTabela: string;
       const TabelaLocal: string = '');
   end;
@@ -30,6 +29,8 @@ type
     class procedure Sincronizar;
   end;
 implementation
+
+uses StrUtils;
 
 
 const
@@ -103,13 +104,14 @@ begin
 
 end;
 
-procedure TSincronizacao.Save;
+procedure TSincronizacao.GetWebData;
 var
-  bd: TObjetoDB;
+  bd, bd_fk: TObjetoDB;
   i, k: Integer;
   doc: IXMLDocument;
   row, field: IXMLNode;
-  campos, campo_atual: string;
+  campos, campo_atual, campo_fk: string;
+
 begin
   bd:= TObjetoDB.create(FTabelaLocal);
   doc:= TXMLDocument.Create(nil);
@@ -138,14 +140,34 @@ begin
         field:= row.ChildNodes[k];
         campo_atual:= FCamposWebLocal.GetValue(VarToStr(field.Attributes['name']));
 
-        bd.AddParametro(campo_atual, field.NodeValue);
+        if field.HasAttribute('to') then
+        begin
+          campo_fk:= varToStr(field.Attributes['to']);
+          campo_fk:= ReverseString(campo_fk);
+          campo_fk:= copy(campo_fk, 1, pos('.', campo_fk)-1);
+          campo_fk := ReverseString(campo_fk);
+          bd_fk := TObjetoDB.create(campo_fk);
+          try
+            bd_fk.AddParametro('id_web', field.NodeValue);
+            bd_fk.Select(['id']);
+            bd.AddParametro(campo_atual, bd_fk.GetVal('id'));
+          finally
+            FreeAndNil(bd_fk);
+          end;
+        end
+        else
+        begin
+          bd.AddParametro(campo_atual, field.NodeValue);
+        end;
 
         if Pos(campo_atual + ',', FChavesTabela) = 0 then
           bd.AddIgnoreParam(campo_atual);
-        
-      end;
 
-      bd.Select(['codigo']);
+      end;
+      bd.AddParametro('id_web', row.Attributes['pk']);
+      bd.AddIgnoreParam('id_web');
+
+      bd.Select(['id']);
 
       if not bd.IsEmpty then
       begin
@@ -180,16 +202,107 @@ var
   sinc : TSincronizacao;
   map : TListaMapaValor;
 begin
-  map:= TListaMapaValor.create;
-  map.Add('nmempresa', 'nmempresa', '');
-  map.Add('codigo', 'codigo', '');
-  map.Add('dtcadastro', 'dtcadastro', '');
-  sinc := TSincronizacao.create('empresa', 'cadastro.empresa.models', map, 'codigo', 'empresa');
-  try
-    sinc.Save;
-  finally
-    FreeAndNil(sinc);
-  end;
+   try
+     map:= TListaMapaValor.create;
+     //empresa
+     map.Add('nmempresa', 'nmempresa', '');
+     map.Add('codigo', 'codigo', '');
+     map.Add('dtcadastro', 'dtcadastro', '');
+     sinc := TSincronizacao.create('empresa', 'cadastro.empresa.models', map, 'codigo', 'empresa');
+     sinc.GetWebData;
+     FreeAndNil(sinc);
+     FreeAndNil(map);
+
+     //pais
+     map := TListaMapaValor.create;
+     map.Add('empresa', 'empresa_id', '');
+     map.Add('dtcadastro', 'dtcadastro', '');
+     map.Add('cdpais', 'cdpais', '');
+     map.Add('nmpais', 'nmpais', '');
+     map.Add('cdsiscomex', 'cdsiscomex', '');
+     map.Add('sgpais2', 'sgpais2', '');
+     map.Add('sgpais3', 'sgpais3', '');
+     sinc := TSincronizacao.create('pais', 'cadastro.localidades.pais.models', map, 'cdpais', 'pais');
+     sinc.GetWebData;
+     FreeAndNil(sinc);
+     FreeAndNil(map);
+
+
+     //estado
+     map := TListaMapaValor.create;
+     map.Add('empresa', 'empresa_id', '');
+     map.Add('dtcadastro', 'dtcadastro', '');
+     map.Add('cdestado', 'cdestado', '');
+     map.Add('nmestado', 'nmestado', '');
+     map.Add('sgestado', 'sgestado', '');
+     map.Add('pais', 'pais_id', '');
+     map.Add('dsregiao', 'dsregiao', '');
+     sinc := TSincronizacao.create('estado', 'cadastro.localidades.estado.models', map, 'cdestado,sgestado', 'estado');
+     sinc.GetWebData;
+     FreeAndNil(sinc);
+     FreeAndNil(map);
+
+     //cidade
+     map := TListaMapaValor.create;
+     map.Add('empresa', 'empresa_id', '');
+     map.Add('dtcadastro', 'dtcadastro', '');
+     map.Add('cdcidade', 'cdcidade', '');
+     map.Add('nmcidade', 'nmcidade', '');
+     map.Add('pais', 'pais_id', '');
+     map.Add('estado', 'estado_id', '');
+     sinc := TSincronizacao.create('cidade', 'cadastro.localidades.cidade.models', map, 'cdcidade', 'cidade');
+     sinc.GetWebData;
+     FreeAndNil(sinc);
+     FreeAndNil(map);
+
+
+     //bairro
+     map := TListaMapaValor.create;
+     map.Add('empresa', 'empresa_id', '');
+     map.Add('dtcadastro', 'dtcadastro', '');
+     map.Add('cdbairro', 'cdbairro', '');
+     map.Add('nmbairro', 'nmbairro', '');
+     map.Add('cidade', 'cidade_id', '');
+     sinc := TSincronizacao.create('bairro', 'cadastro.localidades.bairro.models', map, 'cdbairro', 'bairro');
+     sinc.GetWebData;
+     FreeAndNil(sinc);
+     FreeAndNil(map);
+
+     //cliente
+     map := TListaMapaValor.create;
+     map.Add('master_endereco', 'idempresa', '');
+     map.Add('dtcadastro', 'dtcadastro', '');
+     map.Add('nrinscjurd', 'nrinscjurd', '');
+     map.Add('nmcliente', 'nmcliente', '');
+     map.Add('identificador', 'identificador', '');
+     map.Add('telcel', 'telcel', '');
+     map.Add('telfixo', 'telfixo', '');
+     sinc := TSincronizacao.create('cliente', 'cadastro.cliente.models', map, 'nmcliente', 'cliente');
+     sinc.GetWebData;
+     FreeAndNil(sinc);
+     FreeAndNil(map);
+
+     //fornecedor
+     map := TListaMapaValor.create;
+     map.Add('empresa', 'idempresa', '');
+     map.Add('dtcadastro', 'dtcadastro', '');
+     map.Add('nrinscjurd', 'nrinscjurd', '');
+     map.Add('nmfornecedor', 'nmfornecedor', '');
+     map.Add('identificador', 'identificador', '');
+     map.Add('telcel', 'telcel', '');
+     map.Add('telfixo', 'telfixo', '');
+     sinc := TSincronizacao.create('fornecedor', 'cadastro.fornecedor.models', map, 'nmfornecedor', 'fornecedor');
+     sinc.GetWebData;
+     FreeAndNil(sinc);
+     FreeAndNil(map);
+
+   finally
+     if Assigned(sinc) then
+        FreeAndNil(sinc);
+     if Assigned(map) then
+        FreeAndNil(map);
+
+   end;
 
 end;
 

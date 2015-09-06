@@ -351,9 +351,9 @@ begin
   for contador := 0 to FParametrosNewValue.Count - 1 do
   begin
     field := FParametrosNewValue.GetKey(contador);
-    sql_param := sql_param + Format(' %s = :new_%s and ', [field, field ])
+    sql_param := sql_param + Format(' %s = :new_%s, ', [field, field ])
   end;
-  sql_param := Copy(sql_param, 1, Length(sql_param) - 4);
+  sql_param := Copy(sql_param, 1, Length(sql_param) - 2);
   sql_param := sql_param + GetSQLWhere;
 
   Result := sql_param;
