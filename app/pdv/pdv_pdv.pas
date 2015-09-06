@@ -486,7 +486,7 @@ begin
       try
         frmAdicional.ShowModal;
       finally
-        FreeAndNil(frmAdicional);
+        FreeAndNil(frmAdicional );
       end;
     end;
   end;
