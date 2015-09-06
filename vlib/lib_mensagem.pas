@@ -17,6 +17,7 @@ CONST
    INFORMAR_USUARIO = 'Usuário deve ser informado.';
    INFORMAR_SENHA   = 'Senha deve ser informada.';
    INFORMAR_VALOR   = 'Valor deve ser informado.';
+   INFORMAR_QTDE    = 'Quantidade deve ser informada.';
    OPCAO_N_IDENTIFICADA = 'Opção não identificada.';
    EXISTENCIA_CAIXA_ABERTO = 'O caixa não foi fechado. Feche antes de prosseguir.';
    FALHA_ABRIR_CAIXA = 'Ocorreu uma falha ao abrir o caixa.';
@@ -39,6 +40,9 @@ CONST
 
    { Rotina de Login }
    INICIA_PROCESSO_FC = 'Iniciando frente de caixa...';
+
+   { PDV }
+   EXCLUIR_ITEM = 'Deseja excluir o item?';
 
 implementation
 

@@ -24,9 +24,9 @@ uses
   pdv_aberturacaixa in 'app\pdv\pdv_aberturacaixa.pas' {frmAberturaCaixa},
   pdv_abertura_fechamento_caixa in 'app\pdv\pdv_abertura_fechamento_caixa.pas' {frmAberturaFechamentoCaixa},
   uvPadraoCadastroFrame in 'vlib\vComponents\uvPadraoCadastroFrame.pas' {vPadraoCadastro: TFrame},
-  lib_sincronizacao in 'vlib\lib_sincronizacao.pas';
+  lib_sincronizacao in 'vlib\lib_sincronizacao.pas',
+  pdv_confirma_qtde_peso in 'app\pdv\pdv_confirma_qtde_peso.pas' {frmConfirmaQtdePeso},
   uvCadastroFornecedorFrame in 'app\cadastro\fornecedor\uvCadastroFornecedorFrame.pas' {vCadastroFornecedorFrame: TFrame};
-
 
 {$R *.res}
 
