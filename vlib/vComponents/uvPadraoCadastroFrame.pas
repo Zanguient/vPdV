@@ -3,7 +3,7 @@ unit uvPadraoCadastroFrame;
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms, 
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, cxGraphics, cxControls, cxLookAndFeels, cxLookAndFeelPainters,
   dxSkinsCore, dxSkinBlack, dxSkinBlue, dxSkinCaramel, dxSkinCoffee,
   dxSkinDarkRoom, dxSkinDarkSide, dxSkinFoggy, dxSkinGlassOceans,
@@ -75,15 +75,19 @@ type
     procedure adqDetailBeforeOpen(DataSet: TDataSet);
     procedure dtsPadraoStateChange(Sender: TObject);
     procedure pgcPadraoChange(Sender: TObject);
+    procedure cxGrid1DBTableView1DblClick(Sender: TObject);
+    procedure cxButton1Click(Sender: TObject);
   private
     { Private declarations }
     stSql:String;
   protected
-    stpk, stDescricao: String; 
+    stpk, stfk, stDescricao: String;
     procedure addFilter(filter: String); virtual;
     procedure DoFilterExecute(); virtual;
     procedure setCadastroCaption; virtual;
     procedure openDetail; virtual;
+    procedure setCadastroAba();
+    procedure setVisaoAba();    
   public
     { Public declarations }
     constructor Create(AOwner: TComponent); override;
@@ -97,11 +101,7 @@ procedure TvPadraoCadastro.cxNavPadraoButtonsButtonClick(Sender: TObject;
   AButtonIndex: Integer; var ADone: Boolean);
 begin
   if AButtonIndex = NBDI_INSERT then
-  begin
-    tabVisao.TabVisible := False;
-    tabCadastro.TabVisible := True;
-    pgcPadrao.ActivePage := tabCadastro;
-  end
+    setCadastroAba
   else
     inherited;
 end;
@@ -109,14 +109,14 @@ end;
 procedure TvPadraoCadastro.actFilttarExecute(Sender: TObject);
 begin
   adqPadrao.Close;
-  adqPadrao.SQL.Text := stSql;  
+  adqPadrao.SQL.Text := stSql;
   DoFilterExecute;
   adqPadrao.Open;
 end;
 
 procedure TvPadraoCadastro.btnFecharClick(Sender: TObject);
 begin
-  Owner.Destroy;
+  Owner.Free;
 end;
 
 procedure TvPadraoCadastro.actLimparExecute(Sender: TObject);
@@ -141,10 +141,13 @@ begin
   inherited;
   stSql := adqPadrao.SQL.Text;
   stpk := adqPadrao.Fields[0].FieldName;
-  stDescricao := adqPadrao.Fields[1].FieldName;  
+  stfk := adqDetail.Parameters.Items[0].Name;
+  stDescricao := adqPadrao.Fields[1].FieldName;
   pgcPadrao.ActivePageIndex := 0;
   tabCadastro.TabVisible := False;
   tabVisao.Caption := lblNomeFrame.Caption;
+  addFilter('1=2');
+  adqPadrao.Active := True;
 end;
 
 procedure TvPadraoCadastro.DoFilterExecute;
@@ -188,17 +191,14 @@ procedure TvPadraoCadastro.cxDBNavigator2ButtonsButtonClick(
   Sender: TObject; AButtonIndex: Integer; var ADone: Boolean);
 begin
   if (AButtonIndex = NBDI_CANCEL) and (adqPadrao.State = dsInsert) then
-  begin
-    tabVisao.TabVisible := True;
-    tabCadastro.TabVisible := False;
-    pgcPadrao.ActivePage := tabVisao;
-  end;
-  inherited;
+    setVisaoAba
+  else
+    inherited;
 end;
 
 procedure TvPadraoCadastro.adqDetailNewRecord(DataSet: TDataSet);
 begin
-   adqDetail.Fields[0].Value := adqPadrao.FieldValues[stpk];
+   adqDetail.Fields.FieldByName(stfk).Value := adqPadrao.FieldValues[stpk];
 end;
 
 procedure TvPadraoCadastro.adqDetailBeforeOpen(DataSet: TDataSet);
@@ -220,7 +220,7 @@ procedure TvPadraoCadastro.setCadastroCaption;
 begin
   if pgcPadrao.ActivePageIndex = 1 then
   begin
-    if (adqPadrao.State = dsInsert) or (adqPadrao.RecordCount > 1) then
+    if (adqPadrao.State = dsInsert) or (adqPadrao.RecordCount < 1) then
       tabCadastro.Caption := lblNomeFrame.Caption
     else
       tabCadastro.Caption := lblNomeFrame.Caption + adqPadrao.FieldValues[stDescricao];
@@ -230,6 +230,7 @@ end;
 procedure TvPadraoCadastro.pgcPadraoChange(Sender: TObject);
 begin
   setCadastroCaption;
+  openDetail;
 end;
 
 procedure TvPadraoCadastro.openDetail;
@@ -239,6 +240,31 @@ begin
     adqDetail.Close;
     adqDetail.Open;
   end;
+end;
+
+procedure TvPadraoCadastro.setCadastroAba;
+begin
+  tabVisao.TabVisible := False;
+  tabCadastro.TabVisible := True;
+  pgcPadrao.ActivePage := tabCadastro;
+end;
+
+procedure TvPadraoCadastro.cxGrid1DBTableView1DblClick(Sender: TObject);
+begin
+  if not adqPadrao.IsEmpty then
+    setCadastroAba;
+end;
+
+procedure TvPadraoCadastro.setVisaoAba;
+begin
+  tabVisao.TabVisible := True;
+  tabCadastro.TabVisible := False;
+  pgcPadrao.ActivePage := tabVisao;
+end;
+
+procedure TvPadraoCadastro.cxButton1Click(Sender: TObject);
+begin
+  setVisaoAba;
 end;
 
 end.

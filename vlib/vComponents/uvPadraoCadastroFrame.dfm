@@ -49,6 +49,7 @@ object vPadraoCadastro: TvPadraoCadastro
           LookAndFeel.NativeStyle = True
           LookAndFeel.SkinName = ''
           object cxGrid1DBTableView1: TcxGridDBTableView
+            OnDblClick = cxGrid1DBTableView1DblClick
             NavigatorButtons.ConfirmDelete = False
             OnCustomDrawCell = cxGrid1DBTableView1CustomDrawCell
             DataController.DataSource = dtsPadrao
@@ -274,7 +275,7 @@ object vPadraoCadastro: TvPadraoCadastro
               Buttons.SaveBookmark.Visible = False
               Buttons.GotoBookmark.Visible = False
               Buttons.Filter.Visible = False
-              DataSource = dtsPadrao
+              DataSource = dtsDetail
               InfoPanel.Font.Charset = DEFAULT_CHARSET
               InfoPanel.Font.Color = clDefault
               InfoPanel.Font.Height = -11
@@ -347,6 +348,7 @@ object vPadraoCadastro: TvPadraoCadastro
           Height = 27
           Caption = 'X'
           TabOrder = 0
+          OnClick = cxButton1Click
           Align = alRight
           Colors.Default = clBtnHighlight
           Colors.NormalText = clActiveCaption

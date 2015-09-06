@@ -29,10 +29,12 @@ type
     nbiEntrada: TdxNavBarItem;
     nbiSaida: TdxNavBarItem;
     cilMenu: TcxImageList;
+    nbiFornecedor: TdxNavBarItem;
     procedure nbgSairClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure nbgPDVClick(Sender: TObject);
     procedure nbiClienteClick(Sender: TObject);
+    procedure nbiFornecedorClick(Sender: TObject);
   private
     { Private declarations }
 //    procedure InvocadordeBpl(stClasse: String);
@@ -50,7 +52,8 @@ implementation
 {$R *.dfm}
 
 uses
-   libframes, pdv_main, pdv_aberturacaixa, pdv_abertura_fechamento_caixa, uvCadastroClienteFrame;
+   libframes, pdv_main, pdv_aberturacaixa, pdv_abertura_fechamento_caixa, uvCadastroClienteFrame,
+   uvCadastroFornecedorFrame;
 
 procedure TfrmMainBase.nbgSairClick(Sender: TObject);
 begin
@@ -91,6 +94,11 @@ end;
 procedure TfrmMainBase.nbiClienteClick(Sender: TObject);
 begin
   TAbasNavegacao.CriarAba(pgcPrincipal, TvCadastroCliente);
+end;
+
+procedure TfrmMainBase.nbiFornecedorClick(Sender: TObject);
+begin
+  TAbasNavegacao.CriarAba(pgcPrincipal, TvCadastroFornecedorFrame);
 end;
 
 end.
