@@ -98,7 +98,7 @@ CREATE TABLE cliente
   cdcep character varying(10),
   cdbairro_id integer,
   CONSTRAINT cliente_pkey PRIMARY KEY (id),
-  CONSTRAINT cliente_nmcliente_key UNIQUE (nmcliente),
+  CONSTRAINT cliente_telcel_key UNIQUE (telcel),
   CONSTRAINT cdbairro_id_refs_id_302eac2a FOREIGN KEY (cdbairro_id)
       REFERENCES bairro (id)
 
@@ -115,8 +115,10 @@ CREATE TABLE fornecedor
   cdnumero character varying(30),
   cdcep character varying(10),
   cdbairro_id integer,
+  telcel character varying(15),
+  telfixo character varying(15),
   CONSTRAINT fornecedor_pkey PRIMARY KEY (id),
-  CONSTRAINT fornecedor_nmfornecedor_key UNIQUE (nmfornecedor),
+  CONSTRAINT fornecedor_telcel_key UNIQUE (telcel),
   CONSTRAINT cdbairro_id_refs_id_fe7bab86 FOREIGN KEY (cdbairro_id)
       REFERENCES bairro (id)
 );

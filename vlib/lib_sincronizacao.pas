@@ -278,7 +278,7 @@ begin
      map.Add('cdnumero', 'cdnumero', '');
      map.Add('cdcep', 'cdcep', '');
      map.Add('cdbairro', 'cdbairro_id', '');
-     sinc := TSincronizacao.create('cliente', 'cadastro.cliente.models', map, 'nmcliente', 'cliente');
+     sinc := TSincronizacao.create('cliente', 'cadastro.cliente.models', map, 'telcel', 'cliente');
      sinc.GetWebData;
      FreeAndNil(sinc);
      FreeAndNil(map);
@@ -296,7 +296,7 @@ begin
      map.Add('cdnumero', 'cdnumero', '');
      map.Add('cdcep', 'cdcep', '');
      map.Add('cdbairro', 'cdbairro_id', '');
-     sinc := TSincronizacao.create('fornecedor', 'cadastro.fornecedor.models', map, 'nmfornecedor', 'fornecedor');
+     sinc := TSincronizacao.create('fornecedor', 'cadastro.fornecedor.models', map, 'telcel', 'fornecedor');
      sinc.GetWebData;
      FreeAndNil(sinc);
      FreeAndNil(map);
