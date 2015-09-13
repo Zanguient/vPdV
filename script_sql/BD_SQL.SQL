@@ -150,8 +150,9 @@ CREATE TABLE Almoxarifado
   id integer NOT NULL AUTO_INCREMENT,
   nmalmoxa character varying(250) NOT NULL,
   dtcadastro date,
-  CONSTRAINT Almoxarifado_pkey PRIMARY KEY(id)  
+  CONSTRAINT Almoxarifado_pkey PRIMARY KEY(id)
 );
+
 
 CREATE TABLE unidade
 (
@@ -310,7 +311,7 @@ CREATE TABLE ItemCategoria
   qtadicgratis integer NOT NULL,
   CONSTRAINT ItemCategoria_pkey PRIMARY KEY (id),
   CONSTRAINT ItemCategoria_categoria_id_fkey FOREIGN KEY (categoria_id)
-      REFERENCES categoria (id) ,
+      REFERENCES categoria (id),
   CONSTRAINT ItemCategoria_produto_id_fkey FOREIGN KEY (produto_id)
       REFERENCES produto (id)
 );
@@ -401,7 +402,7 @@ CREATE TABLE adicionais
   item_id integer NOT NULL,
   valor FLOAT(14,2) NOT NULL,
   quantidade FLOAT(14,2) NOT NULL,
-  id_web integer null,  
+  id_web integer null,
   CONSTRAINT agrupadicional_adicionais_pkey PRIMARY KEY (id),
   CONSTRAINT agrupadicional_adicionais_agrupadicional_id_fkey FOREIGN KEY (agrupadicional_id)
       REFERENCES AgrupAdicional (id),
@@ -419,7 +420,6 @@ CREATE TABLE itadicional
   itempedido_id integer NOT NULL,
   item_id integer NOT NULL,
   qtitem FLOAT(14,2) NOT NULL,
-  id_web integer null,
   CONSTRAINT itadicional_pkey PRIMARY KEY (id),
   CONSTRAINT itadicional_itempedido_id_fkey FOREIGN KEY (itempedido_id)
       REFERENCES itempedido(id) ON DELETE CASCADE,
@@ -453,7 +453,6 @@ CREATE TABLE funcionario
   dtadmissao date,
   dtdemissao date,
   pessoa character varying(2) NOT NULL,
-  id_web integer null,
   CONSTRAINT funcionario_pkey PRIMARY KEY (id),
   CONSTRAINT funcionario_bairro_id_fkey FOREIGN KEY (bairro_id)
       REFERENCES bairro (id),
@@ -475,7 +474,6 @@ CREATE TABLE caixa
 (
   id integer NOT NULL AUTO_INCREMENT,
   nmcaixa character varying(50),
-  id_web integer null,
   CONSTRAINT caixa_pkey PRIMARY KEY(id)
 );
 CREATE UNIQUE INDEX ux_caixa_nmcaixa ON caixa(nmcaixa);
@@ -575,4 +573,5 @@ alter table itagrupadicional add id_web integer NULL;
 alter table mesa add id_web integer NULL;
 alter table cliente add dtcadastro datetime not NULL DEFAULT CURRENT_TIMESTAMP;
 alter table fornecedor add dtcadastro datetime not NULL DEFAULT CURRENT_TIMESTAMP;
+
 

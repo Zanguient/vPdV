@@ -5,6 +5,7 @@ interface
 uses IdHTTP, SysUtils, Windows, Classes, Variants, Dialogs, lib_db, XMLDoc, XMLIntf;
 
 type
+  TChaveEValor = class of TMapaValor;
   TSincronizacao = class(TObject)
   private
     FUrlToGetXML: string;
@@ -18,7 +19,7 @@ type
   protected
 
   public
-    procedure GetWebData; virtual;
+    procedure Save; virtual;
     constructor create(const model, module: string; const CamposWebLocal: TListaMapaValor; const ChavesTabela: string;
       const TabelaLocal: string = '');
   end;
@@ -29,8 +30,6 @@ type
     class procedure Sincronizar;
   end;
 implementation
-
-uses StrUtils;
 
 
 const
@@ -104,9 +103,9 @@ begin
 
 end;
 
-procedure TSincronizacao.GetWebData;
+procedure TSincronizacao.Save;
 var
-  bd, bd_fk: TObjetoDB;
+  bd: TObjetoDB;
   i, k: Integer;
   doc: IXMLDocument;
   row, field: IXMLNode;
@@ -139,6 +138,7 @@ begin
       begin
         field:= row.ChildNodes[k];
         campo_atual:= FCamposWebLocal.GetValue(VarToStr(field.Attributes['name']));
+<<<<<<< HEAD
         valor_adicional := FCamposWebLocal.GetAdicional(VarToStr(field.Attributes['name']));
         if valor_adicional <> EmptyStr then
         begin
@@ -167,14 +167,14 @@ begin
           end;
         end;
 
+        bd.AddParametro(campo_atual, field.NodeValue);
+
         if Pos(campo_atual + ',', FChavesTabela) = 0 then
           bd.AddIgnoreParam(campo_atual);
-
+        
       end;
-      bd.AddParametro('id_web', row.Attributes['pk']);
-      bd.AddIgnoreParam('id_web');
 
-      bd.Select(['id']);
+      bd.Select(['codigo']);
 
       if not bd.IsEmpty then
       begin
@@ -210,6 +210,7 @@ var
   map : TListaMapaValor;
 
 begin
+
    try
 
      //pais

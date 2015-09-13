@@ -1,5 +1,5 @@
 object frmLoginBase: TfrmLoginBase
-  Left = 350
+  Left = 623
   Top = 188
   AlphaBlend = True
   AlphaBlendValue = 220

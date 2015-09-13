@@ -25,10 +25,8 @@ uses
   pdv_abertura_fechamento_caixa in 'app\pdv\pdv_abertura_fechamento_caixa.pas' {frmAberturaFechamentoCaixa},
   uvPadraoCadastroFrame in 'vlib\vComponents\uvPadraoCadastroFrame.pas' {vPadraoCadastro: TFrame},
   lib_sincronizacao in 'vlib\lib_sincronizacao.pas',
-  uvCadastroFornecedorFrame in 'app\cadastro\fornecedor\uvCadastroFornecedorFrame.pas' {vCadastroFornecedorFrame: TFrame},
-  pdv_confirma_qtde_peso in 'app\pdv\pdv_confirma_qtde_peso.pas' {frmConfirmaQtdePeso};
-
-
+  pdv_confirma_qtde_peso in 'app\pdv\pdv_confirma_qtde_peso.pas' {frmConfirmaQtdePeso},
+  uvCadastroFornecedorFrame in 'app\cadastro\fornecedor\uvCadastroFornecedorFrame.pas' {vCadastroFornecedorFrame: TFrame};
 
 {$R *.res}
 
@@ -40,11 +38,9 @@ begin
   try
      if frmLoginBase.GetLogado then
      begin
-       //Application.CreateForm(TfrmMainBase, frmMainBase);
+
        CriarMainForm(frmLoginBase.IdUsuario, frmLoginBase.IdEmpresa, frmLoginBase.IdUnidade,
          frmLoginBase.NomeUsuario, frmLoginBase.NomeEmpresa, frmLoginBase.NomeUnidade);
-//       frmMainBase.Fusuario := frmLoginBase.Usuario;
-//       frmMainBase.FidUsuario := frmLoginBase.IdUsuario;
        FreeAndNil(frmLoginBase);
        Application.Run;
      end;
