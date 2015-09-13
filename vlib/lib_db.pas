@@ -8,9 +8,9 @@ uses Windows, Messages, SysUtils, Variants, Classes, ADODB, uDmConexao, DBClient
     protected
        FChave : String;
        FValor : Variant;
-       FComparador : String;
+       FAdicional : String;
     public
-       constructor create(const chave : string; valor : variant; comparador : String);
+       constructor create(const chave : string; valor : variant; Adicional : String = '');
        destructor destroy;override;
     end;
 
@@ -18,13 +18,14 @@ uses Windows, Messages, SysUtils, Variants, Classes, ADODB, uDmConexao, DBClient
     private
       FlistaValor : TList;
     public
-      procedure Add(const chave : string; valor : Variant; comparador : String);
+      procedure Add(const chave : string; valor : Variant; Adicional : String = '');
       procedure Remove(const index : Integer); overload;
       procedure Remove(const chave : string); overload;
       function GetValue(const index : Integer): Variant; overload;
       function GetValue(const chave : string): Variant; overload;
       function GetKey(const index : integer): string;
-      function GetComparador(const index : integer) : string;
+      function GetAdicional(const index : integer) : string; overload;
+      function GetAdicional(const chave : string) : string; overload;
       function Count : Integer;
       procedure Clear;
       constructor create; virtual;
@@ -134,7 +135,7 @@ begin
     key := FParametros.GetKey(contador);
     if FIgnoreParams.IndexOf(key) = -1 then
     begin
-      comparador := FParametros.GetComparador(contador);
+      comparador := FParametros.GetAdicional(contador);
       sql := sql + Format(' %s %s :%s AND ', [key, comparador, key]);
     end
   end;
@@ -389,11 +390,11 @@ end;
 
 { TMapaValor }
 
-constructor TMapaValor.create(const chave: string; valor: variant; comparador : string);
+constructor TMapaValor.create(const chave: string; valor: variant; Adicional : string = '');
 begin
   FChave := chave;
   FValor := valor;
-  FComparador := comparador;
+  FAdicional := Adicional;
 end;
 
 destructor TMapaValor.destroy;
@@ -403,11 +404,11 @@ end;
 
 { TListaMapaValor }
 
-procedure TListaMapaValor.Add(const chave: string; valor: Variant;  comparador : String);
+procedure TListaMapaValor.Add(const chave: string; valor: Variant;  Adicional : String = '');
 var
   Mapa : TMapaValor;
 begin
-  Mapa := TMapaValor.create(chave, valor, comparador);
+  Mapa := TMapaValor.create(chave, valor, Adicional);
   FlistaValor.Add(Mapa);
 end;
 
@@ -484,12 +485,29 @@ begin
    FlistaValor.Clear;
 end;
 
-function TListaMapaValor.GetComparador(const index : integer): string;
+function TListaMapaValor.GetAdicional(const index : integer): string;
 var
   mapa : TMapaValor;
 begin
   mapa := FlistaValor.Items[index];
-  Result := mapa.Fcomparador;
+  Result := mapa.FAdicional;
+end;
+
+function TListaMapaValor.GetAdicional(const chave: string): string;
+var
+  contador : Integer;
+  mapa : TMapaValor;
+begin
+  for contador := 0 to FlistaValor.Count - 1 do
+  begin
+    mapa := FlistaValor.Items[contador];
+    if UpperCase(mapa.FChave) = UpperCase(chave) then
+    begin
+      Result := mapa.FAdicional;
+      Break;
+    end;
+  end;
+
 end;
 
 end.

@@ -367,7 +367,7 @@ var
   AcessoGaveta : TAcessoUsuario;
 begin
   inherited;
-  AcessoGaveta := TAcessoUsuario.create(frmMainBase.Fusuario);
+  AcessoGaveta := TAcessoUsuario.create(frmMainBase.NomeUsuario);
   Acesso_Perifericos := TAcesso_Perifericos.Create;
   try
     if AcessoGaveta.Autenticado('gaveta', TpmProcessar) then

@@ -224,7 +224,7 @@ begin
       FreeAndNil(tbCaixa);
     end;
     tbAberFechCaixa.AddParametro('vrinicial',(StringReplace(edtValorPreAbertura.Text, ',', '.', [rfReplaceAll])));
-    tbAberFechCaixa.AddParametro('funcipreabertura', frmMainBase.FidUsuario);
+    tbAberFechCaixa.AddParametro('funcipreabertura', frmMainBase.IdUsuario);
     tbAberFechCaixa.AddParametro('dtmovi', TUtilidades.GetDateToMySql(Date));
     tbAberFechCaixa.AddParametro('status', 'P');
     tbAberFechCaixa.Insert;
@@ -277,7 +277,7 @@ begin
 
     tbAberFechCaixa.ChangeValue('vrcorrigido', edtValorAbertura.Value);
     tbAberFechCaixa.ChangeValue('dtmovi', Date);
-    tbAberFechCaixa.ChangeValue('funciconfabertura', frmMainBase.FidUsuario);
+    tbAberFechCaixa.ChangeValue('funciconfabertura', frmMainBase.IdUsuario);
     tbAberFechCaixa.ChangeValue('status', 'A');
     tbAberFechCaixa.SaveChanges;
     FConfirmado := True;
@@ -307,7 +307,7 @@ begin
     tbAberFechCaixa.ChangeValue('vrdebio', edtDebitoConf.Value);
     tbAberFechCaixa.ChangeValue('vrcredito', edtCreditoConf.Value);
     tbAberFechCaixa.ChangeValue('status', 'F');
-    tbAberFechCaixa.ChangeValue('funcifechamento', frmMainBase.FidUsuario);
+    tbAberFechCaixa.ChangeValue('funcifechamento', frmMainBase.IdUsuario);
     tbAberFechCaixa.SaveChanges;
     FConfirmado := True;
   finally

@@ -110,7 +110,7 @@ var
   i, k: Integer;
   doc: IXMLDocument;
   row, field: IXMLNode;
-  campos, campo_atual, campo_fk: string;
+  campos, campo_atual, campo_fk, valor_adicional: string;
 
 begin
   bd:= TObjetoDB.create(FTabelaLocal);
@@ -139,25 +139,32 @@ begin
       begin
         field:= row.ChildNodes[k];
         campo_atual:= FCamposWebLocal.GetValue(VarToStr(field.Attributes['name']));
-
-        if field.HasAttribute('to') then
+        valor_adicional := FCamposWebLocal.GetAdicional(VarToStr(field.Attributes['name']));
+        if valor_adicional <> EmptyStr then
         begin
-          campo_fk:= varToStr(field.Attributes['to']);
-          campo_fk:= ReverseString(campo_fk);
-          campo_fk:= copy(campo_fk, 1, pos('.', campo_fk)-1);
-          campo_fk := ReverseString(campo_fk);
-          bd_fk := TObjetoDB.create(campo_fk);
-          try
-            bd_fk.AddParametro('id_web', field.NodeValue);
-            bd_fk.Select(['id']);
-            bd.AddParametro(campo_atual, bd_fk.GetVal('id'));
-          finally
-            FreeAndNil(bd_fk);
-          end;
+          bd.AddParametro(campo_atual, valor_adicional);
         end
         else
         begin
-          bd.AddParametro(campo_atual, field.NodeValue);
+          if field.HasAttribute('to') then
+          begin
+            campo_fk:= varToStr(field.Attributes['to']);
+            campo_fk:= ReverseString(campo_fk);
+            campo_fk:= copy(campo_fk, 1, pos('.', campo_fk)-1);
+            campo_fk := ReverseString(campo_fk);
+            bd_fk := TObjetoDB.create(campo_fk);
+            try
+              bd_fk.AddParametro('id_web', field.NodeValue);
+              bd_fk.Select(['id']);
+              bd.AddParametro(campo_atual, bd_fk.GetVal('id'));
+            finally
+              FreeAndNil(bd_fk);
+            end;
+          end
+          else
+          begin
+            bd.AddParametro(campo_atual, field.NodeValue);
+          end;
         end;
 
         if Pos(campo_atual + ',', FChavesTabela) = 0 then
@@ -201,21 +208,13 @@ class procedure TSincronizarTabelas.Sincronizar;
 var
   sinc : TSincronizacao;
   map : TListaMapaValor;
+
 begin
    try
-     map:= TListaMapaValor.create;
-     //empresa
-     map.Add('nmempresa', 'nmempresa', '');
-     map.Add('codigo', 'codigo', '');
-     map.Add('dtcadastro', 'dtcadastro', '');
-     sinc := TSincronizacao.create('empresa', 'cadastro.empresa.models', map, 'codigo', 'empresa');
-     sinc.GetWebData;
-     FreeAndNil(sinc);
-     FreeAndNil(map);
 
      //pais
      map := TListaMapaValor.create;
-     map.Add('empresa', 'empresa_id', '');
+//     map.Add('empresa', 'empresa_id', '');
      map.Add('dtcadastro', 'dtcadastro', '');
      map.Add('cdpais', 'cdpais', '');
      map.Add('nmpais', 'nmpais', '');
@@ -230,7 +229,7 @@ begin
 
      //estado
      map := TListaMapaValor.create;
-     map.Add('empresa', 'empresa_id', '');
+  //   map.Add('empresa', 'empresa_id', '');
      map.Add('dtcadastro', 'dtcadastro', '');
      map.Add('cdestado', 'cdestado', '');
      map.Add('nmestado', 'nmestado', '');
@@ -244,7 +243,7 @@ begin
 
      //cidade
      map := TListaMapaValor.create;
-     map.Add('empresa', 'empresa_id', '');
+  //   map.Add('empresa', 'empresa_id', '');
      map.Add('dtcadastro', 'dtcadastro', '');
      map.Add('cdcidade', 'cdcidade', '');
      map.Add('nmcidade', 'nmcidade', '');
@@ -258,7 +257,7 @@ begin
 
      //bairro
      map := TListaMapaValor.create;
-     map.Add('empresa', 'empresa_id', '');
+  //   map.Add('empresa', 'empresa_id', '');
      map.Add('dtcadastro', 'dtcadastro', '');
      map.Add('cdbairro', 'cdbairro', '');
      map.Add('nmbairro', 'nmbairro', '');
@@ -270,13 +269,17 @@ begin
 
      //cliente
      map := TListaMapaValor.create;
-     map.Add('master_endereco', 'idempresa', '');
+  //   map.Add('master_endereco', 'idempresa', '');
      map.Add('dtcadastro', 'dtcadastro', '');
      map.Add('nrinscjurd', 'nrinscjurd', '');
      map.Add('nmcliente', 'nmcliente', '');
      map.Add('identificador', 'identificador', '');
      map.Add('telcel', 'telcel', '');
      map.Add('telfixo', 'telfixo', '');
+     map.Add('nmrua', 'nmrua', '');
+     map.Add('cdnumero', 'cdnumero', '');
+     map.Add('cdcep', 'cdcep', '');
+     map.Add('cdbairro', 'cdbairro_id', '');
      sinc := TSincronizacao.create('cliente', 'cadastro.cliente.models', map, 'nmcliente', 'cliente');
      sinc.GetWebData;
      FreeAndNil(sinc);
@@ -284,13 +287,17 @@ begin
 
      //fornecedor
      map := TListaMapaValor.create;
-     map.Add('empresa', 'idempresa', '');
+//     map.Add('empresa', 'idempresa', '');
      map.Add('dtcadastro', 'dtcadastro', '');
      map.Add('nrinscjurd', 'nrinscjurd', '');
      map.Add('nmfornecedor', 'nmfornecedor', '');
      map.Add('identificador', 'identificador', '');
      map.Add('telcel', 'telcel', '');
      map.Add('telfixo', 'telfixo', '');
+     map.Add('nmrua', 'nmrua', '');
+     map.Add('cdnumero', 'cdnumero', '');
+     map.Add('cdcep', 'cdcep', '');
+     map.Add('cdbairro', 'cdbairro_id', '');
      sinc := TSincronizacao.create('fornecedor', 'cadastro.fornecedor.models', map, 'nmfornecedor', 'fornecedor');
      sinc.GetWebData;
      FreeAndNil(sinc);

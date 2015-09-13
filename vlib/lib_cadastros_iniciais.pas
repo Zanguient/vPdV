@@ -5,15 +5,8 @@ interface
 uses Windows, Messages, SysUtils;
 
   type
-     TCadastrosIniciais = class
+     TCadastrosIniciais = class(TObject)
      private
-       FidEmpresa : Integer;
-       FidPais : Integer;
-       FidEstado : Integer;
-       FIdCidade : Integer;
-       FidBairro : Integer;
-       FIdFuncionario : Integer;
-       Fusuario : String;
        procedure AddEmpresa;
        procedure AddPaises;
        procedure AddEstados;
@@ -21,9 +14,21 @@ uses Windows, Messages, SysUtils;
        procedure AddAbairro;
        procedure AddFuncionario;
        procedure AddCaixa;
+       procedure AddAlmoxarifado;
+       procedure AddUnidade;
      public
+       FidEmpresa : Integer;
+       FidPais : Integer;
+       FidEstado : Integer;
+       FIdCidade : Integer;
+       FidBairro : Integer;
+       FidAlmoxarifado : Integer;
+       FidUnidade : Integer;
+       FIdFuncionario : Integer;
+       Fusuario : String;
+       FNomeEmpresa : String;
+       FNomeUnidade : String;
        procedure Executar;
-
      end;
 implementation
 
@@ -40,7 +45,7 @@ var
 begin
   tbBairro := TObjetoDB.create('bairro');
   try
-    tbBairro.AddParametro('empresa_id', FidEmpresa);
+//    tbBairro.AddParametro('empresa_id', FidEmpresa);
     tbBairro.AddParametro('cdbairro', '1');
 
     tbBairro.Select(['id']);
@@ -55,7 +60,7 @@ begin
     tbBairro.AddParametro('dtcadastro', DATA_PADRAO);
  //   tbBairro.AddParametro('pais_id', FidPais);
 //    tbBairro.AddParametro('estado_id', FidEstado);
-    tbBairro.AddParametro('cidade_id', FIdCidade);    
+    tbBairro.AddParametro('cidade_id', FIdCidade);
     tbBairro.Insert;
 
     tbBairro.Select(['id']);
@@ -64,6 +69,31 @@ begin
     FreeAndNil(tbBairro);
   end
 
+end;
+
+procedure TCadastrosIniciais.AddAlmoxarifado;
+  var
+    tbAlmoxarifado : TObjetoDB;
+begin
+  tbAlmoxarifado := TObjetoDB.create('Almoxarifado');
+  try
+    tbAlmoxarifado.AddParametro('nmalmoxa', 'Almoxarifado padr„o');
+    tbAlmoxarifado.Select(['id']);
+
+    if tbAlmoxarifado.IsEmpty then
+    begin
+      tbAlmoxarifado.AddParametro('dtcadastro', DATA_PADRAO);
+      tbAlmoxarifado.Insert;
+      tbAlmoxarifado.Select(['id']);
+      FidAlmoxarifado := tbAlmoxarifado.GetVal('id');
+      Exit;
+    end;
+
+    FidAlmoxarifado := tbAlmoxarifado.GetVal('id');
+
+  finally
+    FreeAndNil(tbAlmoxarifado);
+  end;
 end;
 
 procedure TCadastrosIniciais.AddCaixa;
@@ -90,7 +120,7 @@ var
 begin
   tbCidade := TObjetoDB.create('cidade');
   try
-    tbCidade.AddParametro('empresa_id', FidEmpresa);
+//    tbCidade.AddParametro('empresa_id', FidEmpresa);
     tbCidade.AddParametro('cdcidade', '1');
 
     tbCidade.Select(['id']);
@@ -123,20 +153,22 @@ begin
   try
     tbEmpresa.AddParametro('codigo', '01');
 
-    tbEmpresa.Select(['id']);
+    tbEmpresa.Select(['id', 'nmempresa']);
 
     if not tbEmpresa.IsEmpty then
     begin
       FidEmpresa := tbEmpresa.GetVal('id');
+      FNomeEmpresa := tbEmpresa.GetVal('nmempresa');
       Exit;
     end;
 
-    tbEmpresa.AddParametro('nmempresa', 'JHOW A√áA√ç');
+    tbEmpresa.AddParametro('nmempresa', 'Empresa Padr„oç');
     tbEmpresa.AddParametro('dtcadastro', '2015-08-22');
     tbEmpresa.Insert;
 
     tbEmpresa.Select(['id']);
     FidEmpresa := tbEmpresa.GetVal('id');
+    FNomeEmpresa := 'Empresa Padr„o';
   finally
     FreeAndNil(tbEmpresa);
   end
@@ -148,7 +180,7 @@ var
 begin
   tbEstado := TObjetoDB.create('estado');
   try
-    tbEstado.AddParametro('empresa_id', FidEmpresa);
+//    tbEstado.AddParametro('empresa_id', FidEmpresa);
     tbEstado.AddParametro('cdestado', '31');
 
     tbEstado.Select(['id']);
@@ -192,7 +224,7 @@ begin
       Exit;
     end;
 
-    tbFunc.AddParametro('empresa_id', FidEmpresa);
+//    tbFunc.AddParametro('empresa_id', FidEmpresa);
     tbFunc.AddParametro('dtcadastro', DATA_PADRAO);
     tbFunc.AddParametro('nome', 'vmsismaster');
     tbFunc.AddParametro('sexo', 'M');
@@ -226,7 +258,7 @@ var
 begin
   tbPais := TObjetoDB.create('pais');
   try
-    tbPais.AddParametro('empresa_id', FidEmpresa);
+//    tbPais.AddParametro('empresa_id', FidEmpresa);
     tbPais.AddParametro('cdpais', '0055');
 
     tbPais.Select(['id']);
@@ -250,6 +282,32 @@ begin
 
 end;
 
+procedure TCadastrosIniciais.AddUnidade;
+var
+  tbUnidade : TObjetoDB;
+begin
+  tbUnidade := TObjetoDB.create('Unidade');
+  try
+    tbUnidade.AddParametro('nmrazao', 'UNIDADE PADR√O');
+    tbUnidade.Select(['id', 'nmrazao']);
+    if tbUnidade.IsEmpty then
+    begin
+      tbUnidade.AddParametro('nmfantasia', 'UNIDADE PADR√O');
+      tbUnidade.AddParametro('almoxpedido_id', FidAlmoxarifado);
+      tbUnidade.Insert;
+      tbUnidade.Select(['id', 'nmrazao']);
+      FidUnidade := tbUnidade.GetVal('id');
+      FNomeUnidade := tbUnidade.GetVal('nmrazao');
+      Exit;
+    end;
+    FidUnidade := tbUnidade.GetVal('id');
+    FNomeUnidade := tbUnidade.GetVal('nmrazao');   
+
+  finally
+    FreeAndNil(tbUnidade);
+  end;
+end;
+
 procedure TCadastrosIniciais.Executar;
 var
   UsrAce : TAcessoUsuario;
@@ -260,6 +318,8 @@ begin
    AddCidade;
    AddAbairro;
    AddFuncionario;
+   AddAlmoxarifado;
+   AddUnidade;
    AddCaixa;
    TAcesso.AddRotinas;
 

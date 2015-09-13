@@ -37,15 +37,30 @@ type
     procedure btnLoginClick(Sender: TObject);
   private
     { Private declarations }
-    FLogado: Boolean;
+    FidEmpresa : Integer;
+{    FidPais : Integer;
+    FidEstado : Integer;
+    FIdCidade : Integer;
+    FidBairro : Integer;}
+    FidAlmoxarifado : Integer;
+    FidUnidade : Integer;
+    FIdFuncionario : Integer;
+    Fusuario : String;
+    FNomeEmpresa : String;
+    FNomeUnidade : String;
+    FLogado : Boolean;
     procedure WMov_tela(var Msg: TMessage);
     message WM_NChitTest;
   public
     { Public declarations }
-    Usuario : String;
-    IdUsuario : Integer;
     function GetLogado: Boolean;
     procedure ArredondarComponente(Componente: TWinControl; const Radius: SmallInt);
+    property IdUsuario : Integer read FIdFuncionario;
+    property NomeUsuario : String read FUsuario;
+    property IdEmpresa : Integer read FIdEmpresa;
+    property NomeEmpresa : String read FNomeEmpresa;
+    property IdUnidade : Integer read FidUnidade;
+    property NomeUnidade : String read FNomeUnidade;
   end;
 
 var
@@ -142,6 +157,7 @@ procedure TfrmLoginBase.btnLoginClick(Sender: TObject);
 var
   usrAcesso :  TAcessoUsuario;
   CadastrosIniciais : TCadastrosIniciais;
+  db : TObjetoDB;
 begin
   FLogado := False;
 
@@ -149,6 +165,11 @@ begin
   try
     try
       CadastrosIniciais.Executar;
+      FidEmpresa := CadastrosIniciais.FidEmpresa;
+      FidAlmoxarifado := CadastrosIniciais.FidAlmoxarifado;
+      FidUnidade := CadastrosIniciais.FidUnidade;
+      FNomeEmpresa := CadastrosIniciais.FNomeEmpresa;
+      FNomeUnidade := CadastrosIniciais.FNomeUnidade;
     except
       //cala boca
     end
@@ -162,6 +183,7 @@ begin
     edtUsuario.SetFocus;
     Abort;
   end;
+
   if Trim(edtSenha.Text) = EmptyStr then
   begin
     Aviso('Informe o campo Senha.');
@@ -176,14 +198,15 @@ begin
       Aviso('Senha ou usuário inválidos.');
       Abort;
     end;
-    Usuario := usrAcesso.Usuario;
-    IdUsuario := usrAcesso.IdUsuario;
 
+    FUsuario := usrAcesso.Usuario;
+    FIdFuncionario := usrAcesso.IdUsuario;
 
     TSincronizarTabelas.Sincronizar;
   finally
     FreeAndNil(usrAcesso);
   end;
+
 
   FLogado := True;
   Close;

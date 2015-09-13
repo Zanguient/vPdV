@@ -40,9 +40,11 @@ begin
   try
      if frmLoginBase.GetLogado then
      begin
-       Application.CreateForm(TfrmMainBase, frmMainBase);
-       frmMainBase.Fusuario := frmLoginBase.Usuario;
-       frmMainBase.FidUsuario := frmLoginBase.IdUsuario;
+       //Application.CreateForm(TfrmMainBase, frmMainBase);
+       CriarMainForm(frmLoginBase.IdUsuario, frmLoginBase.IdEmpresa, frmLoginBase.IdUnidade,
+         frmLoginBase.NomeUsuario, frmLoginBase.NomeEmpresa, frmLoginBase.NomeUnidade);
+//       frmMainBase.Fusuario := frmLoginBase.Usuario;
+//       frmMainBase.FidUsuario := frmLoginBase.IdUsuario;
        FreeAndNil(frmLoginBase);
        Application.Run;
      end;

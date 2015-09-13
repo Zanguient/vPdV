@@ -38,14 +38,35 @@ type
   private
     { Private declarations }
 //    procedure InvocadordeBpl(stClasse: String);
+    FidEmpresa : Integer;
+    FidPais : Integer;
+    FidEstado : Integer;
+    FIdCidade : Integer;
+    FidBairro : Integer;
+    FidAlmoxarifado : Integer;
+    FidUnidade : Integer;
+    FIdFuncionario : Integer;
+    Fusuario : String;
+    FNomeEmpresa : String;
+    FNomeUnidade : String;
+    FidUsuario : Integer;
+
   public
     { Public declarations }
-    Fusuario : string;
-    FidUsuario : Integer;
+
+    property IdUsuario : Integer read FIdUsuario;
+    property NomeUsuario : String read FUsuario;
+    property IdEmpresa : Integer read FIdEmpresa;
+    property NomeEmpresa : String read FNomeEmpresa;
+    property IdUnidade : Integer read FidUnidade;
+    property NomeUnidade : String read FNomeUnidade;
   end;
 
 var
   frmMainBase: TfrmMainBase;
+
+procedure CriarMainForm(const IdUsuario, IdEmpresa, IdUnidade : Integer;
+  const NomeUsuario, NomeEmpresa, NomeUnidade : string);
 
 implementation
 
@@ -53,7 +74,20 @@ implementation
 
 uses
    libframes, pdv_main, pdv_aberturacaixa, pdv_abertura_fechamento_caixa, uvCadastroClienteFrame,
-   uvCadastroFornecedorFrame;
+   uvCadastroFornecedorFrame, lib_db;
+
+
+procedure CriarMainForm(const IdUsuario, IdEmpresa, IdUnidade : Integer;
+  const NomeUsuario, NomeEmpresa, NomeUnidade : string);
+begin
+  Application.CreateForm(TfrmMainBase, frmMainBase);
+  frmMainBase.FIdEmpresa := IdEmpresa;
+  frmMainBase.FidUsuario := IdUsuario;
+  frmMainBase.FidUnidade := IdUnidade;
+  frmMainBase.FNomeEmpresa := NomeEmpresa;
+  frmMainBase.FNomeUnidade := NomeUnidade;
+  frmMainBase.FNomeUsuario := NomeUsuario;
+end;
 
 procedure TfrmMainBase.nbgSairClick(Sender: TObject);
 begin
@@ -63,6 +97,7 @@ end;
 procedure TfrmMainBase.FormCreate(Sender: TObject);
 var
    region: hrgn;
+   db : TObjetoDB;
 begin
    Height := Screen.WorkAreaHeight-20;
    Width  := Screen.WorkAreaWidth-20;
@@ -71,6 +106,15 @@ begin
    DoubleBuffered := True;
    region := CreateRoundRectRgn(0, 0, width, height, 15, 15);
    SetWindowRgn(handle, region, true);
+   db := TObjetoDB.create('empresa');
+   try
+     db.AddSqlAdicional(' LIMIT 1 ');
+     db.Select(['ID', 'NMEMPRESA']);
+     FIdEmpresa := db.GetVal('ID');
+     FNomeEmpresa := db.GetVal('NMEMPRESA')
+   finally
+     FreeAndNil(db);
+   end
 end;
 
 //procedure TfrmMainBase.Invocadordebpl(stClasse: String);
