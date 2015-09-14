@@ -15,6 +15,7 @@ type
     FCamposWebLocal : TListaMapaValor;
     FChavesTabela : string;
     function GetXMLText(FieldsSeparetedByPipe : String = ''): string;
+    function CheckNoveValue(const field : IXMLNode): OleVariant;
   protected
 
   public
@@ -149,10 +150,10 @@ begin
             campo_fk:= varToStr(field.Attributes['to']);
             campo_fk:= ReverseString(campo_fk);
             campo_fk:= copy(campo_fk, 1, pos('.', campo_fk)-1);
-            campo_fk := ReverseString(campo_fk);
+            campo_fk:= ReverseString(campo_fk);
             bd_fk := TObjetoDB.create(campo_fk);
             try
-              bd_fk.AddParametro('id_web', field.NodeValue);
+              bd_fk.AddParametro('id_web', CheckNoveValue(field));
               bd_fk.Select(['id']);
               bd.AddParametro(campo_atual, bd_fk.GetVal('id'));
             finally
@@ -161,7 +162,7 @@ begin
           end
           else
           begin
-            bd.AddParametro(campo_atual, field.NodeValue);
+            bd.AddParametro(campo_atual, CheckNoveValue(field));
           end;
         end;
 
@@ -191,6 +192,35 @@ begin
 
 end;
 
+function TSincronizacao.CheckNoveValue(const field: IXMLNode): OleVariant;
+var
+  field_type : string;
+  value : Variant;
+const
+  C_BOLLEAN_FIELD = 'BooleanField';
+  
+begin
+  field_type := VarToStr(field.Attributes['type']);
+
+  try
+    value := field.NodeValue
+  except
+    Result := Null;
+    Exit;
+  end;
+
+  if field_type = C_BOLLEAN_FIELD then
+  begin
+     if value = 'True' then
+       Result := 1
+     else
+       Result := 0
+  end
+  else
+    Result := value;
+
+end;
+
 { TSincronizarTabelas }
 
 class procedure TSincronizarTabelas.ExecutarSincObjeto(
@@ -212,7 +242,6 @@ begin
 
      //pais
      map := TListaMapaValor.create;
-//     map.Add('empresa', 'empresa_id', '');
      map.Add('dtcadastro', 'dtcadastro', '');
      map.Add('cdpais', 'cdpais', '');
      map.Add('nmpais', 'nmpais', '');
@@ -227,7 +256,6 @@ begin
 
      //estado
      map := TListaMapaValor.create;
-  //   map.Add('empresa', 'empresa_id', '');
      map.Add('dtcadastro', 'dtcadastro', '');
      map.Add('cdestado', 'cdestado', '');
      map.Add('nmestado', 'nmestado', '');
@@ -241,7 +269,6 @@ begin
 
      //cidade
      map := TListaMapaValor.create;
-  //   map.Add('empresa', 'empresa_id', '');
      map.Add('dtcadastro', 'dtcadastro', '');
      map.Add('cdcidade', 'cdcidade', '');
      map.Add('nmcidade', 'nmcidade', '');
@@ -255,7 +282,6 @@ begin
 
      //bairro
      map := TListaMapaValor.create;
-  //   map.Add('empresa', 'empresa_id', '');
      map.Add('dtcadastro', 'dtcadastro', '');
      map.Add('cdbairro', 'cdbairro', '');
      map.Add('nmbairro', 'nmbairro', '');
@@ -267,7 +293,6 @@ begin
 
      //cliente
      map := TListaMapaValor.create;
-  //   map.Add('master_endereco', 'idempresa', '');
      map.Add('dtcadastro', 'dtcadastro', '');
      map.Add('nrinscjurd', 'nrinscjurd', '');
      map.Add('nmcliente', 'nmcliente', '');
@@ -285,7 +310,6 @@ begin
 
      //fornecedor
      map := TListaMapaValor.create;
-//     map.Add('empresa', 'idempresa', '');
      map.Add('dtcadastro', 'dtcadastro', '');
      map.Add('nrinscjurd', 'nrinscjurd', '');
      map.Add('nmfornecedor', 'nmfornecedor', '');
@@ -297,6 +321,47 @@ begin
      map.Add('cdcep', 'cdcep', '');
      map.Add('cdbairro', 'cdbairro_id', '');
      sinc := TSincronizacao.create('fornecedor', 'cadastro.fornecedor.models', map, 'telcel', 'fornecedor');
+     sinc.GetWebData;
+     FreeAndNil(sinc);
+     FreeAndNil(map);
+
+
+     //unimedida
+     map := TListaMapaValor.create;
+     map.Add('dtcadastro', 'dtcadastro', '');
+     map.Add('nmmedida', 'nmmedida', '');
+     map.Add('sgmedida', 'sgmedida', '');
+     map.Add('qtfatorconv', 'qtfatorconv', '');
+     map.Add('idtipomed', 'idtipomed', '');                    
+
+     sinc := TSincronizacao.create('unimedida', 'cadastro.unimedida.models', map, 'nmmedida', 'unimedida');
+     sinc.GetWebData;
+     FreeAndNil(sinc);
+     FreeAndNil(map);
+
+     //produto
+     map := TListaMapaValor.create;
+     map.Add('dtcadastro', 'dtcadastro');
+     map.Add('posarvore', 'posarvore');
+     map.Add('nmproduto', 'nmproduto');
+     map.Add('unimedida', 'unimedida_id');
+     map.Add('cdbarra', 'cdbarra');
+     map.Add('idprodvenda', 'idprodvenda');
+     map.Add('idadicional', 'idadicional');
+     map.Add('imgindex', 'imgindex');          
+
+     sinc := TSincronizacao.create('produto', 'cadastro.produto.models', map, 'nmproduto', 'produto');
+     sinc.GetWebData;
+     FreeAndNil(sinc);
+     FreeAndNil(map);
+
+
+     //finalidade
+     map := TListaMapaValor.create;
+     map.Add('dtcadastro', 'dtcadastro');
+     map.Add('descricao', 'descricao');
+
+     sinc := TSincronizacao.create('finalidade', 'estoque.cadastro_estoque.finalidade.models', map, 'descricao', 'finalidade');
      sinc.GetWebData;
      FreeAndNil(sinc);
      FreeAndNil(map);

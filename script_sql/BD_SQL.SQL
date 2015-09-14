@@ -214,7 +214,7 @@ CREATE TABLE moviest
   dtmovi date NOT NULL,
   cliente_id integer NULL,
   fornecedor_id integer NULL,
-  finalidade_id integer NOT NULL,
+  finalidade_id integer NULL,
   idtipo character varying(1) NOT NULL,
   tpmovi character varying(1) NOT NULL check(tpmovi in ('E', 'S' )),
   CONSTRAINT moviest_pkey PRIMARY KEY (id),
