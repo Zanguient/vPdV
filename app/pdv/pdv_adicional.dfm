@@ -4,7 +4,7 @@ object frmAdicional: TfrmAdicional
   BorderStyle = bsNone
   ClientHeight = 517
   ClientWidth = 920
-  Color = clBtnHighlight
+  Color = clCream
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -11
@@ -116,16 +116,26 @@ object frmAdicional: TfrmAdicional
         object dbgAdicionalPedidoColumn2: TcxGridDBColumn
           Caption = 'Quantidade'
           DataBinding.FieldName = 'QTITEM'
+          PropertiesClassName = 'TcxCurrencyEditProperties'
+          Properties.DecimalPlaces = 3
+          Properties.DisplayFormat = '0.000;-0.000'
+          Properties.MaxLength = 13
           Width = 89
         end
         object dbgAdicionalPedidoColumn3: TcxGridDBColumn
           Caption = 'Valor Unit'#225'rio'
           DataBinding.FieldName = 'VRUNITARIO'
+          PropertiesClassName = 'TcxCurrencyEditProperties'
+          Properties.DisplayFormat = '0.00;-0.00'
+          Properties.MaxLength = 13
           Width = 101
         end
         object dbgAdicionalPedidoColumn4: TcxGridDBColumn
           Caption = 'Valor Total'
           DataBinding.FieldName = 'VRTOTAITEM'
+          PropertiesClassName = 'TcxCurrencyEditProperties'
+          Properties.DisplayFormat = '0.00;-0.00'
+          Properties.MaxLength = 13
           Width = 99
         end
         object cdbgExcluir: TcxGridDBColumn

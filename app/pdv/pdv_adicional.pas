@@ -19,7 +19,7 @@ uses
   cxDataStorage, cxEdit, cxDBData, cxGridLevel, cxGridBandedTableView,
   cxGridDBBandedTableView, cxGridCustomTableView, cxGridTableView,
   cxGridDBTableView, cxClasses, cxGridCustomView, cxGrid, cxButtonEdit,
-  cxImageComboBox;
+  cxImageComboBox, cxCurrencyEdit;
 
 type
   TfrmAdicional = class(TForm)
@@ -134,33 +134,33 @@ begin
   end;
 
   frmPDV_PDV.cdsAddPedido.Filtered := False;
-  frmPDV_PDV.cdsAddPedido.Filter := ' PRODUTO_ID = ' + IntToStr(frmPDV_PDV.cdsItemPedidoID.AsInteger);
+  frmPDV_PDV.cdsAddPedido.Filter := ' ITEMPEDIDO_ID = ' + IntToStr(frmPDV_PDV.cdsItemPedidoID.AsInteger);
   frmPDV_PDV.cdsAddPedido.Filtered := True;
 end;
 
 procedure TfrmAdicional.OnClickAdicionalPDV(Sender: TObject);
-begin
-  if frmPDV_PDV.cdsAddPedido.Locate('PRODUTO_ID', frmPDV_PDV.cdsItemCategoriaID.AsInteger, [loCaseInsensitive]) then
+begin                                                                           
+  cdsAdicional.Locate('ID', (Sender as TcxButton).Tag, [loCaseInsensitive]);
+  if frmPDV_PDV.cdsAddPedido.Locate('ID', cdsAdicionalID.AsInteger, [loCaseInsensitive]) then
   begin
     frmPDV_PDV.cdsAddPedido.Edit;
-    frmPDV_PDV.cdsAddPedidoQTITEM.AsFloat := frmPDV_PDV.cdsAddPedidoQTITEM.AsFloat+1.0;
+    frmPDV_PDV.cdsAddPedidoQTITEM.AsFloat     := frmPDV_PDV.cdsAddPedidoQTITEM.AsFloat+1.0;
+    frmPDV_PDV.cdsAddPedidoVRUNITARIO.AsFloat   := cdsAdicionalVALOR.AsFloat;
+//    frmPDV_PDV.cdsAddPedidoV.AsFloat := frmPDV_PDV.cdsAddPedidoVRUNITARIO.AsFloat*frmPDV_PDV.cdsAddPedidoQTITEM.AsFloat;
     frmPDV_PDV.cdsAddPedido.Post;
   end else
   begin
     frmPDV_PDV.cdsAddPedido.Insert;
     frmPDV_PDV.cdsAddPedidoIMG.AsInteger        := 0;
-    if VarIsNull(frmPDV_PDV.cdsAddPedidoMAXID.Value) then
-      frmPDV_PDV.cdsAddPedidoid.AsInteger       := 1
-    else
-      frmPDV_PDV.cdsAddPedidoid.AsInteger       := Integer(frmPDV_PDV.cdsAddPedidoMAXID.Value)+1;
-    {cdsAddPedidoVRUNITARIO: TFloatField
-    cdsAddPedidoVRTOTAITEM: TFloatField}
+    frmPDV_PDV.cdsAddPedidoid.AsInteger         := cdsAdicionalID.AsInteger;
+    frmPDV_PDV.cdsAddPedidoVRUNITARIO.AsFloat   := cdsAdicionalVALOR.AsFloat;
+    frmPDV_PDV.cdsAddPedidoVRTOTAITEM.AsFloat   := cdsAdicionalVALOR.AsFloat;
     frmPDV_PDV.cdsAddPedidoQTITEM.AsFloat       := 1.0;
-    frmPDV_PDV.cdsAddPedidoPRODUTO_ID.AsInteger := frmPDV_PDV.cdsItemPedidoID.AsInteger;
-    frmPDV_PDV.cdsAddPedidoNMPRODUTO.AsString   := frmPDV_PDV.cdsItemCategoriaNMPRODUTO.AsString;
+    frmPDV_PDV.cdsAddPedidoITEMPEDIDO_ID.AsInteger := frmPDV_PDV.cdsITEMPEDIDOID.AsInteger;
+    frmPDV_PDV.cdsAddPedidoNMPRODUTO.AsString   := cdsAdicionalNMPRODUTO.AsString;
     frmPDV_PDV.cdsAddPedidoIMG.AsInteger        := 0;
     frmPDV_PDV.cdsAddPedido.Post;
-  end;  
+  end;
 end;
 
 function TfrmAdicional.GetBlz: Boolean;
@@ -173,7 +173,11 @@ begin
   FOk := True;
   frmPDV_PDV.cdsAddPedido.First;
   while not frmPDV_PDV.cdsAddPedido.Eof do
-    frmPDV_PDV.cdsAddPedido.Delete;
+  begin
+    frmPDV_PDV.cdsAddPedido.Edit;
+    frmPDV_PDV.cdsAddPedidoQTITEM.AsFloat := 0.0;
+    frmPDV_PDV.cdsAddPedido.Post;
+  end;
   Close;
 end;
 
@@ -232,7 +236,11 @@ procedure TfrmAdicional.dbgAdicionalPedidoCellClick(
 begin
   if ACellViewInfo.Item.Name = 'cdbgExcluir' then
     if Confirma(EXCLUIR_ITEM) then
-      frmPDV_PDV.cdsAddPedido.Delete;
+    begin
+      frmPDV_PDV.cdsAddPedido.Edit;
+      frmPDV_PDV.cdsAddPedidoQTITEM.AsFloat := 0.0;
+      frmPDV_PDV.cdsAddPedido.Post;
+    end;
 end;
 
 end.

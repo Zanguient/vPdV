@@ -164,7 +164,7 @@ begin
   CadastrosIniciais := TCadastrosIniciais.Create;
   try
     try
-      CadastrosIniciais.Executar;
+      //CadastrosIniciais.Executar;
       FidEmpresa := CadastrosIniciais.FidEmpresa;
       FidAlmoxarifado := CadastrosIniciais.FidAlmoxarifado;
       FidUnidade := CadastrosIniciais.FidUnidade;
@@ -202,7 +202,7 @@ begin
     FUsuario := usrAcesso.Usuario;
     FIdFuncionario := usrAcesso.IdUsuario;
 
-    TSincronizarTabelas.Sincronizar;
+    //TSincronizarTabelas.Sincronizar;
   finally
     FreeAndNil(usrAcesso);
   end;

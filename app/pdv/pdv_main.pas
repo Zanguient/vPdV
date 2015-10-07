@@ -89,7 +89,8 @@ begin
     cdsMesa.First;
     while not cdsMesa.Eof do
     begin
-      Interface_.CriaButtonScrollBox(sbxOpcoesPDV, cdsMesa.FieldByName('nmmesa').AsString, OnClickOpcoesPDV, 150, 150);
+      Interface_.CriaButtonScrollBox(sbxOpcoesPDV, cdsMesa.FieldByName('nmmesa').AsString, OnClickOpcoesPDV, 150, 150,
+        cdsMesa.FieldByName('id_mesa').AsInteger);
 
       cdsMesa.Next;
     end;

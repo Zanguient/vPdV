@@ -5,18 +5,21 @@ interface
 uses
    Classes, WinInet, Dialogs, Windows, Forms,
    IdBaseComponent, IdComponent, IdRawBase, IdRawClient, IdIcmpClient,
-   cxButtons, SysUtils;
+   cxButtons, SysUtils, cxGraphics, Buttons, 
+   Controls, ExtCtrls, StdCtrls, Messages;
 
 type
   TInterface = Class(TPersistent)
 //   private
 //   protected
   public
+    procedure ArredondarComponente(Componente: TWinControl; const Radius: SmallInt);
     procedure OrganizaScrollBox(ScrollBox: TScrollBox; inTop: Integer);
     procedure CriaButtonScrollBox(ScrollBox: TScrollBox; stCaption: String; stOnClick: TNotifyEvent;
-      inHeight, inWidth: Integer; intag: Integer = 0);
+      inHeight, inWidth: Integer; intag: Integer = 0; TmpImageList: TcxImageList = Nil;
+      inImagePos: Integer = 0);
 //   published
-end;    
+end;
 
 const
   { Panel de button }
@@ -27,14 +30,31 @@ const
 
 implementation
 
-uses Controls;
-
 { Interface }
 
 { TInterface }
 
+procedure TInterface.ArredondarComponente(Componente: TWinControl;
+  const Radius: SmallInt);
+var
+  R: TRect;
+  Rgn: HRGN;
+begin
+  with Componente do
+  begin
+    R := ClientRect;
+    Rgn := CreateRoundRectRgn(R.Left, R.Top, R.Right, R.Bottom, Radius, Radius);
+    Perform(EM_GETRECT, 0, lParam(@R));
+    InflateRect(R, -5, -5);
+    Perform(EM_SETRECTNP, 0, lParam(@R));
+    SetWindowRgn(Handle, Rgn, True);
+    Invalidate;
+  end;
+end;
+
 procedure TInterface.CriaButtonScrollBox(ScrollBox: TScrollBox; stCaption: String;
-  stOnClick: TNotifyEvent; inHeight, inWidth: Integer; intag: Integer = 0);
+  stOnClick: TNotifyEvent; inHeight, inWidth: Integer; intag: Integer = 0; TmpImageList: TcxImageList = Nil;
+  inImagePos: Integer = 0);
 var
    btn: TcxButton;
 begin
@@ -48,7 +68,18 @@ begin
    btn.OnClick := stOnClick;
    btn.Visible := True;
    btn.Tag     := intag;
-//   btn.CanBeFocused := True;
+   btn.SpeedButtonOptions.CanBeFocused := False;
+   btn.SpeedButtonOptions.Flat := True;
+   btn.SpeedButtonOptions.Transparent := True;
+
+   try
+     if TmpImageList <> Nil then
+       TmpImageList.GetBitmap(inImagePos, btn.Glyph);
+     btn.Layout := blGlyphTop;
+   except
+     //Cala a boca
+   end;
+   ArredondarComponente(btn,10);
 end;
 
 procedure TInterface.OrganizaScrollBox(ScrollBox: TScrollBox; inTop: Integer);

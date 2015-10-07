@@ -1,4 +1,5 @@
 inherited frmPDVMain: TfrmPDVMain
+  Height = 588
   OnResize = FrameResize
   inherited panTop: TPanel
     inherited lblNomeFrame: TLabel
@@ -7,11 +8,12 @@ inherited frmPDVMain: TfrmPDVMain
     end
   end
   inherited panClient: TPanel
+    Height = 561
     object scbPedidos: TScrollBox
       Left = 201
       Top = 0
       Width = 276
-      Height = 468
+      Height = 561
       Align = alRight
       BevelInner = bvNone
       BevelOuter = bvNone
@@ -21,7 +23,7 @@ inherited frmPDVMain: TfrmPDVMain
         Left = 0
         Top = 0
         Width = 276
-        Height = 468
+        Height = 561
         Align = alClient
         BevelInner = bvNone
         BevelOuter = bvNone
@@ -74,14 +76,14 @@ inherited frmPDVMain: TfrmPDVMain
       Left = 0
       Top = 0
       Width = 201
-      Height = 468
+      Height = 561
       Align = alClient
       BevelOuter = bvNone
       Color = clHighlightText
       TabOrder = 1
       object scbOpcoes: TScrollBox
         Left = 0
-        Top = 369
+        Top = 462
         Width = 201
         Height = 99
         Align = alBottom
@@ -2217,7 +2219,7 @@ inherited frmPDVMain: TfrmPDVMain
         Left = 0
         Top = 0
         Width = 201
-        Height = 369
+        Height = 462
         Align = alClient
         BevelInner = bvNone
         BevelOuter = bvNone

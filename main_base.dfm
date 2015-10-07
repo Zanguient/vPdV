@@ -4,7 +4,7 @@ object frmMainBase: TfrmMainBase
   BorderStyle = bsNone
   ClientHeight = 632
   ClientWidth = 1222
-  Color = clBtnHighlight
+  Color = clCream
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -11
@@ -95,7 +95,7 @@ object frmMainBase: TfrmMainBase
     Width = 1067
     Height = 632
     Align = alClient
-    Color = clActiveBorder
+    Color = clCream
     LookAndFeel.SkinName = ''
     NavigatorPosition = npLeftBottom
     Options = [pcoAlwaysShowGoDialogButton, pcoCloseButton, pcoGradient, pcoGradientClientArea, pcoRedrawOnResize]

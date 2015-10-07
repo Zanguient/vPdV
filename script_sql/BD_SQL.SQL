@@ -576,4 +576,8 @@ alter table mesa add id_web integer NULL;
 alter table cliente add dtcadastro datetime not NULL DEFAULT CURRENT_TIMESTAMP;
 alter table fornecedor add dtcadastro datetime not NULL DEFAULT CURRENT_TIMESTAMP;
 
+ALTER TABLE ITEMPEDIDO ADD Produto_id integer NOT NULL;
 
+ALTER TABLE ITEMPEDIDO ADD CONSTRAINT ItemPedido_produto_id_fkey FOREIGN KEY (produto_id) REFERENCES produto (id);
+
+ALTER TABLE ITADICIONAL ADD valor FLOAT(14,2) NOT NULL;
