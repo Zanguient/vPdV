@@ -95,11 +95,9 @@ object frmMainBase: TfrmMainBase
     Width = 1067
     Height = 632
     Align = alClient
-    Color = clCream
     LookAndFeel.SkinName = ''
     NavigatorPosition = npLeftBottom
     Options = [pcoAlwaysShowGoDialogButton, pcoCloseButton, pcoGradient, pcoGradientClientArea, pcoRedrawOnResize]
-    ParentColor = False
     Style = 5
     TabOrder = 1
     ClientRectBottom = 632

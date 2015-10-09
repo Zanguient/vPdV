@@ -134,7 +134,7 @@ begin
   end;
 
   frmPDV_PDV.cdsAddPedido.Filtered := False;
-  frmPDV_PDV.cdsAddPedido.Filter := ' ITEMPEDIDO_ID = ' + IntToStr(frmPDV_PDV.cdsItemPedidoID.AsInteger);
+  frmPDV_PDV.cdsAddPedido.Filter := '  QTITEM > 0 AND ITEMPEDIDO_ID = ' + IntToStr(frmPDV_PDV.cdsItemPedidoID.AsInteger);
   frmPDV_PDV.cdsAddPedido.Filtered := True;
 end;
 
@@ -177,6 +177,8 @@ begin
     frmPDV_PDV.cdsAddPedido.Edit;
     frmPDV_PDV.cdsAddPedidoQTITEM.AsFloat := 0.0;
     frmPDV_PDV.cdsAddPedido.Post;
+
+    frmPDV_PDV.cdsAddPedido.Next;
   end;
   Close;
 end;
@@ -237,9 +239,18 @@ begin
   if ACellViewInfo.Item.Name = 'cdbgExcluir' then
     if Confirma(EXCLUIR_ITEM) then
     begin
+//      frmPDV_PDV.cdsAddPedido.DisableControls;
+//      frmPDV_PDV.cdsAddPedido.Filtered := False;
+
       frmPDV_PDV.cdsAddPedido.Edit;
       frmPDV_PDV.cdsAddPedidoQTITEM.AsFloat := 0.0;
       frmPDV_PDV.cdsAddPedido.Post;
+
+//      frmPDV_PDV.cdsAddPedido.Filtered := True;
+//      frmPDV_PDV.cdsAddPedido.EnableControls;
+
+//      if frmPDV_PDV.cdsAddPedido.RecordCount > 0 then
+        frmPDV_PDV.cdsAddPedido.First;
     end;
 end;
 

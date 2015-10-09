@@ -2917,7 +2917,6 @@ object frmPDV_PDV: TfrmPDV_PDV
     Top = 190
   end
   object cdsAddPedido: TClientDataSet
-    Active = True
     Aggregates = <>
     AggregatesActive = True
     FieldDefs = <
@@ -2955,12 +2954,6 @@ object frmPDV_PDV: TfrmPDV_PDV
     StoreDefs = True
     Left = 847
     Top = 222
-    Data = {
-      9A0000009619E0BD0100000018000000070000000000030000009A0002696404
-      00010000000000094E4D50524F4455544F010049000000010005574944544802
-      000200FA000651544954454D08000400000000000A5652554E49544152494F08
-      000400000000000D4954454D50454449444F5F4944040001000000000003494D
-      4708000100000000000A5652544F54414954454D08000400000000000000}
     object cdsAddPedidoid: TIntegerField
       FieldName = 'id'
     end
@@ -4007,7 +4000,7 @@ object frmPDV_PDV: TfrmPDV_PDV
     Left = 840
     Top = 374
   end
-  object adqConsIDPedido: TADOQuery
+  object adqConsID: TADOQuery
     Connection = dmConexao.adoConexaoBd
     Parameters = <>
     SQL.Strings = (
@@ -4023,14 +4016,24 @@ object frmPDV_PDV: TfrmPDV_PDV
         Name = 'ID'
         Attributes = [paNullable]
         DataType = ftString
-        NumericScale = 240
+        NumericScale = 80
+        Precision = 255
+        Size = 255
+        Value = Null
+      end
+      item
+        Name = 'PEDIDO_ID'
+        Attributes = [paNullable]
+        DataType = ftString
+        NumericScale = 80
         Precision = 255
         Size = 255
         Value = Null
       end>
     SQL.Strings = (
       'DELETE FROM ITEMPEDIDO'
-      ' WHERE ID = :ID')
+      ' WHERE ID = :ID'
+      '   AND PEDIDO_ID = :PEDIDO_ID')
     Left = 840
     Top = 406
   end
@@ -4115,15 +4118,18 @@ object frmPDV_PDV: TfrmPDV_PDV
       end>
     SQL.Strings = (
       
-        'SELECT P.id, P.NMPRODUTO, IA.QTITEM, IA.VALOR VRUNITARIO, IA.VAL' +
-        'OR VRTOTAITEM, IA.ITEMPEDIDO_ID, 0 IMG'
-      '  FROM ITADICIONAL IA INNER JOIN PRODUTO P ON P.ID = IA.ITEM_ID'
+        'SELECT IA.ITEM_ID ID, P.NMPRODUTO, IA.QTITEM, IA.VALOR VRUNITARI' +
+        'O, IA.VALOR VRTOTAITEM, IA.ITEMPEDIDO_ID, 0 IMG'
       
-        '                      INNER JOIN ITEMPEDIDO IP ON IP.ID = IA.ITE' +
-        'MPEDIDO_ID'
+        '  FROM ADICIONAIS A INNER JOIN ITADICIONAL IA ON A.ID = IA.ITEM_' +
+        'ID  '
+      '                    INNER JOIN PRODUTO P ON P.ID = A.ITEM_ID'
       
-        '                      INNER JOIN PEDIDO PED ON PED.ID = IP.PEDID' +
-        'O_ID'
+        '                    INNER JOIN ITEMPEDIDO IP ON IP.ID = IA.ITEMP' +
+        'EDIDO_ID'
+      
+        '                    INNER JOIN PEDIDO PED ON PED.ID = IP.PEDIDO_' +
+        'ID'
       ' WHERE PED.MESA_ID = :P_MESA_ID'
       ' ORDER BY P.ID'
       ''
@@ -4213,5 +4219,46 @@ object frmPDV_PDV: TfrmPDV_PDV
       '   AND ITEM_ID = :P_ITEM_ID')
     Left = 872
     Top = 375
+  end
+  object adqConsItemPedidoID: TADOQuery
+    Connection = dmConexao.adoConexaoBd
+    Parameters = <>
+    SQL.Strings = (
+      'SELECT MAX(ID) ID'
+      '   FROM ITEMPEDIDO')
+    Left = 776
+    Top = 408
+  end
+  object adqAuxAdicional: TADOQuery
+    Connection = dmConexao.adoConexaoBd
+    Parameters = <
+      item
+        Name = 'P_CARDAPIO_ID'
+        Attributes = [paNullable]
+        DataType = ftString
+        NumericScale = 128
+        Precision = 255
+        Size = 255
+        Value = Null
+      end>
+    SQL.Strings = (
+      
+        'SELECT IC.PRODUTO_ID, IC.VRVENDA, IC.QTADICGRATIS, AA.ID, AA.VRA' +
+        'GRUPADIC'
+      
+        '  FROM ITEMCATEGORIA IC INNER JOIN ITAGRUPADICIONAL IA ON IA.CAR' +
+        'DAPIO_ID = IC.ID'
+      
+        '                        INNER JOIN AGRUPADICIONAL   AA ON AA.ID ' +
+        '= IA.AGRUPADICIONAL_ID                        '
+      ' WHERE AA.IDAGRUPATIV = '#39'S'#39
+      '   AND IC.ID = :P_CARDAPIO_ID'
+      '')
+    Left = 648
+    Top = 256
+    object AutoIncField1: TAutoIncField
+      FieldName = 'ID'
+      ReadOnly = True
+    end
   end
 end

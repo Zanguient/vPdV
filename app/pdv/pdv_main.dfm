@@ -1,5 +1,7 @@
 inherited frmPDVMain: TfrmPDVMain
   Height = 588
+  Color = clCream
+  ParentColor = False
   OnResize = FrameResize
   inherited panTop: TPanel
     inherited lblNomeFrame: TLabel
@@ -43,6 +45,10 @@ inherited frmPDVMain: TfrmPDVMain
           OptionsSelection.MultiSelect = True
           OptionsSelection.CellMultiSelect = True
           OptionsView.GroupByBox = False
+          Styles.Background = frmPDV_PDV.cxStyle2
+          Styles.Content = frmPDV_PDV.cxStyle10
+          Styles.Selection = frmPDV_PDV.cxStyle8
+          Styles.Header = frmPDV_PDV.cxStyle1
           object gcpMesa: TcxGridDBColumn
             Caption = 'Mesa'
             DataBinding.FieldName = 'id_mesa'
@@ -79,7 +85,7 @@ inherited frmPDVMain: TfrmPDVMain
       Height = 561
       Align = alClient
       BevelOuter = bvNone
-      Color = clHighlightText
+      Color = clCream
       TabOrder = 1
       object scbOpcoes: TScrollBox
         Left = 0
@@ -2224,6 +2230,8 @@ inherited frmPDVMain: TfrmPDVMain
         BevelInner = bvNone
         BevelOuter = bvNone
         BorderStyle = bsNone
+        Color = clCream
+        ParentColor = False
         TabOrder = 1
       end
     end

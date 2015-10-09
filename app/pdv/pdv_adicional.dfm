@@ -108,6 +108,10 @@ object frmAdicional: TfrmAdicional
         OptionsData.Inserting = False
         OptionsSelection.CellSelect = False
         OptionsView.GroupByBox = False
+        Styles.Background = frmPDV_PDV.cxStyle2
+        Styles.Content = frmPDV_PDV.cxStyle10
+        Styles.Selection = frmPDV_PDV.cxStyle8
+        Styles.Header = frmPDV_PDV.cxStyle1
         object dbgAdicionalPedidoColumn1: TcxGridDBColumn
           Caption = 'Adicional'
           DataBinding.FieldName = 'NMPRODUTO'

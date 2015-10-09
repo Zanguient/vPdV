@@ -23,7 +23,7 @@ object frmConfirmaQtdePeso: TfrmConfirmaQtdePeso
     Height = 42
     Align = alBottom
     BevelOuter = bvNone
-    Color = clWhite
+    Color = clTeal
     TabOrder = 0
     object btnConfirmar: TcxButton
       Left = 0
@@ -31,9 +31,22 @@ object frmConfirmaQtdePeso: TfrmConfirmaQtdePeso
       Width = 177
       Height = 42
       Caption = 'Confirmar'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -13
+      Font.Name = 'MS Sans Serif'
+      Font.Style = [fsBold]
+      ParentFont = False
       TabOrder = 0
       OnClick = btnConfirmarClick
       Align = alClient
+      Colors.DefaultText = clCream
+      Colors.Hot = 5593599
+      Colors.HotText = clCaptionText
+      Colors.Pressed = 263357
+      Colors.PressedText = clCaptionText
+      Colors.Disabled = clInactiveBorder
+      Colors.DisabledText = clCream
       SpeedButtonOptions.CanBeFocused = False
       SpeedButtonOptions.Flat = True
       SpeedButtonOptions.Transparent = True
@@ -44,9 +57,22 @@ object frmConfirmaQtdePeso: TfrmConfirmaQtdePeso
       Width = 177
       Height = 42
       Caption = 'Cancelar'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -13
+      Font.Name = 'MS Sans Serif'
+      Font.Style = [fsBold]
+      ParentFont = False
       TabOrder = 1
       OnClick = btnCancelarClick
       Align = alRight
+      Colors.DefaultText = clCream
+      Colors.Hot = 5593599
+      Colors.HotText = clCaptionText
+      Colors.Pressed = 263357
+      Colors.PressedText = clCaptionText
+      Colors.Disabled = clInactiveBorder
+      Colors.DisabledText = clCream
       SpeedButtonOptions.CanBeFocused = False
       SpeedButtonOptions.Flat = True
       SpeedButtonOptions.Transparent = True
@@ -59,7 +85,7 @@ object frmConfirmaQtdePeso: TfrmConfirmaQtdePeso
     Height = 89
     Align = alClient
     BevelOuter = bvNone
-    Color = clWhite
+    Color = clTeal
     TabOrder = 1
     object lblQtde: TcxLabel
       Left = 4
@@ -71,6 +97,7 @@ object frmConfirmaQtdePeso: TfrmConfirmaQtdePeso
       Style.Font.Height = -17
       Style.Font.Name = 'Latha'
       Style.Font.Style = [fsBold]
+      Style.TextColor = clCream
       Style.TextStyle = [fsBold]
       Style.IsFontAssigned = True
       Transparent = True
@@ -105,6 +132,7 @@ object frmConfirmaQtdePeso: TfrmConfirmaQtdePeso
       Style.Font.Height = -17
       Style.Font.Name = 'Latha'
       Style.Font.Style = [fsBold]
+      Style.TextColor = clCream
       Style.TextStyle = [fsBold]
       Style.IsFontAssigned = True
       Transparent = True
