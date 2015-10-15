@@ -1,6 +1,6 @@
 object frmMainBase: TfrmMainBase
-  Left = 223
-  Top = 46
+  Left = 95
+  Top = 48
   BorderStyle = bsNone
   ClientHeight = 632
   ClientWidth = 1222
@@ -27,7 +27,7 @@ object frmMainBase: TfrmMainBase
     Font.Height = -11
     Font.Name = 'MS Sans Serif'
     Font.Style = []
-    ActiveGroupIndex = 0
+    ActiveGroupIndex = 3
     TabOrder = 0
     View = 15
     OptionsImage.SmallImages = cilMenu
@@ -164,15 +164,16 @@ object frmMainBase: TfrmMainBase
       CustomStyles.ItemDisabled = sty_menu_lat
       CustomStyles.ItemHotTracked = sty_menu_lat_hottra
       CustomStyles.ItemPressed = nbMain_BaseStyleItem3
+      OnClick = nbiCancelarPedidoClick
     end
     object sty_menu_lat: TdxNavBarStyleItem
       Style.BackColor = 15202808
-      Style.BackColor2 = clCream
+      Style.BackColor2 = 15202808
       Style.Font.Charset = DEFAULT_CHARSET
       Style.Font.Color = 65408
-      Style.Font.Height = -11
+      Style.Font.Height = -13
       Style.Font.Name = 'MS Sans Serif'
-      Style.Font.Style = []
+      Style.Font.Style = [fsBold]
       Style.HAlignment = haLeft
       Style.AssignedValues = [savBackColor, savBackColor2, savFont]
     end

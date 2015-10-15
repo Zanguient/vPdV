@@ -45,6 +45,7 @@ type
     procedure nbgPDVClick(Sender: TObject);
     procedure nbiClienteClick(Sender: TObject);
     procedure nbiFornecedorClick(Sender: TObject);
+    procedure nbiCancelarPedidoClick(Sender: TObject);
   private
     { Private declarations }
 //    procedure InvocadordeBpl(stClasse: String);
@@ -84,7 +85,7 @@ implementation
 
 uses
    libframes, pdv_main, pdv_aberturacaixa, pdv_abertura_fechamento_caixa, uvCadastroClienteFrame,
-   uvCadastroFornecedorFrame, lib_db;
+   uvCadastroFornecedorFrame, lib_db, pdv_cancelar_pedido;
 
 
 procedure CriarMainForm(const IdUsuario, IdEmpresa, IdUnidade : Integer;
@@ -153,6 +154,11 @@ end;
 procedure TfrmMainBase.nbiFornecedorClick(Sender: TObject);
 begin
   TAbasNavegacao.CriarAba(pgcPrincipal, TvCadastroFornecedorFrame);
+end;
+
+procedure TfrmMainBase.nbiCancelarPedidoClick(Sender: TObject);
+begin
+  TAbasNavegacao.CriarAba(pgcPrincipal, TvCancelaPedido);
 end;
 
 end.
