@@ -32,6 +32,7 @@ uses
 
 begin
   Application.Initialize;
+  Application.Title := 'Cliente PDV';
   Application.CreateForm(TdmConexao, dmConexao);
   frmLoginBase := TfrmLoginBase.Create(Application);
   frmLoginBase.ShowModal;
