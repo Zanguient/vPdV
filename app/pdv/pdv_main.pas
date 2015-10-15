@@ -18,7 +18,7 @@ uses
   dxSkinXmas2008Blue, dxSkinscxPCPainter, cxCustomData, cxFilter, cxData,
   cxDataStorage, cxEdit, cxDBData, cxGridLevel, cxGridCustomTableView,
   cxGridTableView, cxGridDBTableView, cxClasses, cxGridCustomView, cxGrid,
-  Provider, cxImageComboBox;
+  Provider, cxImageComboBox, ImgList;
 
 type
   TfrmPDVMain = class(TvPadraoFrame)
@@ -46,6 +46,12 @@ type
     cdsMesavalor: TBCDField;
     cxStyleRepository1: TcxStyleRepository;
     cxStyle1: TcxStyle;
+    styGridPDV: TcxStyleRepository;
+    styGridBackgroud: TcxStyle;
+    styGridContent: TcxStyle;
+    styGridHeader: TcxStyle;
+    styGridSelection: TcxStyle;
+    cilDetalhePDV: TcxImageList;
     procedure FrameResize(Sender: TObject);
     procedure btnGavetaClick(Sender: TObject);
     procedure dtvPedidosCustomDrawCell(Sender: TcxCustomGridTableView;
@@ -90,7 +96,7 @@ begin
     while not cdsMesa.Eof do
     begin
       Interface_.CriaButtonScrollBox(sbxOpcoesPDV, cdsMesa.FieldByName('nmmesa').AsString, OnClickOpcoesPDV, 150, 150,
-        cdsMesa.FieldByName('id_mesa').AsInteger);
+        cdsMesa.FieldByName('id_mesa').AsInteger, cilDetalhePDV, 0);
 
       cdsMesa.Next;
     end;

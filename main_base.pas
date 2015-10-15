@@ -15,7 +15,8 @@ uses
   dxSkinSharp, dxSkinSilver, dxSkinSpringTime, dxSkinStardust,
   dxSkinSummer2008, dxSkinsDefaultPainters, dxSkinValentine,
   dxSkinXmas2008Blue, dxSkinsdxNavBar2Painter, dxNavBarCollns, cxClasses,
-  dxNavBarBase, dxNavBar, dxSkinscxPCPainter, cxPC, ImgList, dxSkinsForm;
+  dxNavBarBase, dxNavBar, dxSkinscxPCPainter, cxPC, ImgList, dxSkinsForm,
+  dxNavBarStyles;
 
 type
   TfrmMainBase = class(TForm)
@@ -30,6 +31,15 @@ type
     nbiSaida: TdxNavBarItem;
     cilMenu: TcxImageList;
     nbiFornecedor: TdxNavBarItem;
+    sty_menu_lat: TdxNavBarStyleItem;
+    sty_menu_lat_header: TdxNavBarStyleItem;
+    sty_menu_lat_active: TdxNavBarStyleItem;
+    sty_menu_lat_hottra: TdxNavBarStyleItem;
+    nbMain_BaseStyleItem1: TdxNavBarStyleItem;
+    nbMain_BaseStyleItem2: TdxNavBarStyleItem;
+    nbMain_BaseStyleItem3: TdxNavBarStyleItem;
+    nbMain_BaseStyleItem4: TdxNavBarStyleItem;
+    nbiCancelarPedido: TdxNavBarItem;
     procedure nbgSairClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure nbgPDVClick(Sender: TObject);

@@ -43,6 +43,7 @@ CONST
 
    { PDV }
    EXCLUIR_ITEM = 'Deseja excluir o item?';
+   CONFIRMA_PERDA_DADOS = 'O pedido foi alterado, deseja desfazer a alteração?';
 
 implementation
 

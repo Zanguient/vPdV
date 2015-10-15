@@ -141,25 +141,7 @@ type
     adqConsID: TADOQuery;
     adqDelItemPedido: TADOQuery;
     cdsItemPedidoIMG: TLargeintField;
-    cxStyleRepository1: TcxStyleRepository;
-    cxStyle1: TcxStyle;
-    cxStyle2: TcxStyle;
-    cxStyleRepository2: TcxStyleRepository;
-    cxStyle3: TcxStyle;
-    cxStyleRepository3: TcxStyleRepository;
-    cxStyle4: TcxStyle;
     edtTotal: TcxCurrencyEdit;
-    cxStyleRepository4: TcxStyleRepository;
-    cxStyle5: TcxStyle;
-    cxStyleRepository5: TcxStyleRepository;
-    cxStyle6: TcxStyle;
-    cxStyleRepository6: TcxStyleRepository;
-    cxStyle7: TcxStyle;
-    cxStyleRepository7: TcxStyleRepository;
-    cxStyle8: TcxStyle;
-    cxStyleRepository8: TcxStyleRepository;
-    cxStyle9: TcxStyle;
-    cxStyle10: TcxStyle;
     adqAdicional: TADOQuery;
     dspAdicional: TDataSetProvider;
     cdsAddPedidoIMG: TLargeintField;
@@ -169,6 +151,11 @@ type
     adqConsItemPedidoID: TADOQuery;
     adqAuxAdicional: TADOQuery;
     AutoIncField1: TAutoIncField;
+    styGridPDV: TcxStyleRepository;
+    styGridBackgroud: TcxStyle;
+    styGridContent: TcxStyle;
+    styGridHeader: TcxStyle;
+    styGridSelection: TcxStyle;
     procedure FormShow(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     constructor PCreate(Form: TComponent; Parametros: TParametros); Overload;
@@ -199,6 +186,7 @@ type
 var
   frmPDV_PDV: TfrmPDV_PDV;
   stStatusPedido: String;
+  boOk: Boolean;
 
 implementation
 
@@ -216,6 +204,7 @@ begin
   Interface_ := TInterface.Create();
 
   stStatusPedido := 'A';
+  boOk := True;
   lblFrom.Caption := FParametros.Caption;
   frmPDV_PDV.Tag  := FParametros.Tag;                  
   panDados.Visible  := FParametros.panDados_Visible;
@@ -350,6 +339,7 @@ var
       end;
       cdsItemPedidoQTITEM.AsFloat  := RoundTo(cdsItemPedidoQTITEM.AsFloat+flRetConfirmaQtdePeso, -3);
       cdsItemPedidoVRTOTAL.AsFloat := RoundTo(cdsItemPedidoQTITEM.AsFloat*cdsItemPedidoVRVENDA.AsFloat, -2);
+      boOk := False;
     end else
     begin
       cdsItemPedido.Insert;
@@ -377,8 +367,8 @@ var
       cdsItemPedidoVRTOTAL.AsFloat := RoundTo(cdsItemCategoriaVRVENDA.AsFloat*flRetConfirmaQtdePeso, -2);
       cdsItemPedidoLOTE_ID.Clear;
       cdsItemPedidoIMG.Value := 0;
-
-//      cdsItemPedidoIDADICIONAL.AsInteger :=
+                                                                                                            
+      boOk := False;
     end;
   end;
 begin
@@ -471,10 +461,14 @@ begin
   finally
     FreeAndNil(Acesso_Perifericos);
   end;
+  boOk := True;
 end;
 
 procedure TfrmPDV_PDV.btnCancelarClick(Sender: TObject);
 begin
+  if not boOk then
+    if not Confirma(CONFIRMA_PERDA_DADOS) then
+      Exit;
   Close;
 end;
 
@@ -614,6 +608,8 @@ begin
 
     cdsItemPedido.EnableControls;
     cdsAddPedido.EnableControls;
+
+    boOk := True;
   except
     cdsItemPedido.EnableControls;
     cdsAddPedido.EnableControls;
@@ -662,6 +658,7 @@ begin
         FreeAndNil(frmAdicional);
       end;
     end;
+    boOk := False;
   end;
 end;
 
@@ -688,6 +685,8 @@ begin
 
       //Super ultra gambiarra para não dar o erro esporadico ao "excluir" um item com adicional
       Abort;
+
+      boOk := False;
     end;
   end;
 end;
