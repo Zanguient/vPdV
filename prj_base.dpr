@@ -27,12 +27,15 @@ uses
   lib_sincronizacao in 'vlib\lib_sincronizacao.pas',
   pdv_confirma_qtde_peso in 'app\pdv\pdv_confirma_qtde_peso.pas' {frmConfirmaQtdePeso},
   uvCadastroFornecedorFrame in 'app\cadastro\fornecedor\uvCadastroFornecedorFrame.pas' {vCadastroFornecedorFrame: TFrame},
-  lib_tratamentos_sincronizacao in 'vlib\lib_tratamentos_sincronizacao.pas';
+  lib_tratamentos_sincronizacao in 'vlib\lib_tratamentos_sincronizacao.pas',
+  pdv_cancelar_pedido in 'app\pdv\pdv_cancelar_pedido.pas' {vCancelaPedido: TFrame};
+
 
 {$R *.res}
 
 begin
   Application.Initialize;
+  Application.Title := 'Client PDV VMSis';
   Application.CreateForm(TdmConexao, dmConexao);
   frmLoginBase := TfrmLoginBase.Create(Application);
   frmLoginBase.ShowModal;

@@ -74,7 +74,7 @@ begin
 
    try
      if TmpImageList <> Nil then
-       TmpImageList.GetBitmap(inImagePos, btn.Glyph);
+       TmpImageList.GetImage(inImagePos, btn.Glyph);
      btn.Layout := blGlyphTop;
    except
      //Cala a boca

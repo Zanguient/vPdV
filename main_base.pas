@@ -15,7 +15,8 @@ uses
   dxSkinSharp, dxSkinSilver, dxSkinSpringTime, dxSkinStardust,
   dxSkinSummer2008, dxSkinsDefaultPainters, dxSkinValentine,
   dxSkinXmas2008Blue, dxSkinsdxNavBar2Painter, dxNavBarCollns, cxClasses,
-  dxNavBarBase, dxNavBar, dxSkinscxPCPainter, cxPC, ImgList, dxSkinsForm;
+  dxNavBarBase, dxNavBar, dxSkinscxPCPainter, cxPC, ImgList, dxSkinsForm,
+  dxNavBarStyles;
 
 type
   TfrmMainBase = class(TForm)
@@ -30,11 +31,21 @@ type
     nbiSaida: TdxNavBarItem;
     cilMenu: TcxImageList;
     nbiFornecedor: TdxNavBarItem;
+    sty_menu_lat: TdxNavBarStyleItem;
+    sty_menu_lat_header: TdxNavBarStyleItem;
+    sty_menu_lat_active: TdxNavBarStyleItem;
+    sty_menu_lat_hottra: TdxNavBarStyleItem;
+    nbMain_BaseStyleItem1: TdxNavBarStyleItem;
+    nbMain_BaseStyleItem2: TdxNavBarStyleItem;
+    nbMain_BaseStyleItem3: TdxNavBarStyleItem;
+    nbMain_BaseStyleItem4: TdxNavBarStyleItem;
+    nbiCancelarPedido: TdxNavBarItem;
     procedure nbgSairClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure nbgPDVClick(Sender: TObject);
     procedure nbiClienteClick(Sender: TObject);
     procedure nbiFornecedorClick(Sender: TObject);
+    procedure nbiCancelarPedidoClick(Sender: TObject);
   private
     { Private declarations }
 //    procedure InvocadordeBpl(stClasse: String);
@@ -74,7 +85,7 @@ implementation
 
 uses
    libframes, pdv_main, pdv_aberturacaixa, pdv_abertura_fechamento_caixa, uvCadastroClienteFrame,
-   uvCadastroFornecedorFrame, lib_db;
+   uvCadastroFornecedorFrame, lib_db, pdv_cancelar_pedido;
 
 
 procedure CriarMainForm(const IdUsuario, IdEmpresa, IdUnidade : Integer;
@@ -143,6 +154,11 @@ end;
 procedure TfrmMainBase.nbiFornecedorClick(Sender: TObject);
 begin
   TAbasNavegacao.CriarAba(pgcPrincipal, TvCadastroFornecedorFrame);
+end;
+
+procedure TfrmMainBase.nbiCancelarPedidoClick(Sender: TObject);
+begin
+  TAbasNavegacao.CriarAba(pgcPrincipal, TvCancelaPedido);
 end;
 
 end.

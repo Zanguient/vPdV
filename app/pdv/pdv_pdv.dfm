@@ -1663,7 +1663,7 @@ object frmPDV_PDV: TfrmPDV_PDV
       Width = 200
       Height = 89
       Hint = 'Cancelar altera'#231#245'es'
-      Caption = 'Desfazer'
+      Caption = 'Voltar'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -13
@@ -2445,10 +2445,10 @@ object frmPDV_PDV: TfrmPDV_PDV
         OptionsData.Inserting = False
         OptionsSelection.CellSelect = False
         OptionsView.GroupByBox = False
-        Styles.Background = cxStyle2
-        Styles.Content = cxStyle10
-        Styles.Selection = cxStyle8
-        Styles.Header = cxStyle1
+        Styles.Background = styGridBackgroud
+        Styles.Content = styGridContent
+        Styles.Selection = styGridSelection
+        Styles.Header = styGridHeader
         object gdbAddPedidoColumn1: TcxGridDBColumn
           Caption = 'Adicional'
           DataBinding.FieldName = 'NMPRODUTO'
@@ -2545,10 +2545,10 @@ object frmPDV_PDV: TfrmPDV_PDV
         OptionsSelection.CellSelect = False
         OptionsView.CellAutoHeight = True
         OptionsView.GroupByBox = False
-        Styles.Background = cxStyle2
-        Styles.Content = cxStyle10
-        Styles.Selection = cxStyle8
-        Styles.Header = cxStyle1
+        Styles.Background = styGridBackgroud
+        Styles.Content = styGridContent
+        Styles.Selection = styGridSelection
+        Styles.Header = styGridHeader
         object gdbNmProduto: TcxGridDBColumn
           Caption = 'Produto'
           DataBinding.FieldName = 'NMPRODUTO'
@@ -4037,73 +4037,6 @@ object frmPDV_PDV: TfrmPDV_PDV
     Left = 840
     Top = 406
   end
-  object cxStyleRepository1: TcxStyleRepository
-    PixelsPerInch = 96
-    object cxStyle1: TcxStyle
-      AssignedValues = [svColor, svFont, svTextColor]
-      Color = cl3DLight
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clDefault
-      Font.Height = -11
-      Font.Name = 'MS Sans Serif'
-      Font.Style = [fsBold]
-      TextColor = clBackground
-    end
-    object cxStyle2: TcxStyle
-      AssignedValues = [svColor]
-      Color = clMoneyGreen
-    end
-  end
-  object cxStyleRepository2: TcxStyleRepository
-    PixelsPerInch = 96
-    object cxStyle3: TcxStyle
-    end
-    object cxStyle10: TcxStyle
-      AssignedValues = [svColor]
-      Color = clCream
-    end
-  end
-  object cxStyleRepository3: TcxStyleRepository
-    PixelsPerInch = 96
-    object cxStyle4: TcxStyle
-    end
-  end
-  object cxStyleRepository4: TcxStyleRepository
-    PixelsPerInch = 96
-    object cxStyle5: TcxStyle
-      AssignedValues = [svColor]
-      Color = clGreen
-    end
-  end
-  object cxStyleRepository5: TcxStyleRepository
-    PixelsPerInch = 96
-    object cxStyle6: TcxStyle
-      AssignedValues = [svColor]
-      Color = clYellow
-    end
-  end
-  object cxStyleRepository6: TcxStyleRepository
-    PixelsPerInch = 96
-    object cxStyle7: TcxStyle
-      AssignedValues = [svColor]
-      Color = clRed
-    end
-  end
-  object cxStyleRepository7: TcxStyleRepository
-    PixelsPerInch = 96
-    object cxStyle8: TcxStyle
-      AssignedValues = [svColor, svTextColor]
-      Color = clBackground
-      TextColor = clBtnHighlight
-    end
-  end
-  object cxStyleRepository8: TcxStyleRepository
-    PixelsPerInch = 96
-    object cxStyle9: TcxStyle
-      AssignedValues = [svColor]
-      Color = clRed
-    end
-  end
   object adqAdicional: TADOQuery
     Connection = dmConexao.adoConexaoBd
     Parameters = <
@@ -4259,6 +4192,41 @@ object frmPDV_PDV: TfrmPDV_PDV
     object AutoIncField1: TAutoIncField
       FieldName = 'ID'
       ReadOnly = True
+    end
+  end
+  object styGridPDV: TcxStyleRepository
+    Top = 32
+    PixelsPerInch = 96
+    object styGridBackgroud: TcxStyle
+      AssignedValues = [svColor]
+      Color = clMoneyGreen
+    end
+    object styGridContent: TcxStyle
+      AssignedValues = [svFont]
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clCream
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
+      Font.Style = []
+    end
+    object styGridHeader: TcxStyle
+      AssignedValues = [svFont, svTextColor]
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = cl3DLight
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
+      Font.Style = [fsBold]
+      TextColor = clBackground
+    end
+    object styGridSelection: TcxStyle
+      AssignedValues = [svColor, svFont, svTextColor]
+      Color = clBackground
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
+      Font.Style = []
+      TextColor = clBtnHighlight
     end
   end
 end

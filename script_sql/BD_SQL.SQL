@@ -49,7 +49,7 @@ CREATE INDEX estado_sgestado_like ON estado(sgestado);
 
 CREATE TABLE cidade
 (
-  id integer NOT NULL AUTO_INCREMENT,  
+  id integer NOT NULL AUTO_INCREMENT,
   dtcadastro date,
   cdcidade character varying(10) NOT NULL,
   nmcidade character varying(250) NOT NULL,
@@ -610,5 +610,13 @@ ALTER TABLE itemproduto ADD saida_id INTEGER NULL;
 ALTER TABLE itemproduto ADD CONSTRAINT FK_itemproduto_entrada FOREIGN KEY(entrada_id)
   REFERENCES Entrada(id);
 
+
 ALTER TABLE itemproduto ADD CONSTRAINT FK_itemproduto_saida FOREIGN KEY(saida_id)
   REFERENCES Saida(id);
+
+ALTER TABLE ITADICIONAL ADD valor FLOAT(14,2) NOT NULL;
+
+ALTER TABLE PEDIDO ADD dsmotivo TEXT NULL;
+
+ALTER TABLE mesa ADD idstatus character varying(1) NOT NULL  default 'L' check(idstatus in ('L', 'O'));
+
