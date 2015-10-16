@@ -15,7 +15,7 @@ type
     FCamposWebLocal : TListaMapaValor;
     FChavesTabela : string;
     function GetXMLText(FieldsSeparetedByPipe : String = ''): string;
-    function CheckNoveValue(const field : IXMLNode): OleVariant;
+    function CheckNodeValue(const field : IXMLNode): OleVariant;
   protected
 
   public
@@ -31,13 +31,13 @@ type
   end;
 implementation
 
-uses StrUtils;
+uses StrUtils, lib_tratamentos_sincronizacao;
 
 
 const
    SENHA_VMSIS = 'masterVMSIS123v';
    USUARIO_VMSIS = 'vmsismaster';
-   URL_BASE = 'http://177.153.20.166';
+   URL_BASE = 'http://127.0.0.1:8000/';//'http://177.153.20.166';
    URL_PARCIAL_GET_XML = '/getmodelasjson/';
    URL_PARCIAL_SEND_XML = '/setmodelasjson/';
 
@@ -119,7 +119,13 @@ begin
 
     for i:= 0 to FCamposWebLocal.Count - 1 do
     begin
-      campos := campos + FCamposWebLocal.GetKey(i) + '|';
+      if FCamposWebLocal.GetKey(i) <> EmptyStr then
+        campos := campos + FCamposWebLocal.GetKey(i) + '|'
+      else
+      begin
+        bd.AddParametro(FCamposWebLocal.GetValue(i), FCamposWebLocal.GetAdicional(i));
+      end;
+
     end;
 
     if campos <> EmptyStr then
@@ -153,7 +159,7 @@ begin
             campo_fk:= ReverseString(campo_fk);
             bd_fk := TObjetoDB.create(campo_fk);
             try
-              bd_fk.AddParametro('id_web', CheckNoveValue(field));
+              bd_fk.AddParametro('id_web', CheckNodeValue(field));
               bd_fk.Select(['id']);
               bd.AddParametro(campo_atual, bd_fk.GetVal('id'));
             finally
@@ -162,16 +168,18 @@ begin
           end
           else
           begin
-            bd.AddParametro(campo_atual, CheckNoveValue(field));
+            bd.AddParametro(campo_atual, CheckNodeValue(field));
           end;
         end;
 
         if Pos(campo_atual + ',', FChavesTabela) = 0 then
           bd.AddIgnoreParam(campo_atual);
-
+                     
       end;
       bd.AddParametro('id_web', row.Attributes['pk']);
-      bd.AddIgnoreParam('id_web');
+
+      if Pos('pk,', FChavesTabela) = 0 then
+        bd.AddIgnoreParam('id_web');
 
       bd.Select(['id']);
 
@@ -192,7 +200,7 @@ begin
 
 end;
 
-function TSincronizacao.CheckNoveValue(const field: IXMLNode): OleVariant;
+function TSincronizacao.CheckNodeValue(const field: IXMLNode): OleVariant;
 var
   field_type : string;
   value : Variant;
@@ -332,7 +340,7 @@ begin
      map.Add('nmmedida', 'nmmedida', '');
      map.Add('sgmedida', 'sgmedida', '');
      map.Add('qtfatorconv', 'qtfatorconv', '');
-     map.Add('idtipomed', 'idtipomed', '');                    
+     map.Add('idtipomed', 'idtipomed', '');
 
      sinc := TSincronizacao.create('unimedida', 'cadastro.unimedida.models', map, 'nmmedida', 'unimedida');
      sinc.GetWebData;
@@ -348,7 +356,7 @@ begin
      map.Add('cdbarra', 'cdbarra');
      map.Add('idprodvenda', 'idprodvenda');
      map.Add('idadicional', 'idadicional');
-     map.Add('imgindex', 'imgindex');          
+     map.Add('imgindex', 'imgindex');
 
      sinc := TSincronizacao.create('produto', 'cadastro.produto.models', map, 'nmproduto', 'produto');
      sinc.GetWebData;
@@ -366,6 +374,39 @@ begin
      FreeAndNil(sinc);
      FreeAndNil(map);
 
+     //entrada - estoque()
+     map := TListaMapaValor.create;
+     map.Add('dtentrada', 'dtentrada');
+     map.Add('fornecedor', 'fornecedor_id');
+     sinc := TSincronizacao.create('Entrada', 'estoque.entrada.models', map, 'pk', 'Entrada');
+     sinc.GetWebData;
+     FreeAndNil(sinc);
+     FreeAndNil(map);
+
+     //saida
+     map := TListaMapaValor.create;
+     map.Add('dtsaida', 'dtsaida');
+     map.Add('cliente', 'cliente_id');
+     map.Add('finalidade', 'finalidade_id');
+     map.Add('idtipo', 'idtipo');
+     sinc := TSincronizacao.create('Saida', 'estoque.saida.models', map, 'pk', 'Saida');
+     sinc.GetWebData;
+     FreeAndNil(sinc);
+     FreeAndNil(map);
+
+     //itemproduto
+     map := TListaMapaValor.create;
+     map.Add('dtcadastro', 'dtcadastro');
+     map.Add('produto', 'produto_id');
+     map.Add('lote', 'lote_id');
+     map.Add('qtdeprod', 'qtdeprod');
+     sinc := TSincronizacao.create('Itemproduto', 'estoque.itemproduto.models', map, 'pk', 'Itemproduto');
+     sinc.GetWebData;
+     FreeAndNil(sinc);
+     FreeAndNil(map);
+
+     TTratamentos.PreencherIdEntradaSaidaItemProduto;
+
    finally
      if Assigned(sinc) then
         FreeAndNil(sinc);
@@ -377,3 +418,4 @@ begin
 end;
 
 end.
+

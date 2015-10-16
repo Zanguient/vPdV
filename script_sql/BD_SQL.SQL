@@ -208,25 +208,26 @@ CREATE TABLE finalidade
 );
 
 
-CREATE TABLE moviest
+CREATE TABLE Entrada
 (
   id integer NOT NULL AUTO_INCREMENT,
-  dtmovi date NOT NULL,
-  cliente_id integer NULL,
+  dtentrada date NOT NULL,
   fornecedor_id integer NULL,
+  id_web integer NULL,
+  CONSTRAINT Entrada_pkey PRIMARY KEY(id));
+
+CREATE TABLE Saida
+(
+  id integer NOT NULL AUTO_INCREMENT,
+  dtsaida date NOT NULL,
+  cliente_id integer NOT NULL,
   finalidade_id integer NULL,
   idtipo character varying(1) NOT NULL,
-  tpmovi character varying(1) NOT NULL check(tpmovi in ('E', 'S' )),
-  CONSTRAINT moviest_pkey PRIMARY KEY (id),
-  CONSTRAINT smoviest_cliente_id_fkey FOREIGN KEY (cliente_id)
-      REFERENCES cliente (id),
-  CONSTRAINT moviest_finalidade_id_fkey FOREIGN KEY (finalidade_id)
+  id_web integer NULL,
+  constraint Saida_pkey PRIMARY KEY(id),
+  CONSTRAINT Saida_finalidade_id_fkey FOREIGN KEY (finalidade_id)
       REFERENCES finalidade (id)
 );
-
-CREATE INDEX moviest_cliente_id ON moviest (cliente_id);
-CREATE INDEX moviest_fornecedor_id ON moviest (fornecedor_id);
-CREATE INDEX moviest_finalidade_id ON moviest(finalidade_id);
 
 
 CREATE TABLE lote
@@ -551,6 +552,25 @@ CREATE TABLE permusr
 );
 CREATE UNIQUE INDEX ux_permusr_descricao ON permusr(id_rotina, descricao);
 
+
+CREATE TABLE itemproduto (
+  id integer NOT NULL AUTO_INCREMENT,
+  dtcadastro DATE DEFAULT NULL,
+  produto_id integer NOT NULL,
+  lote_id integer DEFAULT NULL,
+  qtdeprod DOUBLE NOT NULL,
+  id_web integer NULL,
+  PRIMARY KEY (id),
+  INDEX itemproduto_0e78abec (produto_id),
+  INDEX itemproduto_8f382e5a (lote_id),
+  CONSTRAINT lote_id_refs_id_81ed77f5 FOREIGN KEY (lote_id)
+    REFERENCES lote(id),
+  CONSTRAINT produto_id_refs_id_4f2c4634 FOREIGN KEY (produto_id)
+    REFERENCES produto(id)
+)
+
+
+
 alter table endereco add complemento character varying(255) NULL;
 alter table empresa add id_web integer NULL;
 alter table pais add id_web integer NULL;
@@ -564,7 +584,6 @@ alter table unidade add id_web integer NULL;
 alter table unimedida add id_web integer NULL;
 alter table produto add id_web integer NULL;
 alter table finalidade add id_web integer NULL;
-alter table moviest add id_web integer NULL;
 alter table lote add id_web integer NULL;
 alter table posestoque add id_web integer NULL;
 alter table AgrupAdicional add id_web integer NULL;
@@ -578,6 +597,18 @@ alter table fornecedor add dtcadastro datetime not NULL DEFAULT CURRENT_TIMESTAM
 
 ALTER TABLE ITEMPEDIDO ADD Produto_id integer NOT NULL;
 
-ALTER TABLE ITEMPEDIDO ADD CONSTRAINT ItemPedido_produto_id_fkey FOREIGN KEY (produto_id) REFERENCES produto (id);
+ALTER TABLE ITEMPEDIDO ADD CONSTRAINT ItemPedido_produto_id_fkey FOREIGN KEY (produto_id)
+  REFERENCES produto (id);
 
 ALTER TABLE ITADICIONAL ADD valor FLOAT(14,2) NOT NULL;
+ALTER TABLE Entrada ADD dtcadastro datetime NOT NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE Saida ADD dtcadastro datetime NOT NULL DEFAULT CURRENT_TIMESTAMP;
+
+ALTER TABLE itemproduto ADD entrada_id INTEGER NULL;
+ALTER TABLE itemproduto ADD saida_id INTEGER NULL;
+
+ALTER TABLE itemproduto ADD CONSTRAINT FK_itemproduto_entrada FOREIGN KEY(entrada_id)
+  REFERENCES Entrada(id);
+
+ALTER TABLE itemproduto ADD CONSTRAINT FK_itemproduto_saida FOREIGN KEY(saida_id)
+  REFERENCES Saida(id);

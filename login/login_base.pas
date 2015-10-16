@@ -164,13 +164,13 @@ begin
   CadastrosIniciais := TCadastrosIniciais.Create;
   try
     try
-      //CadastrosIniciais.Executar;
+      CadastrosIniciais.Executar;
       FidEmpresa := CadastrosIniciais.FidEmpresa;
       FidAlmoxarifado := CadastrosIniciais.FidAlmoxarifado;
       FidUnidade := CadastrosIniciais.FidUnidade;
       FNomeEmpresa := CadastrosIniciais.FNomeEmpresa;
       FNomeUnidade := CadastrosIniciais.FNomeUnidade;
-    except
+    except                 
       //cala boca
     end
   finally
@@ -202,7 +202,7 @@ begin
     FUsuario := usrAcesso.Usuario;
     FIdFuncionario := usrAcesso.IdUsuario;
 
-    //TSincronizarTabelas.Sincronizar;
+    TSincronizarTabelas.Sincronizar;
   finally
     FreeAndNil(usrAcesso);
   end;

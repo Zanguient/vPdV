@@ -26,7 +26,8 @@ uses
   uvPadraoCadastroFrame in 'vlib\vComponents\uvPadraoCadastroFrame.pas' {vPadraoCadastro: TFrame},
   lib_sincronizacao in 'vlib\lib_sincronizacao.pas',
   pdv_confirma_qtde_peso in 'app\pdv\pdv_confirma_qtde_peso.pas' {frmConfirmaQtdePeso},
-  uvCadastroFornecedorFrame in 'app\cadastro\fornecedor\uvCadastroFornecedorFrame.pas' {vCadastroFornecedorFrame: TFrame};
+  uvCadastroFornecedorFrame in 'app\cadastro\fornecedor\uvCadastroFornecedorFrame.pas' {vCadastroFornecedorFrame: TFrame},
+  lib_tratamentos_sincronizacao in 'vlib\lib_tratamentos_sincronizacao.pas';
 
 {$R *.res}
 
