@@ -64,6 +64,7 @@ inherited frmPDVMain: TfrmPDVMain
                 ImageIndex = 0
                 Value = 'Campo no banco'
               end>
+            OnGetDisplayText = gcpStatusGetDisplayText
             Styles.Header = cxStyle1
             Width = 92
           end
@@ -2239,14 +2240,42 @@ inherited frmPDVMain: TfrmPDVMain
   inherited adqPadrao: TADOQuery
     SQL.Strings = (
       
-        'SELECT id id_mesa, nmmesa, dsobsmesa, idmesaativ status, 0.00 va' +
-        'lor'
-      '  FROM MESA'
-      '')
+        'SELECT id id_mesa, nmmesa, dsobsmesa, idstatus status, 0.00 valo' +
+        'r'
+      'FROM MESA'
+      ' WHERE idmesaativ = '#39'A'#39)
   end
   object cdsMesa: TClientDataSet
+    Active = True
     Aggregates = <>
-    FieldDefs = <>
+    FieldDefs = <
+      item
+        Name = 'id_mesa'
+        Attributes = [faReadonly]
+        DataType = ftAutoInc
+      end
+      item
+        Name = 'nmmesa'
+        DataType = ftString
+        Size = 250
+      end
+      item
+        Name = 'dsobsmesa'
+        DataType = ftString
+        Size = 250
+      end
+      item
+        Name = 'status'
+        DataType = ftString
+        Size = 1
+      end
+      item
+        Name = 'valor'
+        Attributes = [faReadonly]
+        DataType = ftBCD
+        Precision = 3
+        Size = 2
+      end>
     IndexDefs = <
       item
         Name = 'cdsMesaIndex1'
@@ -2257,6 +2286,14 @@ inherited frmPDVMain: TfrmPDVMain
     StoreDefs = True
     Left = 368
     Top = 80
+    Data = {
+      D20000009619E0BD010000001800000005000000000003000000D2000769645F
+      6D657361040001000200010007535542545950450200490008004175746F696E
+      6300066E6D6D657361010049000000010005574944544802000200FA00096473
+      6F62736D657361010049000000010005574944544802000200FA000673746174
+      757301004900000001000557494454480200020001000576616C6F7204000500
+      0200020008444543494D414C5302000200020005574944544802000200030001
+      000C4155544F494E4356414C55450400010001000000}
     object cdsMesaid_mesa: TAutoIncField
       FieldName = 'id_mesa'
       ReadOnly = True

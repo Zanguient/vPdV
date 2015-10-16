@@ -583,3 +583,5 @@ ALTER TABLE ITEMPEDIDO ADD CONSTRAINT ItemPedido_produto_id_fkey FOREIGN KEY (pr
 ALTER TABLE ITADICIONAL ADD valor FLOAT(14,2) NOT NULL;
 
 ALTER TABLE PEDIDO ADD dsmotivo TEXT NULL;
+
+ALTER TABLE mesa ADD idstatus character varying(1) NOT NULL  default 'L' check(idstatus in ('L', 'O'));

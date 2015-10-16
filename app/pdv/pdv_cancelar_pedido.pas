@@ -68,6 +68,10 @@ type
     procedure dbgProdutoEnter(Sender: TObject);
     procedure memMotivoEnter(Sender: TObject);
     procedure btnAtualizarClick(Sender: TObject);
+    procedure gdbStatusPedidoGetDisplayText(Sender: TcxCustomGridTableItem;
+      ARecord: TcxCustomGridRecord; var AText: String);
+    procedure gdbTipoPedidoGetDisplayText(Sender: TcxCustomGridTableItem;
+      ARecord: TcxCustomGridRecord; var AText: String);
   private
     { Private declarations }
   public
@@ -84,7 +88,7 @@ implementation
 {$R *.dfm}
 
 uses
-  lib_interface, lib_mensagem, Math;
+  lib_interface, lib_mensagem, Math, StrUtils;
 
 procedure TvCancelaPedido.FrameResize(Sender: TObject); 
 var
@@ -191,6 +195,34 @@ begin
   end;
   cdsPedido.First;
   cdsPedido.EnableControls;
+end;
+
+procedure TvCancelaPedido.gdbStatusPedidoGetDisplayText(
+  Sender: TcxCustomGridTableItem; ARecord: TcxCustomGridRecord;
+  var AText: String);
+begin
+  inherited;
+  case AnsiIndexStr(UpperCase(AText), ['A','C','F']) of
+    0: Atext := 'Aberto';
+    1: Atext := 'Cancelado';
+    2: Atext := 'Finalizado';
+  else
+    AText := 'Desconhecido'; 
+  end;
+end;
+
+procedure TvCancelaPedido.gdbTipoPedidoGetDisplayText(
+  Sender: TcxCustomGridTableItem; ARecord: TcxCustomGridRecord;
+  var AText: String);
+begin
+  inherited;
+  case AnsiIndexStr(UpperCase(AText), ['D','B','M']) of
+    0: Atext := 'Delivery';
+    1: Atext := 'Balcão';
+    2: Atext := 'Mesa';
+  else
+    AText := 'Desconhecido';
+  end;
 end;
 
 end.

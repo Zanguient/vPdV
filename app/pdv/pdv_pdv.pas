@@ -454,7 +454,7 @@ var
 begin
   inherited;
   Acesso_Perifericos := TAcesso_Perifericos.Create;
-  stStatusPedido := 'C';
+  stStatusPedido := 'F';
   try
     btnGravarClick(btnGravar);
     Acesso_Perifericos.AbreGaveta;

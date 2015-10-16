@@ -60,6 +60,8 @@ type
     procedure btnDeliveryClick(Sender: TObject);
     procedure btnBalcaoClick(Sender: TObject);
     procedure cxButton1Click(Sender: TObject);
+    procedure gcpStatusGetDisplayText(Sender: TcxCustomGridTableItem;
+      ARecord: TcxCustomGridRecord; var AText: String);
   private
     { Private declarations }
   public
@@ -76,11 +78,11 @@ implementation
 
 uses
   lib_interface, lib_mensagem, pdv_pdv, pdv_adicional, uDmConexao, lib_vmsis,
-  lib_acesso, main_base, pdv_abertura_fechamento_caixa;
+  lib_acesso, main_base, pdv_abertura_fechamento_caixa, StrUtils;
 
 procedure TfrmPDVMain.FrameResize(Sender: TObject);
 var
-  iComp: Integer;
+  iComp, inStatus: Integer;
   Interface_: TInterface;
 begin
   Interface_ := TInterface.Create();
@@ -95,8 +97,13 @@ begin
     cdsMesa.First;
     while not cdsMesa.Eof do
     begin
+      if cdsMesastatus.AsString = 'L' then
+        inStatus := 0
+      else
+        inStatus := 1;
+
       Interface_.CriaButtonScrollBox(sbxOpcoesPDV, cdsMesa.FieldByName('nmmesa').AsString, OnClickOpcoesPDV, 150, 150,
-        cdsMesa.FieldByName('id_mesa').AsInteger, cilDetalhePDV, 0);
+        cdsMesa.FieldByName('id_mesa').AsInteger, cilDetalhePDV, inStatus);      
 
       cdsMesa.Next;
     end;
@@ -151,7 +158,7 @@ procedure TfrmPDVMain.OnClickOpcoesPDV(Sender: TObject);
 var
   P_Create: TParametros;
 begin                            
-  P_Create.Caption := (Sender as TcxButton).Caption;
+  P_Create.Caption := 'Mesa ' + (Sender as TcxButton).Caption;
   P_Create.Tag     := (Sender as TcxButton).Tag;
   P_Create.Totalizador_Height := 45;
   P_Create.btnGravar_Visible  := True;
@@ -208,6 +215,19 @@ begin
   inherited;
   if CaixaFechado then
     CaixaPreAberto;
+end;
+
+procedure TfrmPDVMain.gcpStatusGetDisplayText(
+  Sender: TcxCustomGridTableItem; ARecord: TcxCustomGridRecord;
+  var AText: String);
+begin
+  inherited;
+  case AnsiIndexStr(UpperCase(AText), ['L','O']) of
+    0: Atext := 'Livre';
+    1: Atext := 'Ocupada';
+  else
+    AText := 'Desconhecido';
+  end;
 end;
 
 end.

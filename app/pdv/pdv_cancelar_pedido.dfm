@@ -57,6 +57,7 @@ inherited vCancelaPedido: TvCancelaPedido
           Properties.DecimalPlaces = 3
           Properties.DisplayFormat = '0.000;-0.000'
           Properties.MaxLength = 13
+          OnGetDisplayText = gdbStatusPedidoGetDisplayText
           Width = 110
         end
         object gdbTipoPedido: TcxGridDBColumn
@@ -65,6 +66,7 @@ inherited vCancelaPedido: TvCancelaPedido
           PropertiesClassName = 'TcxCurrencyEditProperties'
           Properties.DisplayFormat = '0.00;-0.00'
           Properties.MaxLength = 13
+          OnGetDisplayText = gdbTipoPedidoGetDisplayText
           Width = 111
         end
         object gdbValorPedido: TcxGridDBColumn
