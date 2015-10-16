@@ -567,7 +567,7 @@ CREATE TABLE itemproduto (
     REFERENCES lote(id),
   CONSTRAINT produto_id_refs_id_4f2c4634 FOREIGN KEY (produto_id)
     REFERENCES produto(id)
-)
+);
 
 
 
@@ -600,7 +600,6 @@ ALTER TABLE ITEMPEDIDO ADD Produto_id integer NOT NULL;
 ALTER TABLE ITEMPEDIDO ADD CONSTRAINT ItemPedido_produto_id_fkey FOREIGN KEY (produto_id)
   REFERENCES produto (id);
 
-ALTER TABLE ITADICIONAL ADD valor FLOAT(14,2) NOT NULL;
 ALTER TABLE Entrada ADD dtcadastro datetime NOT NULL DEFAULT CURRENT_TIMESTAMP;
 ALTER TABLE Saida ADD dtcadastro datetime NOT NULL DEFAULT CURRENT_TIMESTAMP;
 
