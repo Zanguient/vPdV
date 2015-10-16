@@ -404,7 +404,7 @@ begin
      sinc.GetWebData;
      FreeAndNil(sinc);
      FreeAndNil(map);
-
+ 
      TTratamentos.PreencherIdEntradaSaidaItemProduto;
 
    finally

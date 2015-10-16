@@ -609,7 +609,7 @@ ALTER TABLE itemproduto ADD saida_id INTEGER NULL;
 
 ALTER TABLE itemproduto ADD CONSTRAINT FK_itemproduto_entrada FOREIGN KEY(entrada_id)
   REFERENCES Entrada(id);
-
+  
 
 ALTER TABLE itemproduto ADD CONSTRAINT FK_itemproduto_saida FOREIGN KEY(saida_id)
   REFERENCES Saida(id);
