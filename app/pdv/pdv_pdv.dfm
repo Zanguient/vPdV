@@ -3067,7 +3067,7 @@ object frmPDV_PDV: TfrmPDV_PDV
       
         '                        INNER JOIN AGRUPADICIONAL   AA ON AA.ID ' +
         '= IA.AGRUPADICIONAL_ID'
-      ' WHERE AA.IDAGRUPATIV = '#39'S'#39)
+      ' WHERE AA.IDAGRUPATIV = '#39'A'#39)
     Left = 728
     Top = 256
   end
@@ -3076,8 +3076,11 @@ object frmPDV_PDV: TfrmPDV_PDV
     Parameters = <
       item
         Name = 'P_PRODUTO'
-        DataType = ftInteger
-        Size = -1
+        Attributes = [paNullable]
+        DataType = ftString
+        NumericScale = 104
+        Precision = 255
+        Size = 255
         Value = Null
       end>
     SQL.Strings = (
@@ -3088,7 +3091,7 @@ object frmPDV_PDV: TfrmPDV_PDV
       
         '                        INNER JOIN AGRUPADICIONAL   AA ON AA.ID ' +
         '= IA.AGRUPADICIONAL_ID'
-      ' WHERE AA.IDAGRUPATIV = '#39'S'#39
+      ' WHERE AA.IDAGRUPATIV = '#39'A'#39
       '   AND IA.CARDAPIO_ID = :P_PRODUTO'
       '')
     Left = 648
@@ -27951,7 +27954,7 @@ object frmPDV_PDV: TfrmPDV_PDV
         Name = 'P_CARDAPIO_ID'
         Attributes = [paNullable]
         DataType = ftString
-        NumericScale = 128
+        NumericScale = 8
         Precision = 255
         Size = 255
         Value = Null
@@ -27966,7 +27969,7 @@ object frmPDV_PDV: TfrmPDV_PDV
       
         '                        INNER JOIN AGRUPADICIONAL   AA ON AA.ID ' +
         '= IA.AGRUPADICIONAL_ID                        '
-      ' WHERE AA.IDAGRUPATIV = '#39'S'#39
+      ' WHERE AA.IDAGRUPATIV = '#39'A'#39
       '   AND IC.ID = :P_CARDAPIO_ID'
       '')
     Left = 648
