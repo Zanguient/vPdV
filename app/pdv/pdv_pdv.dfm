@@ -3019,7 +3019,7 @@ object frmPDV_PDV: TfrmPDV_PDV
     SQL.Strings = (
       'SELECT id, nmcategoria, imgindex'
       '  FROM CATEGORIA'
-      ' WHERE IDCATEGORIATIV = '#39'S'#39)
+      ' WHERE IDCATEGORIATIV = '#39'A'#39)
     Left = 728
     Top = 128
   end
