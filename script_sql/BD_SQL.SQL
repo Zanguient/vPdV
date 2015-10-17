@@ -608,7 +608,7 @@ ALTER TABLE itemproduto ADD saida_id INTEGER NULL;
 
 ALTER TABLE itemproduto ADD CONSTRAINT FK_itemproduto_entrada FOREIGN KEY(entrada_id)
   REFERENCES Entrada(id);
-  
+
 
 ALTER TABLE itemproduto ADD CONSTRAINT FK_itemproduto_saida FOREIGN KEY(saida_id)
   REFERENCES Saida(id);
@@ -618,4 +618,5 @@ ALTER TABLE ITADICIONAL ADD valor FLOAT(14,2) NOT NULL;
 ALTER TABLE PEDIDO ADD dsmotivo TEXT NULL;
 
 ALTER TABLE mesa ADD idstatus character varying(1) NOT NULL  default 'L' check(idstatus in ('L', 'O'));
+
 
