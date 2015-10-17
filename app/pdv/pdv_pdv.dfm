@@ -3060,13 +3060,16 @@ object frmPDV_PDV: TfrmPDV_PDV
     Connection = dmConexao.adoConexaoBd
     Parameters = <>
     SQL.Strings = (
-      'SELECT AA.ID, AA.NMAGRUPADIC, AA.VRAGRUPADIC'
+      'SELECT AA.ID, AA.NMAGRUPADIC, AA.VRAGRUPADIC, P.IMGINDEX'
       
         '  FROM ITEMCATEGORIA IC INNER JOIN ITAGRUPADICIONAL IA ON IC.ID ' +
         '= IA.CARDAPIO_ID'
       
         '                        INNER JOIN AGRUPADICIONAL   AA ON AA.ID ' +
         '= IA.AGRUPADICIONAL_ID'
+      
+        '                        INNER JOIN PRODUTO           P ON P.ID  ' +
+        '= IC.PRODUTO_ID'
       ' WHERE AA.IDAGRUPATIV = '#39'A'#39)
     Left = 728
     Top = 256
@@ -3102,7 +3105,6 @@ object frmPDV_PDV: TfrmPDV_PDV
     end
   end
   object cdsAgrupAdicional: TClientDataSet
-    Active = True
     Aggregates = <>
     FieldDefs = <
       item
@@ -3118,18 +3120,16 @@ object frmPDV_PDV: TfrmPDV_PDV
       item
         Name = 'VRAGRUPADIC'
         DataType = ftFloat
+      end
+      item
+        Name = 'imgindex'
+        DataType = ftInteger
       end>
     IndexDefs = <>
     Params = <>
     StoreDefs = True
     Left = 728
     Top = 286
-    Data = {
-      840000009619E0BD010000001800000003000000000003000000840002494404
-      0001000200010007535542545950450200490008004175746F696E63000B4E4D
-      414752555041444943010049000000010005574944544802000200FA000B5652
-      414752555041444943080004000000000001000C4155544F494E4356414C5545
-      0400010001000000}
     object cdsAgrupAdicionalID: TAutoIncField
       FieldName = 'ID'
       ReadOnly = True
@@ -3140,6 +3140,9 @@ object frmPDV_PDV: TfrmPDV_PDV
     end
     object cdsAgrupAdicionalVRAGRUPADIC: TFloatField
       FieldName = 'VRAGRUPADIC'
+    end
+    object cdsAgrupAdicionalimgindex: TIntegerField
+      FieldName = 'imgindex'
     end
   end
   object dtsAgrupAdicional: TDataSource
@@ -27678,7 +27681,7 @@ object frmPDV_PDV: TfrmPDV_PDV
         Name = 'P_MESA_ID'
         Attributes = [paNullable]
         DataType = ftString
-        NumericScale = 248
+        NumericScale = 216
         Precision = 255
         Size = 255
         Value = Null
@@ -27696,7 +27699,7 @@ object frmPDV_PDV: TfrmPDV_PDV
       
         '                     INNER JOIN PEDIDO PED ON PED.ID = IP.PEDIDO' +
         '_ID'
-      ' WHERE PED.IDSTATUSPED <> '#39'C'#39
+      ' WHERE PED.IDSTATUSPED = '#39'A'#39
       '   AND PED.MESA_ID = :P_MESA_ID')
     Left = 728
     Top = 192
@@ -28013,5 +28016,61 @@ object frmPDV_PDV: TfrmPDV_PDV
       Font.Style = []
       TextColor = clBtnHighlight
     end
+  end
+  object adqAuxUpdMesa: TADOQuery
+    Connection = dmConexao.adoConexaoBd
+    Parameters = <
+      item
+        Name = 'IDSTATUS'
+        Attributes = [paNullable]
+        DataType = ftString
+        NumericScale = 64
+        Precision = 255
+        Size = 255
+        Value = Null
+      end
+      item
+        Name = 'ID'
+        Attributes = [paNullable]
+        DataType = ftString
+        NumericScale = 64
+        Precision = 255
+        Size = 255
+        Value = Null
+      end>
+    SQL.Strings = (
+      'UPDATE MESA'
+      '   SET IDSTATUS = :IDSTATUS'
+      ' WHERE ID = :ID')
+    Left = 744
+    Top = 408
+  end
+  object adqUpdPedido: TADOQuery
+    Connection = dmConexao.adoConexaoBd
+    Parameters = <
+      item
+        Name = 'P_IDSTATUSPED'
+        Attributes = [paNullable]
+        DataType = ftString
+        NumericScale = 24
+        Precision = 255
+        Size = 255
+        Value = Null
+      end
+      item
+        Name = 'P_ID'
+        Attributes = [paNullable]
+        DataType = ftString
+        NumericScale = 24
+        Precision = 255
+        Size = 255
+        Value = Null
+      end>
+    SQL.Strings = (
+      'UPDATE PEDIDO'
+      '   SET IDSTATUSPED = :P_IDSTATUSPED'
+      ' WHERE ID = :P_ID')
+    Left = 808
+    Top = 376
   end
 end

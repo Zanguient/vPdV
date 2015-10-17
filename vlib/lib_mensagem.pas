@@ -48,6 +48,7 @@ CONST
    CONFIRMA_CANCELAMENTO_PEDIDO = 'Cancelar o pedido?';
    MOTIVO_TEMP_CANCELAMENTO = 'Os motivos foram armazenados temporariamente. Sem confirmação do cancelamento. ';
    MOTIVO_INFORM_PERDIDO = 'Os motivos não confirmados serão perdidos, deseja prosseguir?';
+   EXISTE_PEDIDO_MESA = 'Existe pedido em aberto para a mesa.';
 
 implementation
 

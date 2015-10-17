@@ -156,6 +156,9 @@ type
     styGridContent: TcxStyle;
     styGridHeader: TcxStyle;
     styGridSelection: TcxStyle;
+    cdsAgrupAdicionalimgindex: TIntegerField;
+    adqAuxUpdMesa: TADOQuery;
+    adqUpdPedido: TADOQuery;
     procedure FormShow(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     constructor PCreate(Form: TComponent; Parametros: TParametros); Overload;
@@ -301,7 +304,7 @@ begin
     while not cdsItemCategoria.Eof do
     begin
       Interface_.CriaButtonScrollBox(scbProduto, cdsItemCategoria.FieldByName('NMPRODUTO').AsString,
-        OnClickProdutosPDV, 150, 150, cdsItemCategoria.FieldByName('ID').AsInteger);
+        OnClickProdutosPDV, 150, 150, cdsItemCategoria.FieldByName('ID').AsInteger, cilItensPDV, cdsItemCategoriaIMGINDEX.AsInteger);
 
       cdsItemCategoria.Next;
     end;
@@ -458,10 +461,16 @@ begin
   try
     btnGravarClick(btnGravar);
     Acesso_Perifericos.AbreGaveta;
+
+    adqUpdPedido.Close;
+    adqUpdPedido.Parameters.ParamByName('P_ID').Value := adqItemPedido.FieldByName('PEDIDO_ID').Value;
+    adqUpdPedido.Parameters.ParamByName('P_IDSTATUSPED').Value := 'F';
+    adqUpdPedido.ExecSQL;
+
+    btnCancelarClick(btnCancelar);
   finally
     FreeAndNil(Acesso_Perifericos);
   end;
-  boOk := True;
 end;
 
 procedure TfrmPDV_PDV.btnCancelarClick(Sender: TObject);
@@ -469,6 +478,8 @@ begin
   if not boOk then
     if not Confirma(CONFIRMA_PERDA_DADOS) then
       Exit;
+      
+  //frmPDVMain.RefreshMesa;
   Close;
 end;
 
@@ -485,7 +496,15 @@ var
 begin
   try
     cdsItemPedido.DisableControls;
-    cdsAddPedido.DisableControls;
+    cdsAddPedido.DisableControls;    
+
+    adqAuxUpdMesa.Close;
+    if stStatusPedido = 'F' then
+      adqAuxUpdMesa.Parameters.ParamByName('IDSTATUS').Value := 'L'
+    else
+      adqAuxUpdMesa.Parameters.ParamByName('IDSTATUS').Value := 'O';
+    adqAuxUpdMesa.Parameters.ParamByName('ID').Value := FParametros.Tag;
+    adqAuxUpdMesa.ExecSQL;
     
     if adqItemPedido.IsEmpty then
     begin

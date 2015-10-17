@@ -39,11 +39,6 @@ type
     cdsMesa: TClientDataSet;
     dtsMesa: TDataSource;
     dspPadrao: TDataSetProvider;
-    cdsMesaid_mesa: TAutoIncField;
-    cdsMesanmmesa: TStringField;
-    cdsMesadsobsmesa: TStringField;
-    cdsMesastatus: TStringField;
-    cdsMesavalor: TBCDField;
     cxStyleRepository1: TcxStyleRepository;
     cxStyle1: TcxStyle;
     styGridPDV: TcxStyleRepository;
@@ -52,6 +47,16 @@ type
     styGridHeader: TcxStyle;
     styGridSelection: TcxStyle;
     cilDetalhePDV: TcxImageList;
+    adqAuxUpdMesa: TADOQuery;
+    pumMesaL: TPopupMenu;
+    pmiLiberar: TMenuItem;
+    pumMesaO: TPopupMenu;
+    pmiOcupada: TMenuItem;
+    cdsMesaid_mesa: TAutoIncField;
+    cdsMesanmmesa: TStringField;
+    cdsMesadsobsmesa: TStringField;
+    cdsMesastatus: TStringField;
+    cdsMesavalor: TFloatField;
     procedure FrameResize(Sender: TObject);
     procedure btnGavetaClick(Sender: TObject);
     procedure dtvPedidosCustomDrawCell(Sender: TcxCustomGridTableView;
@@ -62,11 +67,14 @@ type
     procedure cxButton1Click(Sender: TObject);
     procedure gcpStatusGetDisplayText(Sender: TcxCustomGridTableItem;
       ARecord: TcxCustomGridRecord; var AText: String);
+    procedure pmiLiberarClick(Sender: TObject);
+    procedure pmiOcupadaClick(Sender: TObject);
   private
     { Private declarations }
   public
     { Public declarations }
     procedure OnClickOpcoesPDV(Sender: TObject);
+    procedure RefreshMesa;
   end;
 
 var
@@ -82,38 +90,9 @@ uses
 
 procedure TfrmPDVMain.FrameResize(Sender: TObject);
 var
-  iComp, inStatus: Integer;
-  Interface_: TInterface;
+  iComp: Integer;
 begin
-  Interface_ := TInterface.Create();
-
-  adqPadrao.Close;
-  adqPadrao.Open;
-
-  cdsMesa.Data := dspPadrao.Data;
-
-  if sbxOpcoesPDV.ControlCount = 0 then
-  begin
-    cdsMesa.First;
-    while not cdsMesa.Eof do
-    begin
-      if cdsMesastatus.AsString = 'L' then
-        inStatus := 0
-      else
-        inStatus := 1;
-
-      Interface_.CriaButtonScrollBox(sbxOpcoesPDV, cdsMesa.FieldByName('nmmesa').AsString, OnClickOpcoesPDV, 150, 150,
-        cdsMesa.FieldByName('id_mesa').AsInteger, cilDetalhePDV, inStatus);      
-
-      cdsMesa.Next;
-    end;
-  end;
-
-  if sbxOpcoesPDV.ControlCount > 0 then
-  begin
-    Interface_ := TInterface.Create();
-    Interface_.OrganizaScrollBox(sbxOpcoesPDV,1);
-  end;
+  RefreshMesa;
 
   for iComp := 0 to pred(scbOpcoes.ControlCount) do
   begin
@@ -157,7 +136,7 @@ end;
 procedure TfrmPDVMain.OnClickOpcoesPDV(Sender: TObject);
 var
   P_Create: TParametros;
-begin                            
+begin
   P_Create.Caption := 'Mesa ' + (Sender as TcxButton).Caption;
   P_Create.Tag     := (Sender as TcxButton).Tag;
   P_Create.Totalizador_Height := 45;
@@ -228,6 +207,83 @@ begin
   else
     AText := 'Desconhecido';
   end;
+end;
+
+procedure TfrmPDVMain.RefreshMesa; 
+var
+  Interface_: TInterface;
+  contador, retirados, inStatus: Integer;
+  pum: TPopUpMenu;
+begin
+  adqPadrao.Close;
+  adqPadrao.Open;
+
+  cdsMesa.Data := dspPadrao.Data;
+  retirados := 0;
+
+  for contador := 0 to sbxOpcoesPDV.ControlCount - 1 do
+  begin
+    if sbxOpcoesPDV.Controls[contador - retirados].ClassName = 'TcxButton' then
+    begin
+       sbxOpcoesPDV.Controls[contador - retirados].Destroy;
+       Inc(retirados);
+    end;
+  end;
+
+  if sbxOpcoesPDV.ControlCount = 0 then
+  begin
+    cdsMesa.First;
+    while not cdsMesa.Eof do
+    begin
+      if cdsMesastatus.AsString = 'L' then
+      begin
+        inStatus := 0;
+        pum := pumMesaO;
+      end else
+      begin
+        inStatus := 1;
+        pum := pumMesaL;
+      end;
+
+      Interface_.CriaButtonScrollBox(sbxOpcoesPDV, cdsMesa.FieldByName('nmmesa').AsString, OnClickOpcoesPDV, 150, 150,
+        cdsMesa.FieldByName('id_mesa').AsInteger, cilDetalhePDV, inStatus, pum);
+
+      cdsMesa.Next;
+    end;
+  end;
+
+  if sbxOpcoesPDV.ControlCount > 0 then
+  begin
+    Interface_ := TInterface.Create();
+    Interface_.OrganizaScrollBox(sbxOpcoesPDV,1);
+  end;
+end;
+
+procedure TfrmPDVMain.pmiLiberarClick(Sender: TObject);
+begin
+  inherited;
+  if cdsMesavalor.AsFloat > 0 then
+    Aviso(EXISTE_PEDIDO_MESA)
+  else
+  begin
+    adqAuxUpdMesa.Close;
+    adqAuxUpdMesa.Parameters.ParamByName('IDSTATUS').Value := 'L';
+    adqAuxUpdMesa.Parameters.ParamByName('ID').Value := pumMesaL.PopupComponent.Tag;
+    adqAuxUpdMesa.ExecSQL;
+  end;
+
+  RefreshMesa;
+end;
+
+procedure TfrmPDVMain.pmiOcupadaClick(Sender: TObject);
+begin
+  inherited;
+  adqAuxUpdMesa.Close;
+  adqAuxUpdMesa.Parameters.ParamByName('IDSTATUS').Value := 'O';
+  adqAuxUpdMesa.Parameters.ParamByName('ID').Value := pumMesaO.PopupComponent.Tag;
+  adqAuxUpdMesa.ExecSQL;
+  
+  RefreshMesa;
 end;
 
 end.

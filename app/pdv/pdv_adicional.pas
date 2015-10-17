@@ -121,7 +121,7 @@ begin
     while not frmPDV_PDV.cdsAgrupAdicional.Eof do
     begin
       Interface_.CriaButtonScrollBox(scbAgrupAdicional, frmPDV_PDV.cdsAgrupAdicional.FieldByName('NMAGRUPADIC').AsString,
-        OnClickAgrupAdicionalPDV, 150, 150, frmPDV_PDV.cdsAgrupAdicionalID.AsInteger);
+        OnClickAgrupAdicionalPDV, 150, 150, frmPDV_PDV.cdsAgrupAdicionalID.AsInteger, frmPDV_PDV.cilItensPDV, frmPDV_PDV.cdsAgrupAdicionalimgindex.AsInteger);
 
       frmPDV_PDV.cdsAgrupAdicional.Next;
     end;
@@ -218,7 +218,7 @@ begin
     while not cdsAdicional.Eof do
     begin
       Interface_.CriaButtonScrollBox(scbAdicional, cdsAdicional.FieldByName('NMPRODUTO').AsString,
-        OnClickAdicionalPDV, 150, 150, cdsAdicionalID.AsInteger);
+        OnClickAdicionalPDV, 150, 150, cdsAdicionalID.AsInteger, frmPDV_PDV.cilItensPDV, cdsAdicionalIMGINDEX.AsInteger);
 
       cdsAdicional.Next;
     end;

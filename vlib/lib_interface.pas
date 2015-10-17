@@ -6,7 +6,7 @@ uses
    Classes, WinInet, Dialogs, Windows, Forms,
    IdBaseComponent, IdComponent, IdRawBase, IdRawClient, IdIcmpClient,
    cxButtons, SysUtils, cxGraphics, Buttons, 
-   Controls, ExtCtrls, StdCtrls, Messages;
+   Controls, ExtCtrls, StdCtrls, Messages, Menus;
 
 type
   TInterface = Class(TPersistent)
@@ -17,7 +17,7 @@ type
     procedure OrganizaScrollBox(ScrollBox: TScrollBox; inTop: Integer);
     procedure CriaButtonScrollBox(ScrollBox: TScrollBox; stCaption: String; stOnClick: TNotifyEvent;
       inHeight, inWidth: Integer; intag: Integer = 0; TmpImageList: TcxImageList = Nil;
-      inImagePos: Integer = 0);
+      inImagePos: Integer = 0; pum: TPopUpMenu = Nil);
 //   published
 end;
 
@@ -54,7 +54,7 @@ end;
 
 procedure TInterface.CriaButtonScrollBox(ScrollBox: TScrollBox; stCaption: String;
   stOnClick: TNotifyEvent; inHeight, inWidth: Integer; intag: Integer = 0; TmpImageList: TcxImageList = Nil;
-  inImagePos: Integer = 0);
+  inImagePos: Integer = 0; pum: TPopUpMenu = Nil);
 var
    btn: TcxButton;
 begin
@@ -71,6 +71,7 @@ begin
    btn.SpeedButtonOptions.CanBeFocused := False;
    btn.SpeedButtonOptions.Flat := True;
    btn.SpeedButtonOptions.Transparent := True;
+   btn.PopupMenu := pum;
 
    try
      if TmpImageList <> Nil then

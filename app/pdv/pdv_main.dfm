@@ -2240,10 +2240,11 @@ inherited frmPDVMain: TfrmPDVMain
   inherited adqPadrao: TADOQuery
     SQL.Strings = (
       
-        'SELECT id id_mesa, nmmesa, dsobsmesa, idstatus status, 0.00 valo' +
-        'r'
-      'FROM MESA'
-      ' WHERE idmesaativ = '#39'A'#39)
+        'SELECT M.id id_mesa, M.nmmesa, M.dsobsmesa, M.idstatus status, i' +
+        'fnull(P.vrpedido, 0) valor'
+      '  FROM MESA M LEFT JOIN PEDIDO P ON M.ID = P.MESA_ID'
+      '                                 AND P.IDSTATUSPED = '#39'A'#39
+      ' WHERE M.idmesaativ = '#39'A'#39)
   end
   object cdsMesa: TClientDataSet
     Active = True
@@ -2271,10 +2272,7 @@ inherited frmPDVMain: TfrmPDVMain
       end
       item
         Name = 'valor'
-        Attributes = [faReadonly]
-        DataType = ftBCD
-        Precision = 3
-        Size = 2
+        DataType = ftFloat
       end>
     IndexDefs = <
       item
@@ -2287,13 +2285,12 @@ inherited frmPDVMain: TfrmPDVMain
     Left = 368
     Top = 80
     Data = {
-      D20000009619E0BD010000001800000005000000000003000000D2000769645F
+      B70000009619E0BD010000001800000005000000000003000000B7000769645F
       6D657361040001000200010007535542545950450200490008004175746F696E
       6300066E6D6D657361010049000000010005574944544802000200FA00096473
       6F62736D657361010049000000010005574944544802000200FA000673746174
-      757301004900000001000557494454480200020001000576616C6F7204000500
-      0200020008444543494D414C5302000200020005574944544802000200030001
-      000C4155544F494E4356414C55450400010001000000}
+      757301004900000001000557494454480200020001000576616C6F7208000400
+      0000000001000C4155544F494E4356414C55450400010001000000}
     object cdsMesaid_mesa: TAutoIncField
       FieldName = 'id_mesa'
       ReadOnly = True
@@ -2310,11 +2307,8 @@ inherited frmPDVMain: TfrmPDVMain
       FieldName = 'status'
       Size = 1
     end
-    object cdsMesavalor: TBCDField
+    object cdsMesavalor: TFloatField
       FieldName = 'valor'
-      ReadOnly = True
-      Precision = 3
-      Size = 2
     end
   end
   object dtsMesa: TDataSource
@@ -3410,5 +3404,49 @@ inherited frmPDVMain: TfrmPDVMain
           0000000000000000000000000000000000000000000000000000000000000000
           0000000000000000000000000000000000000000000000000000}
       end>
+  end
+  object adqAuxUpdMesa: TADOQuery
+    Connection = dmConexao.adoConexaoBd
+    Parameters = <
+      item
+        Name = 'IDSTATUS'
+        Attributes = [paNullable]
+        DataType = ftString
+        NumericScale = 192
+        Precision = 255
+        Size = 255
+        Value = Null
+      end
+      item
+        Name = 'ID'
+        Attributes = [paNullable]
+        DataType = ftString
+        NumericScale = 192
+        Precision = 255
+        Size = 255
+        Value = Null
+      end>
+    SQL.Strings = (
+      'UPDATE MESA'
+      '   SET IDSTATUS = :IDSTATUS'
+      ' WHERE ID = :ID')
+    Left = 368
+    Top = 120
+  end
+  object pumMesaL: TPopupMenu
+    Left = 400
+    Top = 160
+    object pmiLiberar: TMenuItem
+      Caption = 'Mesa livre'
+      OnClick = pmiLiberarClick
+    end
+  end
+  object pumMesaO: TPopupMenu
+    Left = 400
+    Top = 200
+    object pmiOcupada: TMenuItem
+      Caption = 'Mesa ocupada'
+      OnClick = pmiOcupadaClick
+    end
   end
 end
