@@ -140,13 +140,15 @@ object frmConfirmaQtdePeso: TfrmConfirmaQtdePeso
     object edtValor: TcxCurrencyEdit
       Left = 107
       Top = 45
+      EditValue = 0c
       Enabled = False
       ParentFont = False
       Properties.Alignment.Horz = taRightJustify
       Properties.AssignedValues.MaxValue = True
       Properties.AssignedValues.MinValue = True
-      Properties.DisplayFormat = 'R$ ,0.00;-R$ ,0.00'
+      Properties.DisplayFormat = '0.00;-0.00'
       Properties.MaxLength = 13
+      Properties.UseDisplayFormatWhenEditing = True
       Style.Font.Charset = DEFAULT_CHARSET
       Style.Font.Color = clWindowText
       Style.Font.Height = -19

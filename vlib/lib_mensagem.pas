@@ -38,6 +38,8 @@ CONST
    ERRO_GENERICO = 'Erro generico.';
    ERRO_RETORNO_NAO_ESPERADO = 'Retorno não esperado.';
 
+   ERRO_COMUNICACAO_BALANCA = 'Verifique a conexão com a balança.';
+
    { Rotina de Login }
    INICIA_PROCESSO_FC = 'Iniciando frente de caixa...';
 

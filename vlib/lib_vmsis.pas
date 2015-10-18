@@ -10,6 +10,7 @@ uses
     TAcesso_Perifericos = Class(TPersistent)
     public
       function AbreGaveta: Boolean;
+      function LeBalanca: Double;
     end;
 
    TAcesso_Online = Class(TPersistent)
@@ -29,6 +30,7 @@ uses
 
   function rStatusGaveta_DUAL_DarumaFramework(var iStatusGaveta: Integer): Integer; StdCall; External 'DarumaFrameWork.dll';
   function iAcionarGaveta_DUAL_DarumaFramework(): Integer; StdCall; External 'DarumaFrameWork.dll';
+  function Elgin_LeBalanca(Porta, Baud, Valor: PChar): Integer; Stdcall; External 'Elgin.dll';
 
 { Acesso_Online }
 
@@ -97,6 +99,25 @@ begin
   end else
     Aviso(GAVETA_ERRO);
   result := Boolean(iStatusGaveta);
+end;
+
+function TAcesso_Perifericos.LeBalanca: Double;
+var
+  stPorta, stBaud, stValor: String;
+  iRetorno: Integer;
+  flReturn: Double;
+begin                 
+  flReturn := 0.0;
+  stBaud := '9600';
+  stValor := StringOfChar(' ', 5);
+  stPorta := 'COM2';
+
+  iRetorno := Elgin_LeBalanca(PAnsiChar(stPorta), PAnsiChar(stBaud), PAnsiChar(stValor));
+  if iRetorno = 1 then
+    flReturn := StrToFloat(stValor)
+  else
+    Aviso(ERRO_COMUNICACAO_BALANCA);
+  Result := flReturn;
 end;
 
 { TUtilidades }

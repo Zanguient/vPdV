@@ -21,7 +21,7 @@ uses
   cxGridDBTableView, cxClasses, cxGrid, DBClient,
   cxContainer, cxTextEdit, cxLabel, Provider, ADODB, cxButtonEdit, cxImage,
   cxImageComboBox, ImgList, cxCalc, cxCurrencyEdit, cxGridCustomView;
-    
+
 type
   TParametros = Record
   Caption: String;
@@ -478,8 +478,8 @@ begin
   if not boOk then
     if not Confirma(CONFIRMA_PERDA_DADOS) then
       Exit;
-      
-  //frmPDVMain.RefreshMesa;
+
+//  frmPDVMain.RefreshMesa;
   Close;
 end;
 

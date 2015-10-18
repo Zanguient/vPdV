@@ -148,6 +148,7 @@ begin
     frmPDV_PDV.ShowModal;
   finally
     FreeAndNil(frmPDV_PDV);
+    RefreshMesa;
   end;
 end;
 
@@ -166,7 +167,8 @@ begin
   try
     frmPDV_PDV.ShowModal;
   finally
-    FreeAndNil(frmPDV_PDV);
+    FreeAndNil(frmPDV_PDV);     
+    RefreshMesa;
   end;
 end;
 
@@ -186,6 +188,7 @@ begin
     frmPDV_PDV.ShowModal;
   finally
     FreeAndNil(frmPDV_PDV);
+    RefreshMesa;
   end;
 end;
 

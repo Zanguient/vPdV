@@ -52,19 +52,28 @@ uses lib_db, lib_mensagem, main_base, lib_vmsis;
 {$R *.dfm}
 
 function ConfirmaQtdePeso(flValorUnit: Double; boBalanca: Boolean = False): Double;
+var
+  Acesso_Perifericos: TAcesso_Perifericos;
 Begin
   Result := 0.0;
   frmConfirmaQtdePeso := TfrmConfirmaQtdePeso.Create(Application);
+  Acesso_Perifericos := TAcesso_Perifericos.Create;
   try
-//    frmConfirmaQtdePeso.edtQuantidade.Enabled := not boBalanca;
+    frmConfirmaQtdePeso.edtQuantidade.Enabled := not boBalanca;
     if flValorUnit > 0.0 then
-      frmConfirmaQtdePeso.edtValor.Text := FloatToStr(flValorUnit)
+      frmConfirmaQtdePeso.edtValor.Text := formatfloat('###,###,##0.00', flValorUnit)
     else
       frmConfirmaQtdePeso.edtValor.Text := '0,00';
-    frmConfirmaQtdePeso.edtQuantidade.Text := '0,000';
+    if boBalanca then
+      frmConfirmaQtdePeso.edtQuantidade.Text := formatfloat('###,###,##0.000', Acesso_Perifericos.LeBalanca)
+    else
+      frmConfirmaQtdePeso.edtQuantidade.Text := formatfloat('###,###,##0.000', 0.0);
+    if StrToFloat(frmConfirmaQtdePeso.edtQuantidade.Text) < 0.001 then
+      frmConfirmaQtdePeso.edtQuantidade.Enabled := True; 
     frmConfirmaQtdePeso.ShowModal;
     Result := frmConfirmaQtdePeso.Qtde;
   finally
+    FreeAndNil(Acesso_Perifericos);
     FreeAndNil(frmConfirmaQtdePeso);
   end;
 end;
