@@ -159,6 +159,14 @@ type
     cdsAgrupAdicionalimgindex: TIntegerField;
     adqAuxUpdMesa: TADOQuery;
     adqUpdPedido: TADOQuery;
+    cdsPedidoImpressao: TClientDataSet;
+    cdsPedidoImpressaoEMPRESA: TStringField;
+    cdsPedidoImpressaoUNIDADE: TStringField;
+    cdsPedidoImpressaoENDERECO: TStringField;
+    cdsPedidoImpressaoREFERENCIA: TStringField;
+    cdsPedidoImpressaoVRPEDIDO: TStringField;
+    cdsPedidoImpressaoTIPOPEDIDO: TStringField;
+    cdsPedidoImpressaoCONTATO: TStringField;
     procedure FormShow(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     constructor PCreate(Form: TComponent; Parametros: TParametros); Overload;

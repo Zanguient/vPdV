@@ -28073,4 +28073,86 @@ object frmPDV_PDV: TfrmPDV_PDV
     Left = 808
     Top = 376
   end
+  object cdsPedidoImpressao: TClientDataSet
+    Aggregates = <>
+    AggregatesActive = True
+    Filtered = True
+    FieldDefs = <
+      item
+        Name = 'ID'
+        DataType = ftInteger
+      end
+      item
+        Name = 'PEDIDO_ID'
+        DataType = ftInteger
+      end
+      item
+        Name = 'CARDAPIO_ID'
+        DataType = ftInteger
+      end
+      item
+        Name = 'LOTE_ID'
+        DataType = ftInteger
+      end
+      item
+        Name = 'QTITEM'
+        DataType = ftFloat
+      end
+      item
+        Name = 'VRVENDA'
+        DataType = ftFloat
+      end
+      item
+        Name = 'VRTOTAL'
+        DataType = ftFloat
+      end
+      item
+        Name = 'IDADICIONAL'
+        DataType = ftInteger
+      end
+      item
+        Name = 'NMPRODUTO'
+        DataType = ftString
+        Size = 250
+      end
+      item
+        Name = 'PRODUTO_ID'
+        DataType = ftInteger
+      end
+      item
+        Name = 'IMG'
+        DataType = ftLargeint
+      end>
+    IndexDefs = <>
+    Params = <>
+    StoreDefs = True
+    Left = 647
+    Top = 326
+    object cdsPedidoImpressaoEMPRESA: TStringField
+      FieldName = 'EMPRESA'
+      Size = 25
+    end
+    object cdsPedidoImpressaoUNIDADE: TStringField
+      FieldName = 'UNIDADE'
+    end
+    object cdsPedidoImpressaoENDERECO: TStringField
+      FieldName = 'ENDERECO'
+      Size = 50
+    end
+    object cdsPedidoImpressaoREFERENCIA: TStringField
+      FieldName = 'REFERENCIA'
+      Size = 40
+    end
+    object cdsPedidoImpressaoVRPEDIDO: TStringField
+      FieldName = 'VRPEDIDO'
+    end
+    object cdsPedidoImpressaoTIPOPEDIDO: TStringField
+      FieldName = 'TIPOPEDIDO'
+      Size = 1
+    end
+    object cdsPedidoImpressaoCONTATO: TStringField
+      FieldName = 'CONTATO'
+      Size = 30
+    end
+  end
 end
