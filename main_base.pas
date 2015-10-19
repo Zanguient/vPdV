@@ -16,7 +16,7 @@ uses
   dxSkinSummer2008, dxSkinsDefaultPainters, dxSkinValentine,
   dxSkinXmas2008Blue, dxSkinsdxNavBar2Painter, dxNavBarCollns, cxClasses,
   dxNavBarBase, dxNavBar, dxSkinscxPCPainter, cxPC, ImgList, dxSkinsForm,
-  dxNavBarStyles;
+  dxNavBarStyles, ExtCtrls;
 
 type
   TfrmMainBase = class(TForm)
@@ -40,12 +40,17 @@ type
     nbMain_BaseStyleItem3: TdxNavBarStyleItem;
     nbMain_BaseStyleItem4: TdxNavBarStyleItem;
     nbiCancelarPedido: TdxNavBarItem;
+    nbgConfiguracoes: TdxNavBarGroup;
+    nbiSincronizacao: TdxNavBarItem;
+    tmSincronizacao: TTimer;
     procedure nbgSairClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure nbgPDVClick(Sender: TObject);
     procedure nbiClienteClick(Sender: TObject);
     procedure nbiFornecedorClick(Sender: TObject);
     procedure nbiCancelarPedidoClick(Sender: TObject);
+    procedure nbiSincronizacaoClick(Sender: TObject);
+    procedure tmSincronizacaoTimer(Sender: TObject);
   private
     { Private declarations }
 //    procedure InvocadordeBpl(stClasse: String);
@@ -85,7 +90,7 @@ implementation
 
 uses
    libframes, pdv_main, pdv_aberturacaixa, pdv_abertura_fechamento_caixa, uvCadastroClienteFrame,
-   uvCadastroFornecedorFrame, lib_db, pdv_cancelar_pedido;
+   uvCadastroFornecedorFrame, lib_db, pdv_cancelar_pedido, uParametrosSincronizacao, lib_sincronizacao;
 
 
 procedure CriarMainForm(const IdUsuario, IdEmpresa, IdUnidade : Integer;
@@ -109,6 +114,7 @@ procedure TfrmMainBase.FormCreate(Sender: TObject);
 var
    region: hrgn;
    db : TObjetoDB;
+   dbSincronizacao: TObjetoDB;
 begin
    Height := Screen.WorkAreaHeight-20;
    Width  := Screen.WorkAreaWidth-20;
@@ -117,15 +123,32 @@ begin
    DoubleBuffered := True;
    region := CreateRoundRectRgn(0, 0, width, height, 15, 15);
    SetWindowRgn(handle, region, true);
+
    db := TObjetoDB.create('empresa');
    try
+     //dados da empresa
      db.AddSqlAdicional(' LIMIT 1 ');
      db.Select(['ID', 'NMEMPRESA']);
      FIdEmpresa := db.GetVal('ID');
      FNomeEmpresa := db.GetVal('NMEMPRESA')
    finally
      FreeAndNil(db);
-   end
+   end;
+
+   dbSincronizacao:= TObjetoDB.create('ParametrosSincronizacao');
+   try
+     dbSincronizacao.Select(['IntervaloHora', 'IntervaloMinuto']);
+     try
+       tmSincronizacao.Interval:= ((dbSincronizacao.GetVal('IntervaloHora') * 3600) +
+         (dbSincronizacao.GetVal('IntervaloMinuto') * 60)) * 1000;
+       tmSincronizacao.Enabled:= True;
+     except
+       tmSincronizacao.Enabled:= False;
+     end
+   finally
+     FreeAndNil(dbSincronizacao);
+   end;
+
 end;
 
 //procedure TfrmMainBase.Invocadordebpl(stClasse: String);
@@ -159,6 +182,16 @@ end;
 procedure TfrmMainBase.nbiCancelarPedidoClick(Sender: TObject);
 begin
   TAbasNavegacao.CriarAba(pgcPrincipal, TvCancelaPedido);
+end;
+
+procedure TfrmMainBase.nbiSincronizacaoClick(Sender: TObject);
+begin
+  TAbasNavegacao.CriarAba(pgcPrincipal, TParametrosSincronizacao);
+end;
+
+procedure TfrmMainBase.tmSincronizacaoTimer(Sender: TObject);
+begin
+  TSincronizarTabelas.Sincronizar(True);
 end;
 
 end.

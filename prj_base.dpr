@@ -28,8 +28,8 @@ uses
   pdv_confirma_qtde_peso in 'app\pdv\pdv_confirma_qtde_peso.pas' {frmConfirmaQtdePeso},
   uvCadastroFornecedorFrame in 'app\cadastro\fornecedor\uvCadastroFornecedorFrame.pas' {vCadastroFornecedorFrame: TFrame},
   lib_tratamentos_sincronizacao in 'vlib\lib_tratamentos_sincronizacao.pas',
-  pdv_cancelar_pedido in 'app\pdv\pdv_cancelar_pedido.pas' {vCancelaPedido: TFrame};
-
+  pdv_cancelar_pedido in 'app\pdv\pdv_cancelar_pedido.pas' {vCancelaPedido: TFrame},
+  uParametrosSincronizacao in 'app\cadastro\sincronizacao\uParametrosSincronizacao.pas' {ParametrosSincronizacao: TFrame};
 
 {$R *.res}
 

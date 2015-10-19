@@ -1,7 +1,7 @@
 unit lib_db;
 
 interface
-uses Windows, Messages, SysUtils, Variants, Classes, ADODB, uDmConexao, DBClient, Provider, DB;
+uses Windows, Messages, SysUtils, Variants, Classes, ADODB, uDmConexao, DBClient, Provider, DB, ADOInt;
 
   type
     TMapaValor = class
@@ -189,6 +189,9 @@ begin
     key := FParametros.GetKey(contador);
     if FIgnoreParams.IndexOf(key) = -1 then
     begin
+      case VarType(FParametros.GetValue(contador)) of
+         varDate: Fquery.Parameters.ParamByName(key).ParameterObject.Type_:= adDBTimeStamp ;
+      end;
       Fquery.Parameters.ParamByName(key).Value := FParametros.GetValue(contador);
     end
   end;
@@ -326,7 +329,7 @@ end;
 
 procedure TObjetoDB.Update;
 begin
-  if ((FParametros.Count = 0) and (FSqlAdicional.Count = 0)) or (FParametrosNewValue.Count = 0) then
+  if {((FParametros.Count = 0) and (FSqlAdicional.Count = 0)) or} (FParametrosNewValue.Count = 0) then
      raise Exception.Create('Não será possível inserir, pois nenhum parametro foi fornecido');
 
   Fquery.close;

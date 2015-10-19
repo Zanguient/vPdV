@@ -7,6 +7,7 @@ uses Windows, Messages, SysUtils;
   type
      TCadastrosIniciais = class(TObject)
      private
+       FDataPadrao: TDateTime;
        procedure AddEmpresa;
        procedure AddPaises;
        procedure AddEstados;
@@ -16,6 +17,7 @@ uses Windows, Messages, SysUtils;
        procedure AddCaixa;
        procedure AddAlmoxarifado;
        procedure AddUnidade;
+       procedure AddParametrosSincronizacao;
      public
        FidEmpresa : Integer;
        FidPais : Integer;
@@ -36,8 +38,6 @@ uses lib_acesso, lib_db, Classes;
 
 { TCadastrosIniciais }
 
-const
-   DATA_PADRAO = '2015-08-22';
 
 procedure TCadastrosIniciais.AddAbairro;
 var
@@ -57,7 +57,7 @@ begin
     end;
 
     tbBairro.AddParametro('nmbairro', 'JARDIM VITÓRIA');
-    tbBairro.AddParametro('dtcadastro', DATA_PADRAO);
+    tbBairro.AddParametro('dtcadastro', FDataPadrao);
  //   tbBairro.AddParametro('pais_id', FidPais);
 //    tbBairro.AddParametro('estado_id', FidEstado);
     tbBairro.AddParametro('cidade_id', FIdCidade);
@@ -82,7 +82,7 @@ begin
 
     if tbAlmoxarifado.IsEmpty then
     begin
-      tbAlmoxarifado.AddParametro('dtcadastro', DATA_PADRAO);
+      tbAlmoxarifado.AddParametro('dtcadastro', FDataPadrao);
       tbAlmoxarifado.Insert;
       tbAlmoxarifado.Select(['id']);
       FidAlmoxarifado := tbAlmoxarifado.GetVal('id');
@@ -132,7 +132,7 @@ begin
     end;
 
     tbCidade.AddParametro('nmcidade', 'BELO HORIZONTE');
-    tbCidade.AddParametro('dtcadastro', DATA_PADRAO);
+    tbCidade.AddParametro('dtcadastro', FDataPadrao);
     tbCidade.AddParametro('pais_id', FidPais);
     tbCidade.AddParametro('estado_id', FidEstado);
     tbCidade.Insert;
@@ -191,7 +191,7 @@ begin
       Exit;
     end;
 
-    tbEstado.AddParametro('dtcadastro', DATA_PADRAO);
+    tbEstado.AddParametro('dtcadastro', FDataPadrao);
     tbEstado.AddParametro('nmestado', 'MINAS GERAIS');
     tbEstado.AddParametro('sgestado', 'MG');
     tbEstado.AddParametro('pais_id', FidPais);
@@ -225,10 +225,10 @@ begin
     end;
 
 //    tbFunc.AddParametro('empresa_id', FidEmpresa);
-    tbFunc.AddParametro('dtcadastro', DATA_PADRAO);
+    tbFunc.AddParametro('dtcadastro', FDataPadrao);
     tbFunc.AddParametro('nome', 'vmsismaster');
     tbFunc.AddParametro('sexo', 'M');
-    tbFunc.AddParametro('dtnascimento', DATA_PADRAO);
+    tbFunc.AddParametro('dtnascimento', FDataPadrao);
     tbFunc.AddParametro('email', 'vmsis@vmsis.com.br');
     tbFunc.AddParametro('senha', 'masterVMSIS123v');
     tbFunc.AddParametro('confsenha', 'masterVMSIS123v');
@@ -240,7 +240,7 @@ begin
     tbFunc.AddParametro('estado_id', FidEstado);
     tbFunc.AddParametro('cidade_id', FIdCidade);
     tbFunc.AddParametro('bairro_id', FidBairro);
-    tbFunc.AddParametro('dtadmissao', DATA_PADRAO);
+    tbFunc.AddParametro('dtadmissao', FDataPadrao);
     tbFunc.AddParametro('pessoa', 'J');
     tbFunc.Insert;
 
@@ -269,7 +269,7 @@ begin
       Exit;
     end;
 
-    tbPais.AddParametro('dtcadastro', DATA_PADRAO);
+    tbPais.AddParametro('dtcadastro', FDataPadrao);
     tbPais.AddParametro('nmpais', 'BRASIL');
     tbPais.Insert;
 
@@ -280,6 +280,23 @@ begin
     FreeAndNil(tbPais);
   end;
 
+end;
+
+procedure TCadastrosIniciais.AddParametrosSincronizacao;
+var
+  tbParametrosSincronizacao: TObjetoDB;
+begin
+  tbParametrosSincronizacao:= TObjetoDB.create('ParametrosSincronizacao');
+  try
+    tbParametrosSincronizacao.Select(['id']);
+    if tbParametrosSincronizacao.IsEmpty then
+    begin
+      tbParametrosSincronizacao.AddParametro('IpSincronizacao', 'http://177.153.20.166');
+      tbParametrosSincronizacao.Insert;
+    end;
+  finally
+    FreeAndNil(tbParametrosSincronizacao);
+  end;
 end;
 
 procedure TCadastrosIniciais.AddUnidade;
@@ -312,6 +329,7 @@ procedure TCadastrosIniciais.Executar;
 var
   UsrAce : TAcessoUsuario;
 begin
+   FDataPadrao:= Date;
    AddEmpresa;
    AddPaises;
    AddEstados;
@@ -321,6 +339,7 @@ begin
    AddAlmoxarifado;
    AddUnidade;
    AddCaixa;
+   AddParametrosSincronizacao;
    TAcesso.AddRotinas;
 
    UsrAce := TAcessoUsuario.create(Fusuario);

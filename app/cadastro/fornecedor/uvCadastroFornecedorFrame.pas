@@ -28,7 +28,6 @@ type
     adqPadraonrinscjurd: TWideStringField;
     adqPadraonmfornecedor: TWideStringField;
     adqPadraoidentificador: TWideStringField;
-    adqPadraoidempresa: TIntegerField;
     adqPadraotelcel: TStringField;
     adqPadraotelfixo: TStringField;
     cxGrid1DBTableView1nrinscjurd: TcxGridDBColumn;
@@ -44,7 +43,6 @@ type
     adqDetailnmrua: TWideStringField;
     adqDetailcdnumero: TWideStringField;
     adqDetailcdcep: TWideStringField;
-    adqDetailempresa_id: TIntegerField;
     adqDetaildtcadastro: TDateField;
     adqDetailcdbairro_id: TIntegerField;
     adqDetailcliente_id: TIntegerField;
@@ -57,7 +55,6 @@ type
     cxGridDBTableView1cdbairro_id: TcxGridDBColumn;
     cxGridDBTableView1complemento: TcxGridDBColumn;
     procedure adqPadraoidentificadorChange(Sender: TField);
-    procedure adqDetailNewRecord(DataSet: TDataSet);
   private
     { Private declarations }
   public
@@ -78,12 +75,6 @@ begin
     adqPadraonrinscjurd.EditMask := '000.000.000-00;0; '
   else
     adqPadraonrinscjurd.EditMask := '00.000.000/0000-00;0; ';
-end;
-
-procedure TvCadastroFornecedorFrame.adqDetailNewRecord(DataSet: TDataSet);
-begin
-  inherited;
-  adqDetailempresa_id.AsInteger := 1;
 end;
 
 end.

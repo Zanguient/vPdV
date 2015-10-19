@@ -2,13 +2,15 @@ unit lib_sincronizacao;
 
 interface
 
-uses IdHTTP, SysUtils, Windows, Classes, Variants, Dialogs, lib_db, XMLDoc, XMLIntf;
+uses IdHTTP, SysUtils, Windows, Classes, Variants, Dialogs, lib_db, XMLDoc, XMLIntf, DateUtils;
 
 type
+  TStatusAtualizacao  = (saSucesso, saError);
   TSincronizacao = class(TObject)
   private
     FUrlToGetXML: string;
     FUrlToSendXML: string;
+    FUrlBase: string;
     FModulo: string;
     Fmodel: string;
     FTabelaLocal : string;
@@ -27,17 +29,20 @@ type
   TSincronizarTabelas = class
   public
     class procedure ExecutarSincObjeto(obj: TSincronizacao);
-    class procedure Sincronizar;
+    class function Sincronizado : Boolean;
+    class procedure GravarDataSincronizacao(const Data: TDateTime; const Status: TStatusAtualizacao;
+      const Log : string);
+    class function Sincronizar(const SincronizacaoForcada: Boolean): String;
   end;
 implementation
 
-uses StrUtils, lib_tratamentos_sincronizacao;
+uses StrUtils, lib_tratamentos_sincronizacao, uDmConexao;
 
 
 const
    SENHA_VMSIS = 'masterVMSIS123v';
    USUARIO_VMSIS = 'vmsismaster';
-   URL_BASE = 'http://127.0.0.1:8000/';//'http://177.153.20.166';
+//   URL_BASE = 'http://127.0.0.1:8000/';//'http://177.153.20.166';
    URL_PARCIAL_GET_XML = '/getmodelasjson/';
    URL_PARCIAL_SEND_XML = '/setmodelasjson/';
 
@@ -61,17 +66,28 @@ begin
 
 constructor TSincronizacao.create(const model, module: string; const CamposWebLocal : TListaMapaValor; const ChavesTabela : string;
   const TabelaLocal : string = '');
+var
+  bdSinc: TObjetoDB;
 begin
-   FUrlToGetXML:= URL_BASE + URL_PARCIAL_GET_XML;
-   FUrlToSendXML:= URL_BASE + URL_PARCIAL_SEND_XML;
-   Fmodel:= model;
-   FModulo:= module;
-   FCamposWebLocal:= CamposWebLocal;
+  bdSinc:= TObjetoDB.create('ParametrosSincronizacao');
+  FUrlBase:= '';
+  try
+    bdSinc.Select(['IpSincronizacao']);
+    FUrlBase:= bdSinc.GetVal('IpSincronizacao');
+  finally
+    FreeAndNil(bdSinc);
+  end;
 
-   if TabelaLocal = EmptyStr then
-      FTabelaLocal:= Fmodel
-   else
-     FTabelaLocal:= TabelaLocal;
+  FUrlToGetXML:= FUrlBase + URL_PARCIAL_GET_XML;
+  FUrlToSendXML:= FUrlBase + URL_PARCIAL_SEND_XML;
+  Fmodel:= model;
+  FModulo:= module;
+  FCamposWebLocal:= CamposWebLocal;
+
+  if TabelaLocal = EmptyStr then
+     FTabelaLocal:= Fmodel
+  else
+    FTabelaLocal:= TabelaLocal;
 
   FChavesTabela:= ChavesTabela + ',';
 end;
@@ -240,282 +256,352 @@ begin
  // end;
 end;
 
-class procedure TSincronizarTabelas.Sincronizar;
+class procedure TSincronizarTabelas.GravarDataSincronizacao(
+  const Data: TDateTime; const Status: TStatusAtualizacao; const Log : string);
+var
+  bd: TObjetoDB;
+begin
+  bd:= TObjetoDB.create('CotroleSincronizacao');
+  try
+    bd.AddParametro('dtsincronizacao', Data);
+
+    case Status of
+      saSucesso: bd.AddParametro('Status', 'S');
+      saError: bd.AddParametro('Status', 'E');
+    end;
+
+    bd.AddParametro('Log', Log);
+    bd.Insert;
+  finally
+    FreeAndNil(bd);
+  end;
+end;
+
+class function TSincronizarTabelas.Sincronizado: Boolean;
+var
+  bdDtSinc: TObjetoDB;
+  bdParamSinc: TObjetoDB;
+  diferencaMinutos : Integer;
+  minutosParaIntervalo: Integer;
+begin
+  Result:= True;
+  bdDtSinc:= TObjetoDB.create('CotroleSincronizacao');
+  bdParamSinc:= TObjetoDB.create('ParametrosSincronizacao');
+  try
+    bdDtSinc.AddParametro('Status', 'S');
+    bdDtSinc.Select(['IFNULL(MAX(dtsincronizacao), DATE_ADD(CURRENT_TIMESTAMP, INTERVAL -1000 YEAR)) AS Data']);
+    bdParamSinc.Select(['IntervaloHora', 'IntervaloMinuto']);
+
+    if bdParamSinc.IsEmpty then
+    begin
+      Result:= False;
+      Exit;
+    end;
+
+    diferencaMinutos:= MinutesBetween(bdDtSinc.GetVal('Data'), now);
+    minutosParaIntervalo:= (bdParamSinc.GetVal('IntervaloHora') * 60) + bdParamSinc.GetVal('IntervaloMinuto');
+
+    if diferencaMinutos >= minutosParaIntervalo then
+      Result:= False;
+
+  finally
+    FreeAndNil(bdDtSinc);
+    FreeAndNil(bdParamSinc);
+  end;
+end;
+
+class function TSincronizarTabelas.Sincronizar(const SincronizacaoForcada: Boolean): String;
 var
   sinc : TSincronizacao;
   map : TListaMapaValor;
-
+  DataInicio : TDateTime;
 begin
-   try
+  Result:= EmptyStr;
+  if (Sincronizado) and (not SincronizacaoForcada) then
+    Exit;
 
-     //pais
-     map := TListaMapaValor.create;
-     map.Add('dtcadastro', 'dtcadastro', '');
-     map.Add('cdpais', 'cdpais', '');
-     map.Add('nmpais', 'nmpais', '');
-     map.Add('cdsiscomex', 'cdsiscomex', '');
-     map.Add('sgpais2', 'sgpais2', '');
-     map.Add('sgpais3', 'sgpais3', '');
-     sinc := TSincronizacao.create('pais', 'cadastro.localidades.pais.models', map, 'cdpais', 'pais');
-     sinc.GetWebData;
-     FreeAndNil(sinc);
-     FreeAndNil(map);
-
-
-     //estado
-     map := TListaMapaValor.create;
-     map.Add('dtcadastro', 'dtcadastro', '');
-     map.Add('cdestado', 'cdestado', '');
-     map.Add('nmestado', 'nmestado', '');
-     map.Add('sgestado', 'sgestado', '');
-     map.Add('pais', 'pais_id', '');
-     map.Add('dsregiao', 'dsregiao', '');
-     sinc := TSincronizacao.create('estado', 'cadastro.localidades.estado.models', map, 'cdestado,sgestado', 'estado');
-     sinc.GetWebData;
-     FreeAndNil(sinc);
-     FreeAndNil(map);
-
-     //cidade
-     map := TListaMapaValor.create;
-     map.Add('dtcadastro', 'dtcadastro', '');
-     map.Add('cdcidade', 'cdcidade', '');
-     map.Add('nmcidade', 'nmcidade', '');
-     map.Add('pais', 'pais_id', '');
-     map.Add('estado', 'estado_id', '');
-     sinc := TSincronizacao.create('cidade', 'cadastro.localidades.cidade.models', map, 'cdcidade', 'cidade');
-     sinc.GetWebData;
-     FreeAndNil(sinc);
-     FreeAndNil(map);
+  dmConexao.adoConexaoBd.BeginTrans;
+  try try
+    DataInicio:= Now;
+    //pais
+    map := TListaMapaValor.create;
+    map.Add('dtcadastro', 'dtcadastro', '');
+    map.Add('cdpais', 'cdpais', '');
+    map.Add('nmpais', 'nmpais', '');
+    map.Add('cdsiscomex', 'cdsiscomex', '');
+    map.Add('sgpais2', 'sgpais2', '');
+    map.Add('sgpais3', 'sgpais3', '');
+    sinc := TSincronizacao.create('pais', 'cadastro.localidades.pais.models', map, 'cdpais', 'pais');
+    sinc.GetWebData;
+    FreeAndNil(sinc);
+    FreeAndNil(map);
 
 
-     //bairro
-     map := TListaMapaValor.create;
-     map.Add('dtcadastro', 'dtcadastro', '');
-     map.Add('cdbairro', 'cdbairro', '');
-     map.Add('nmbairro', 'nmbairro', '');
-     map.Add('cidade', 'cidade_id', '');
-     sinc := TSincronizacao.create('bairro', 'cadastro.localidades.bairro.models', map, 'cdbairro', 'bairro');
-     sinc.GetWebData;
-     FreeAndNil(sinc);
-     FreeAndNil(map);
+    //estado
+    map := TListaMapaValor.create;
+    map.Add('dtcadastro', 'dtcadastro', '');
+    map.Add('cdestado', 'cdestado', '');
+    map.Add('nmestado', 'nmestado', '');
+    map.Add('sgestado', 'sgestado', '');
+    map.Add('pais', 'pais_id', '');
+    map.Add('dsregiao', 'dsregiao', '');
+    sinc := TSincronizacao.create('estado', 'cadastro.localidades.estado.models', map, 'cdestado,sgestado', 'estado');
+    sinc.GetWebData;
+    FreeAndNil(sinc);
+    FreeAndNil(map);
 
-     //cliente
-     map := TListaMapaValor.create;
-     map.Add('dtcadastro', 'dtcadastro', '');
-     map.Add('nrinscjurd', 'nrinscjurd', '');
-     map.Add('nmcliente', 'nmcliente', '');
-     map.Add('identificador', 'identificador', '');
-     map.Add('telcel', 'telcel', '');
-     map.Add('telfixo', 'telfixo', '');
-     map.Add('nmrua', 'nmrua', '');
-     map.Add('cdnumero', 'cdnumero', '');
-     map.Add('cdcep', 'cdcep', '');
-     map.Add('cdbairro', 'cdbairro_id', '');
-     sinc := TSincronizacao.create('cliente', 'cadastro.cliente.models', map, 'telcel', 'cliente');
-     sinc.GetWebData;
-     FreeAndNil(sinc);
-     FreeAndNil(map);
-
-     //fornecedor
-     map := TListaMapaValor.create;
-     map.Add('dtcadastro', 'dtcadastro', '');
-     map.Add('nrinscjurd', 'nrinscjurd', '');
-     map.Add('nmfornecedor', 'nmfornecedor', '');
-     map.Add('identificador', 'identificador', '');
-     map.Add('telcel', 'telcel', '');
-     map.Add('telfixo', 'telfixo', '');
-     map.Add('nmrua', 'nmrua', '');
-     map.Add('cdnumero', 'cdnumero', '');
-     map.Add('cdcep', 'cdcep', '');
-     map.Add('cdbairro', 'cdbairro_id', '');
-     sinc := TSincronizacao.create('fornecedor', 'cadastro.fornecedor.models', map, 'telcel', 'fornecedor');
-     sinc.GetWebData;
-     FreeAndNil(sinc);
-     FreeAndNil(map);
+    //cidade
+    map := TListaMapaValor.create;
+    map.Add('dtcadastro', 'dtcadastro', '');
+    map.Add('cdcidade', 'cdcidade', '');
+    map.Add('nmcidade', 'nmcidade', '');
+    map.Add('pais', 'pais_id', '');
+    map.Add('estado', 'estado_id', '');
+    sinc := TSincronizacao.create('cidade', 'cadastro.localidades.cidade.models', map, 'cdcidade', 'cidade');
+    sinc.GetWebData;
+    FreeAndNil(sinc);
+    FreeAndNil(map);
 
 
-     //unimedida
-     map := TListaMapaValor.create;
-     map.Add('dtcadastro', 'dtcadastro', '');
-     map.Add('nmmedida', 'nmmedida', '');
-     map.Add('sgmedida', 'sgmedida', '');
-     map.Add('qtfatorconv', 'qtfatorconv', '');
-     map.Add('idtipomed', 'idtipomed', '');
+    //bairro
+    map := TListaMapaValor.create;
+    map.Add('dtcadastro', 'dtcadastro', '');
+    map.Add('cdbairro', 'cdbairro', '');
+    map.Add('nmbairro', 'nmbairro', '');
+    map.Add('cidade', 'cidade_id', '');
+    sinc := TSincronizacao.create('bairro', 'cadastro.localidades.bairro.models', map, 'cdbairro', 'bairro');
+    sinc.GetWebData;
+    FreeAndNil(sinc);
+    FreeAndNil(map);
 
-     sinc := TSincronizacao.create('unimedida', 'cadastro.unimedida.models', map, 'nmmedida', 'unimedida');
-     sinc.GetWebData;
-     FreeAndNil(sinc);
-     FreeAndNil(map);
+    //cliente
+    map := TListaMapaValor.create;
+    map.Add('dtcadastro', 'dtcadastro', '');
+    map.Add('nrinscjurd', 'nrinscjurd', '');
+    map.Add('nmcliente', 'nmcliente', '');
+    map.Add('identificador', 'identificador', '');
+    map.Add('telcel', 'telcel', '');
+    map.Add('telfixo', 'telfixo', '');
+    map.Add('nmrua', 'nmrua', '');
+    map.Add('cdnumero', 'cdnumero', '');
+    map.Add('cdcep', 'cdcep', '');
+    map.Add('cdbairro', 'cdbairro_id', '');
+    sinc := TSincronizacao.create('cliente', 'cadastro.cliente.models', map, 'telcel', 'cliente');
+    sinc.GetWebData;
+    FreeAndNil(sinc);
+    FreeAndNil(map);
 
-     //produto
-     map := TListaMapaValor.create;
-     map.Add('dtcadastro', 'dtcadastro');
-     map.Add('posarvore', 'posarvore');
-     map.Add('nmproduto', 'nmproduto');
-     map.Add('unimedida', 'unimedida_id');
-     map.Add('cdbarra', 'cdbarra');
-     map.Add('idprodvenda', 'idprodvenda');
-     map.Add('idadicional', 'idadicional');
-     map.Add('imgindex', 'imgindex');
-
-     sinc := TSincronizacao.create('produto', 'cadastro.produto.models', map, 'nmproduto', 'produto');
-     sinc.GetWebData;
-     FreeAndNil(sinc);
-     FreeAndNil(map);
-
-
-     //finalidade
-     map := TListaMapaValor.create;
-     map.Add('dtcadastro', 'dtcadastro');
-     map.Add('descricao', 'descricao');
-
-     sinc := TSincronizacao.create('finalidade', 'estoque.cadastro_estoque.finalidade.models', map, 'descricao', 'finalidade');
-     sinc.GetWebData;
-     FreeAndNil(sinc);
-     FreeAndNil(map);
-
-     //entrada - estoque()
-     map := TListaMapaValor.create;
-     map.Add('dtentrada', 'dtentrada');
-     map.Add('fornecedor', 'fornecedor_id');
-     sinc := TSincronizacao.create('Entrada', 'estoque.entrada.models', map, 'pk', 'Entrada');
-     sinc.GetWebData;
-     FreeAndNil(sinc);
-     FreeAndNil(map);
-
-     //saida
-     map := TListaMapaValor.create;
-     map.Add('dtsaida', 'dtsaida');
-     map.Add('cliente', 'cliente_id');
-     map.Add('finalidade', 'finalidade_id');
-     map.Add('idtipo', 'idtipo');
-     sinc := TSincronizacao.create('Saida', 'estoque.saida.models', map, 'pk', 'Saida');
-     sinc.GetWebData;
-     FreeAndNil(sinc);
-     FreeAndNil(map);
-
-     //itemproduto
-     map := TListaMapaValor.create;
-     map.Add('dtcadastro', 'dtcadastro');
-     map.Add('produto', 'produto_id');
-     map.Add('lote', 'lote_id');
-     map.Add('qtdeprod', 'qtdeprod');
-     sinc := TSincronizacao.create('Itemproduto', 'estoque.itemproduto.models', map, 'pk', 'Itemproduto');
-     sinc.GetWebData;
-     FreeAndNil(sinc);
-     FreeAndNil(map);
-
-     TTratamentos.PreencherIdEntradaSaidaItemProduto;
-     //lote
-     map := TListaMapaValor.create;
-     map.Add('dtcadastro', 'dtcadastro');
-     map.Add('dslote', 'dslote');
-     map.Add('dtvalidade', 'dtvalidade');
-     map.Add('dtfabricacao', 'dtfabricacao');
-     sinc := TSincronizacao.create('Lote', 'estoque.lote.models', map, 'pk', 'Lote');
-     sinc.GetWebData;
-     FreeAndNil(sinc);
-     FreeAndNil(map);
-
-     //posestoque
-     map := TListaMapaValor.create;
-     map.Add('dtcadastro', 'dtcadastro');
-     map.Add('produto', 'produto_id');
-     map.Add('lote', 'lote_id');
-     map.Add('qtdeproduto', 'qtdeproduto');
-     sinc := TSincronizacao.create('posestoque', 'estoque.posestoque.models', map, 'pk', 'posestoque');
-     sinc.GetWebData;
-     FreeAndNil(sinc);
-     FreeAndNil(map);
-
-     //AgrupAdicional
-     map := TListaMapaValor.create;
-     map.Add('nmagrupadic', 'nmagrupadic');
-     map.Add('vragrupadic', 'vragrupadic');
-     map.Add('idagrupativ', 'idagrupativ');
-     sinc := TSincronizacao.create('AgrupAdicional', 'pedido.cadastro_pedido.agrupadicional.models',
-       map, 'pk', 'AgrupAdicional');
-     sinc.GetWebData;
-     FreeAndNil(sinc);
-     FreeAndNil(map);
-
-     //Categoria
-     map := TListaMapaValor.create;
-     map.Add('nmcategoria', 'nmcategoria');
-     map.Add('idcategoriativ', 'idcategoriativ');
-     map.Add('imgindex', 'imgindex');
-     sinc := TSincronizacao.create('categoria', 'pedido.cadastro_pedido.categoria.models',
-       map, 'pk', 'categoria');
-     sinc.GetWebData;
-     FreeAndNil(sinc);
-     FreeAndNil(map);
-
-     //ComposicaoProd
-     map := TListaMapaValor.create;
-     map.Add('produto', 'produto_id');
-     map.Add('prodcomp', 'prodcomp_id');
-     map.Add('qtcomp', 'qtcomp');
-     map.Add('unimedida', 'unimedida_id');
-     sinc := TSincronizacao.create('ComposicaoProd', 'pedido.cadastro_pedido.composicaoproduto.models',
-       map, 'pk', 'ComposicaoProd');
-     sinc.GetWebData;
-     FreeAndNil(sinc);
-     FreeAndNil(map);
-
-     //ItemCategoria
-     map := TListaMapaValor.create;
-     map.Add('categoria', 'categoria_id');
-     map.Add('produto', 'produto_id');
-     map.Add('vrvenda', 'vrvenda');
-     map.Add('qtvenda', 'qtvenda');
-     map.Add('qtadicgratis', 'qtadicgratis');
-     map.Add('unimedida', 'unimedida_id');
-     sinc := TSincronizacao.create('ItemCategoria', 'pedido.cadastro_pedido.itemcategoria.models',
-       map, 'pk', 'ItemCategoria');
-     sinc.GetWebData;
-     FreeAndNil(sinc);
-     FreeAndNil(map);
-
-     //itagrupadicional
-     map := TListaMapaValor.create;
-     map.Add('cardapio', 'cardapio_id');
-     map.Add('agrupadicional', 'agrupadicional_id');
-     sinc := TSincronizacao.create('itagrupadicional', 'pedido.cadastro_pedido.itemcategoria.models',
-       map, 'pk', 'itagrupadicional');
-     sinc.GetWebData;
-     FreeAndNil(sinc);
-     FreeAndNil(map);
-
-     //mesa
-     map := TListaMapaValor.create;
-     map.Add('nmmesa', 'nmmesa');
-     map.Add('dsobsmesa', 'dsobsmesa');
-     map.Add('idmesaativ', 'idmesaativ');
-     sinc := TSincronizacao.create('Mesa', 'pedido.cadastro_pedido.mesa.models', map, 'nmmesa', 'Mesa');
-     sinc.GetWebData;
-     FreeAndNil(sinc);
-     FreeAndNil(map);
-
-     //adicionais
-     map := TListaMapaValor.create;
-     map.Add('agrupadicional', 'agrupadicional_id');
-     map.Add('item', 'item_id');
-     map.Add('valor', 'valor');
-     map.Add('quantidade', 'quantidade');
-     sinc := TSincronizacao.create('Adicionais', 'pedido.cadastro_pedido.agrupadicional.models',
-       map, 'pk', 'Adicionais');
-     sinc.GetWebData;
-     FreeAndNil(sinc);
-     FreeAndNil(map);
+    //fornecedor
+    map := TListaMapaValor.create;
+    map.Add('dtcadastro', 'dtcadastro', '');
+    map.Add('nrinscjurd', 'nrinscjurd', '');
+    map.Add('nmfornecedor', 'nmfornecedor', '');
+    map.Add('identificador', 'identificador', '');
+    map.Add('telcel', 'telcel', '');
+    map.Add('telfixo', 'telfixo', '');
+    map.Add('nmrua', 'nmrua', '');
+    map.Add('cdnumero', 'cdnumero', '');
+    map.Add('cdcep', 'cdcep', '');
+    map.Add('cdbairro', 'cdbairro_id', '');
+    sinc := TSincronizacao.create('fornecedor', 'cadastro.fornecedor.models', map, 'telcel', 'fornecedor');
+    sinc.GetWebData;
+    FreeAndNil(sinc);
+    FreeAndNil(map);
 
 
-   finally
-     if Assigned(sinc) then
-        FreeAndNil(sinc);
-     if Assigned(map) then
-        FreeAndNil(map);
+    //unimedida
+    map := TListaMapaValor.create;
+    map.Add('dtcadastro', 'dtcadastro', '');
+    map.Add('nmmedida', 'nmmedida', '');
+    map.Add('sgmedida', 'sgmedida', '');
+    map.Add('qtfatorconv', 'qtfatorconv', '');
+    map.Add('idtipomed', 'idtipomed', '');
 
-   end;
+    sinc := TSincronizacao.create('unimedida', 'cadastro.unimedida.models', map, 'nmmedida', 'unimedida');
+    sinc.GetWebData;
+    FreeAndNil(sinc);
+    FreeAndNil(map);
+
+    //produto
+    map := TListaMapaValor.create;
+    map.Add('dtcadastro', 'dtcadastro');
+    map.Add('posarvore', 'posarvore');
+    map.Add('nmproduto', 'nmproduto');
+    map.Add('unimedida', 'unimedida_id');
+    map.Add('cdbarra', 'cdbarra');
+    map.Add('idprodvenda', 'idprodvenda');
+    map.Add('idadicional', 'idadicional');
+    map.Add('imgindex', 'imgindex');
+
+    sinc := TSincronizacao.create('produto', 'cadastro.produto.models', map, 'nmproduto', 'produto');
+    sinc.GetWebData;
+    FreeAndNil(sinc);
+    FreeAndNil(map);
+
+
+    //finalidade
+    map := TListaMapaValor.create;
+    map.Add('dtcadastro', 'dtcadastro');
+    map.Add('descricao', 'descricao');
+
+    sinc := TSincronizacao.create('finalidade', 'estoque.cadastro_estoque.finalidade.models', map, 'descricao', 'finalidade');
+    sinc.GetWebData;
+    FreeAndNil(sinc);
+    FreeAndNil(map);
+
+    //entrada - estoque()
+    map := TListaMapaValor.create;
+    map.Add('dtentrada', 'dtentrada');
+    map.Add('fornecedor', 'fornecedor_id');
+    sinc := TSincronizacao.create('Entrada', 'estoque.entrada.models', map, 'pk', 'Entrada');
+    sinc.GetWebData;
+    FreeAndNil(sinc);
+    FreeAndNil(map);
+
+    //saida
+    map := TListaMapaValor.create;
+    map.Add('dtsaida', 'dtsaida');
+    map.Add('cliente', 'cliente_id');
+    map.Add('finalidade', 'finalidade_id');
+    map.Add('idtipo', 'idtipo');
+    sinc := TSincronizacao.create('Saida', 'estoque.saida.models', map, 'pk', 'Saida');
+    sinc.GetWebData;
+    FreeAndNil(sinc);
+    FreeAndNil(map);
+
+    //itemproduto
+    map := TListaMapaValor.create;
+    map.Add('dtcadastro', 'dtcadastro');
+    map.Add('produto', 'produto_id');
+    map.Add('lote', 'lote_id');
+    map.Add('qtdeprod', 'qtdeprod');
+    sinc := TSincronizacao.create('Itemproduto', 'estoque.itemproduto.models', map, 'pk', 'Itemproduto');
+    sinc.GetWebData;
+    FreeAndNil(sinc);
+    FreeAndNil(map);
+
+    TTratamentos.PreencherIdEntradaSaidaItemProduto;
+    //lote
+    map := TListaMapaValor.create;
+    map.Add('dtcadastro', 'dtcadastro');
+    map.Add('dslote', 'dslote');
+    map.Add('dtvalidade', 'dtvalidade');
+    map.Add('dtfabricacao', 'dtfabricacao');
+    sinc := TSincronizacao.create('Lote', 'estoque.lote.models', map, 'pk', 'Lote');
+    sinc.GetWebData;
+    FreeAndNil(sinc);
+    FreeAndNil(map);
+
+    //posestoque
+    map := TListaMapaValor.create;
+    map.Add('dtcadastro', 'dtcadastro');
+    map.Add('produto', 'produto_id');
+    map.Add('lote', 'lote_id');
+    map.Add('qtdeproduto', 'qtdeproduto');
+    sinc := TSincronizacao.create('posestoque', 'estoque.posestoque.models', map, 'pk', 'posestoque');
+    sinc.GetWebData;
+    FreeAndNil(sinc);
+    FreeAndNil(map);
+
+    //AgrupAdicional
+    map := TListaMapaValor.create;
+    map.Add('nmagrupadic', 'nmagrupadic');
+    map.Add('vragrupadic', 'vragrupadic');
+    map.Add('idagrupativ', 'idagrupativ');
+    sinc := TSincronizacao.create('AgrupAdicional', 'pedido.cadastro_pedido.agrupadicional.models',
+      map, 'pk', 'AgrupAdicional');
+    sinc.GetWebData;
+    FreeAndNil(sinc);
+    FreeAndNil(map);
+
+    //Categoria
+    map := TListaMapaValor.create;
+    map.Add('nmcategoria', 'nmcategoria');
+    map.Add('idcategoriativ', 'idcategoriativ');
+    map.Add('imgindex', 'imgindex');
+    sinc := TSincronizacao.create('categoria', 'pedido.cadastro_pedido.categoria.models',
+      map, 'pk', 'categoria');
+    sinc.GetWebData;
+    FreeAndNil(sinc);
+    FreeAndNil(map);
+
+    //ComposicaoProd
+    map := TListaMapaValor.create;
+    map.Add('produto', 'produto_id');
+    map.Add('prodcomp', 'prodcomp_id');
+    map.Add('qtcomp', 'qtcomp');
+    map.Add('unimedida', 'unimedida_id');
+    sinc := TSincronizacao.create('ComposicaoProd', 'pedido.cadastro_pedido.composicaoproduto.models',
+      map, 'pk', 'ComposicaoProd');
+    sinc.GetWebData;
+    FreeAndNil(sinc);
+    FreeAndNil(map);
+
+    //ItemCategoria
+    map := TListaMapaValor.create;
+    map.Add('categoria', 'categoria_id');
+    map.Add('produto', 'produto_id');
+    map.Add('vrvenda', 'vrvenda');
+    map.Add('qtvenda', 'qtvenda');
+    map.Add('qtadicgratis', 'qtadicgratis');
+    map.Add('unimedida', 'unimedida_id');
+    sinc := TSincronizacao.create('ItemCategoria', 'pedido.cadastro_pedido.itemcategoria.models',
+      map, 'pk', 'ItemCategoria');
+    sinc.GetWebData;
+    FreeAndNil(sinc);
+    FreeAndNil(map);
+
+    //itagrupadicional
+    map := TListaMapaValor.create;
+    map.Add('cardapio', 'cardapio_id');
+    map.Add('agrupadicional', 'agrupadicional_id');
+    sinc := TSincronizacao.create('itagrupadicional', 'pedido.cadastro_pedido.itemcategoria.models',
+      map, 'pk', 'itagrupadicional');
+    sinc.GetWebData;
+    FreeAndNil(sinc);
+    FreeAndNil(map);
+
+    //mesa
+    map := TListaMapaValor.create;
+    map.Add('nmmesa', 'nmmesa');
+    map.Add('dsobsmesa', 'dsobsmesa');
+    map.Add('idmesaativ', 'idmesaativ');
+    sinc := TSincronizacao.create('Mesa', 'pedido.cadastro_pedido.mesa.models', map, 'nmmesa', 'Mesa');
+    sinc.GetWebData;
+    FreeAndNil(sinc);
+    FreeAndNil(map);
+
+    //adicionais
+    map := TListaMapaValor.create;
+    map.Add('agrupadicional', 'agrupadicional_id');
+    map.Add('item', 'item_id');
+    map.Add('valor', 'valor');
+    map.Add('quantidade', 'quantidade');
+    sinc := TSincronizacao.create('Adicionais', 'pedido.cadastro_pedido.agrupadicional.models',
+      map, 'pk', 'Adicionais');
+    sinc.GetWebData;
+    FreeAndNil(sinc);
+    FreeAndNil(map);
+
+    GravarDataSincronizacao(DataInicio, saSucesso, EmptyStr);
+
+    dmConexao.adoConexaoBd.CommitTrans;
+
+  except
+    on E:Exception do
+    begin
+      dmConexao.adoConexaoBd.RollbackTrans;
+      GravarDataSincronizacao(DataInicio, saError, E.Message);
+      Result:= E.Message;
+    end;
+  end;
+  finally
+    if Assigned(sinc) then
+       FreeAndNil(sinc);
+    if Assigned(map) then
+       FreeAndNil(map);
+
+  end;
 
 end;
 

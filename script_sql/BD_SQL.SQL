@@ -570,6 +570,24 @@ CREATE TABLE itemproduto (
 );
 
 
+CREATE TABLE CotroleSincronizacao(
+  id integer NOT NULL AUTO_INCREMENT,
+  dtsincronizacao DATETIME NOT NULL,
+  Status character varying(1) NULL check (Status in ('S', 'E')),
+  Log character varying(500) NULL,
+  constraint CotroleSincronizacao_pkey PRIMARY KEY(ID)
+);
+
+
+
+CREATE TABLE ParametrosSincronizacao(
+  id integer NOT NULL AUTO_INCREMENT,
+  IntervaloHora INTEGER NOT NULL DEFAULT 24,
+  IntervaloMinuto INTEGER NOT NULL DEFAULT 0,
+  IpSincronizacao character varying(255) NOT NULL,
+  constraint ParametrosSincronizacao_pkey PRIMARY KEY(id)
+);
+
 
 alter table endereco add complemento character varying(255) NULL;
 alter table empresa add id_web integer NULL;

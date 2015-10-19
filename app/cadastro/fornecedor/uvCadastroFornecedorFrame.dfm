@@ -1,6 +1,5 @@
 inherited vCadastroFornecedorFrame: TvCadastroFornecedorFrame
   inherited pgcPadrao: TcxPageControl
-    ActivePage = tabVisao
     inherited tabVisao: TcxTabSheet
       inherited panClient: TPanel
         inherited cxgridFiltro: TcxVerticalGrid
@@ -39,6 +38,7 @@ inherited vCadastroFornecedorFrame: TvCadastroFornecedorFrame
       inherited panTop: TPanel
         inherited lblNomeFrame: TLabel
           Width = 54
+          Height = 27
           Caption = 'Fornecedor'
         end
       end
@@ -49,35 +49,35 @@ inherited vCadastroFornecedorFrame: TvCadastroFornecedorFrame
           Version = 1
           object cxvGrid1nmfornecedor: TcxDBEditorRow
             Properties.DataBinding.FieldName = 'nmfornecedor'
-            ID = 2
+            ID = 0
             ParentID = -1
             Index = 0
             Version = 1
           end
           object cxvGrid1identificador: TcxDBEditorRow
             Properties.DataBinding.FieldName = 'identificador'
-            ID = 3
+            ID = 1
             ParentID = -1
             Index = 1
             Version = 1
           end
           object cxvGrid1nrinscjurd: TcxDBEditorRow
             Properties.DataBinding.FieldName = 'nrinscjurd'
-            ID = 1
+            ID = 2
             ParentID = -1
             Index = 2
             Version = 1
           end
           object cxvGrid1telfixo: TcxDBEditorRow
             Properties.DataBinding.FieldName = 'telfixo'
-            ID = 6
+            ID = 3
             ParentID = -1
             Index = 3
             Version = 1
           end
           object cxvGrid1telcel: TcxDBEditorRow
             Properties.DataBinding.FieldName = 'telcel'
-            ID = 5
+            ID = 4
             ParentID = -1
             Index = 4
             Version = 1
@@ -143,10 +143,6 @@ inherited vCadastroFornecedorFrame: TvCadastroFornecedorFrame
       OnChange = adqPadraoidentificadorChange
       Size = 1
     end
-    object adqPadraoidempresa: TIntegerField
-      FieldName = 'idempresa'
-      Visible = False
-    end
     object adqPadraotelcel: TStringField
       DisplayLabel = 'Celular'
       FieldName = 'telcel'
@@ -191,9 +187,6 @@ inherited vCadastroFornecedorFrame: TvCadastroFornecedorFrame
       DisplayLabel = 'CEP'
       FieldName = 'cdcep'
       Size = 10
-    end
-    object adqDetailempresa_id: TIntegerField
-      FieldName = 'empresa_id'
     end
     object adqDetaildtcadastro: TDateField
       DisplayLabel = 'Data cadastro'

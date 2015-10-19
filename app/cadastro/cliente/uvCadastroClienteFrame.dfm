@@ -104,33 +104,25 @@ inherited vCadastroCliente: TvCadastroCliente
         inherited cxvGrid1: TcxDBVerticalGrid
           Width = 556
           Version = 1
-          object cxvGrid1idempresa: TcxDBEditorRow
-            Properties.DataBinding.FieldName = 'idempresa'
-            Visible = False
+          object cxvGrid1nmcliente: TcxDBEditorRow
+            Properties.DataBinding.FieldName = 'nmcliente'
             ID = 0
             ParentID = -1
             Index = 0
             Version = 1
           end
-          object cxvGrid1nmcliente: TcxDBEditorRow
-            Properties.DataBinding.FieldName = 'nmcliente'
+          object cxvGrid1telfixo: TcxDBEditorRow
+            Properties.DataBinding.FieldName = 'telfixo'
             ID = 1
             ParentID = -1
             Index = 1
             Version = 1
           end
-          object cxvGrid1telfixo: TcxDBEditorRow
-            Properties.DataBinding.FieldName = 'telfixo'
+          object cxvGrid1telcel: TcxDBEditorRow
+            Properties.DataBinding.FieldName = 'telcel'
             ID = 2
             ParentID = -1
             Index = 2
-            Version = 1
-          end
-          object cxvGrid1telcel: TcxDBEditorRow
-            Properties.DataBinding.FieldName = 'telcel'
-            ID = 3
-            ParentID = -1
-            Index = 3
             Version = 1
           end
           object cxvGrid1identificador: TcxDBEditorRow
@@ -147,16 +139,16 @@ inherited vCadastroCliente: TvCadastroCliente
                 Value = 'J'
               end>
             Properties.DataBinding.FieldName = 'identificador'
-            ID = 4
+            ID = 3
             ParentID = -1
-            Index = 4
+            Index = 3
             Version = 1
           end
           object cxvGrid1nrinscjurd: TcxDBEditorRow
             Properties.DataBinding.FieldName = 'nrinscjurd'
-            ID = 5
+            ID = 4
             ParentID = -1
-            Index = 5
+            Index = 4
             Version = 1
           end
         end
@@ -227,10 +219,6 @@ inherited vCadastroCliente: TvCadastroCliente
       FieldName = 'nmcliente'
       Size = 250
     end
-    object adqPadraoidempresa: TIntegerField
-      FieldName = 'idempresa'
-      Visible = False
-    end
     object adqPadraonrinscjurd: TWideStringField
       DisplayLabel = 'CPF/CNPJ'
       FieldName = 'nrinscjurd'
@@ -294,9 +282,6 @@ inherited vCadastroCliente: TvCadastroCliente
       DisplayLabel = 'Cep'
       FieldName = 'cdcep'
       Size = 10
-    end
-    object adqDetailempresa_id: TIntegerField
-      FieldName = 'empresa_id'
     end
     object adqDetailcdbairro_id: TIntegerField
       DisplayLabel = 'Bairro'

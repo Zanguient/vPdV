@@ -25,7 +25,6 @@ uses
 type
   TvCadastroCliente = class(TvPadraoCadastro)
     adqPadraoid: TAutoIncField;
-    adqPadraoidempresa: TIntegerField;
     adqPadraonrinscjurd: TWideStringField;
     adqPadraonmcliente: TWideStringField;
     adqPadraoidentificador: TWideStringField;
@@ -40,7 +39,6 @@ type
     telfixo: TcxEditorRow;
     telcelular: TcxEditorRow;
     nrinscjurd: TcxEditorRow;
-    cxvGrid1idempresa: TcxDBEditorRow;
     cxvGrid1nrinscjurd: TcxDBEditorRow;
     cxvGrid1nmcliente: TcxDBEditorRow;
     cxvGrid1identificador: TcxDBEditorRow;
@@ -50,7 +48,6 @@ type
     adqDetailnmrua: TWideStringField;
     adqDetailcdnumero: TWideStringField;
     adqDetailcdcep: TWideStringField;
-    adqDetailempresa_id: TIntegerField;
     adqDetaildtcadastro: TDateField;
     adqDetailcdbairro_id: TIntegerField;
     adqDetailcliente_id: TIntegerField;
@@ -88,7 +85,6 @@ end;
 procedure TvCadastroCliente.adqPadraoNewRecord(DataSet: TDataSet);
 begin
   inherited;
-  adqPadraoidempresa.AsInteger := 1;
   adqPadraoidentificador.AsString := 'F';
 end;
 

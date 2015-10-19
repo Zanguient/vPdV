@@ -27,7 +27,7 @@ object frmMainBase: TfrmMainBase
     Font.Height = -11
     Font.Name = 'MS Sans Serif'
     Font.Style = []
-    ActiveGroupIndex = 3
+    ActiveGroupIndex = 4
     TabOrder = 0
     View = 15
     OptionsImage.SmallImages = cilMenu
@@ -102,6 +102,15 @@ object frmMainBase: TfrmMainBase
           Item = nbiFornecedor
         end>
     end
+    object nbgConfiguracoes: TdxNavBarGroup
+      Caption = 'Configurar'
+      SelectedLinkIndex = -1
+      TopVisibleLinkIndex = 0
+      Links = <
+        item
+          Item = nbiSincronizacao
+        end>
+    end
     object nbgSair: TdxNavBarGroup
       Caption = 'Sair'
       SelectedLinkIndex = -1
@@ -165,6 +174,11 @@ object frmMainBase: TfrmMainBase
       CustomStyles.ItemHotTracked = sty_menu_lat_hottra
       CustomStyles.ItemPressed = nbMain_BaseStyleItem3
       OnClick = nbiCancelarPedidoClick
+    end
+    object nbiSincronizacao: TdxNavBarItem
+      Caption = 'Sincroniza'#231#227'o'
+      Hint = 'Configurar sincroniza'#231#227'o'
+      OnClick = nbiSincronizacaoClick
     end
     object sty_menu_lat: TdxNavBarStyleItem
       Style.BackColor = 15202808
@@ -4930,5 +4944,10 @@ object frmMainBase: TfrmMainBase
           0000000000000000000000000000000000000000000000000000000000000000
           0000000000000000000000000000000000000000000000000000}
       end>
+  end
+  object tmSincronizacao: TTimer
+    OnTimer = tmSincronizacaoTimer
+    Left = 1011
+    Top = 448
   end
 end
