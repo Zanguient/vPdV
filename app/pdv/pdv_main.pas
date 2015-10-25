@@ -142,6 +142,8 @@ begin
   P_Create.Totalizador_Height := 45;
   P_Create.btnGravar_Visible  := True;
   P_Create.panDados_Visible   := False;
+  
+  cdsMesa.Locate('ID_MESA', (Sender as TcxButton).Tag, [loCaseInsensitive]);
 
   FrmPDV_PDV := TfrmPDV_PDV.PCreate(Self,P_Create);
   try

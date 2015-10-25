@@ -90,7 +90,7 @@ type
     lblTotal: TcxLabel;
     panDados: TPanel;
     lblTelefone: TcxLabel;
-    edtCPF: TcxTextEdit;
+    edtTelefone: TcxTextEdit;
     edtNome: TcxTextEdit;
     lblNome: TcxLabel;
     btnPesqCliente: TcxButton;
@@ -164,9 +164,11 @@ type
     cdsPedidoImpressaoUNIDADE: TStringField;
     cdsPedidoImpressaoENDERECO: TStringField;
     cdsPedidoImpressaoREFERENCIA: TStringField;
-    cdsPedidoImpressaoVRPEDIDO: TStringField;
     cdsPedidoImpressaoTIPOPEDIDO: TStringField;
     cdsPedidoImpressaoCONTATO: TStringField;
+    cdsPedidoImpressaoVRPEDIDO: TCurrencyField;
+    adqItemPedidoF: TADOQuery;
+    dspItemPedidoF: TDataSetProvider;
     procedure FormShow(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     constructor PCreate(Form: TComponent; Parametros: TParametros); Overload;
@@ -192,6 +194,7 @@ type
     procedure OnClickProdutosPDV(Sender: TObject);
     procedure AtualizaValorPedido;
     procedure AtualizaValorAdicional;
+    procedure AtualizacdsPedido;
   end;
 
 var
@@ -205,7 +208,7 @@ implementation
 
 uses
   lib_mensagem, lib_interface, pdv_adicional, uDmConexao, lib_vmsis, lib_acesso,
-  main_base, pdv_confirma_qtde_peso, math, pdv_main;
+  main_base, pdv_confirma_qtde_peso, math, pdv_main, lib_modelo_impressao, StrUtils;
 
 procedure TfrmPDV_PDV.FormShow(Sender: TObject);
 var
@@ -244,7 +247,7 @@ begin
   cdsItemPedido.Data := dspItemPedido.Data;
 
   adqAdicional.Close;
-  adqAdicional.Parameters.ParamByName('P_MESA_ID').Value := FParametros.Tag;
+  adqAdicional.Parameters.ParamByName('P_ITEMPEDIDO_ID').Value := cdsItemPedidoID.AsInteger;
   adqAdicional.Open;
   cdsAddPedido.Data := dspAdicional.Data;
 
@@ -462,12 +465,24 @@ end;
 procedure TfrmPDV_PDV.btnFinalizarPedidoClick(Sender: TObject);
 var
   Acesso_Perifericos: TAcesso_Perifericos;
+  Impressao_Nao_Fiscal: TImpressao_Nao_Fiscal;
 begin
   inherited;
   Acesso_Perifericos := TAcesso_Perifericos.Create;
+  Impressao_Nao_Fiscal := TImpressao_Nao_Fiscal.Create;
   stStatusPedido := 'F';
   try
     btnGravarClick(btnGravar);
+    if not Impressao_Nao_Fiscal.Verif_Impressora then
+      if not Confirma(DESEJA_CONTINUAR_PEDIDO) then
+        Exit;                                        
+    if Impressao_Nao_Fiscal.Verif_Impressora then
+    begin
+      AtualizacdsPedido;
+      cdsAddPedido.Filtered := False;
+      Impressao_Nao_Fiscal.Layout_Finaliza_Pedido(cdsPedidoImpressao, cdsItemPedido, cdsAddPedido);
+    end;
+    
     Acesso_Perifericos.AbreGaveta;
 
     adqUpdPedido.Close;
@@ -478,6 +493,7 @@ begin
     btnCancelarClick(btnCancelar);
   finally
     FreeAndNil(Acesso_Perifericos);
+    FreeAndNil(Impressao_Nao_Fiscal);
   end;
 end;
 
@@ -621,13 +637,22 @@ begin
     end;
     cdsItemPedido.Filtered := True;
 
-    adqItemPedido.Close;
-    adqItemPedido.Parameters.ParamByName('P_MESA_ID').Value := FParametros.Tag;
-    adqItemPedido.Open;
-    cdsItemPedido.Data := dspItemPedido.Data;
+    if stStatusPedido = 'F' then
+    begin
+      adqItemPedidoF.Close;
+      adqItemPedidoF.Parameters.ParamByName('P_PEDIDO_ID').Value := inPedido_ID;
+      adqItemPedidoF.Open;
+      cdsItemPedido.Data := dspItemPedidoF.Data;
+    end else
+    begin
+      adqItemPedido.Close;
+      adqItemPedido.Parameters.ParamByName('P_MESA_ID').Value := FParametros.Tag;
+      adqItemPedido.Open;
+      cdsItemPedido.Data := dspItemPedido.Data;
+    end;
 
     adqAdicional.Close;
-    adqAdicional.Parameters.ParamByName('P_MESA_ID').Value := FParametros.Tag;
+    adqAdicional.Parameters.ParamByName('P_ITEMPEDIDO_ID').Value := cdsItemPedidoID.AsInteger;
     adqAdicional.Open;
     cdsAddPedido.Data := dspAdicional.Data;
 
@@ -707,7 +732,7 @@ begin
       cdsItemPedido.Edit;
       cdsItemPedido.FieldByName('QTITEM').Value := 0.0;
       cdsItemPedido.Post;
-      
+
       cdsItemPedido.First;
 
       //Super ultra gambiarra para não dar o erro esporadico ao "excluir" um item com adicional
@@ -739,12 +764,46 @@ begin
     if not adqAuxAdicional.Locate('ID', cdsAddPedidoID.Value, [loCaseInsensitive]) then
     begin
 
-    end;    
+    end;
 
     cdsAddPedido.Next;
   end;
-                      
+
   cdsAddPedido.EnableControls;
+end;
+
+procedure TfrmPDV_PDV.AtualizacdsPedido;
+begin
+  if cdsPedidoImpressao.IsEmpty then
+    cdsPedidoImpressao.Insert
+  else
+    cdsPedidoImpressao.Edit;
+
+  cdsPedidoImpressaoEMPRESA.AsString := frmMainBase.NomeEmpresa;
+  cdsPedidoImpressaoUNIDADE.AsString := frmMainBase.NomeUnidade;
+
+  case AnsiIndexStr(UpperCase(Copy(FParametros.Caption,1,1)), ['M','D','B']) of
+    0: begin
+        //Mesa
+        cdsPedidoImpressaoTIPOPEDIDO.AsString := 'M';
+        cdsPedidoImpressaoENDERECO.AsString   := Copy(FParametros.Caption, 5, Length(FParametros.Caption)-5);
+       end;
+    1: begin
+        //Delivery                                   
+        cdsPedidoImpressaoTIPOPEDIDO.AsString := 'D';
+        //cdsPedidoImpressaoENDERECO.AsString   := 
+        cdsPedidoImpressaoCONTATO.AsString    := edtTelefone.Text + ' - ' + edtNome.Text;
+        //cdsPedidoImpressaoREFERENCIA.AsString :=
+       end;
+    2: begin
+        //Balcão
+        cdsPedidoImpressaoTIPOPEDIDO.AsString := 'B';
+        cdsPedidoImpressaoCONTATO.AsString    := edtTelefone.Text + ' - ' + edtNome.Text;
+       end;
+  end;
+  cdsPedidoImpressaoVRPEDIDO.AsFloat := StrToFloat(edtTotal.Text);
+
+  cdsPedidoImpressao.Post;
 end;
 
 end.

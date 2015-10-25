@@ -2333,7 +2333,7 @@ object frmPDV_PDV: TfrmPDV_PDV
           Style.IsFontAssigned = True
           Transparent = True
         end
-        object edtCPF: TcxTextEdit
+        object edtTelefone: TcxTextEdit
           Left = 76
           Top = 7
           Hint = 'Total'
@@ -3105,6 +3105,7 @@ object frmPDV_PDV: TfrmPDV_PDV
     end
   end
   object cdsAgrupAdicional: TClientDataSet
+    Active = True
     Aggregates = <>
     FieldDefs = <
       item
@@ -3130,6 +3131,12 @@ object frmPDV_PDV: TfrmPDV_PDV
     StoreDefs = True
     Left = 728
     Top = 286
+    Data = {
+      950000009619E0BD010000001800000004000000000003000000950002494404
+      0001000200010007535542545950450200490008004175746F696E63000B4E4D
+      414752555041444943010049000000010005574944544802000200FA000B5652
+      414752555041444943080004000000000008696D67696E646578040001000000
+      000001000C4155544F494E4356414C55450400010001000000}
     object cdsAgrupAdicionalID: TAutoIncField
       FieldName = 'ID'
       ReadOnly = True
@@ -27829,10 +27836,10 @@ object frmPDV_PDV: TfrmPDV_PDV
     Connection = dmConexao.adoConexaoBd
     Parameters = <
       item
-        Name = 'P_MESA_ID'
+        Name = 'P_ITEMPEDIDO_ID'
         Attributes = [paNullable]
         DataType = ftString
-        NumericScale = 232
+        NumericScale = 112
         Precision = 255
         Size = 255
         Value = Null
@@ -27843,7 +27850,7 @@ object frmPDV_PDV: TfrmPDV_PDV
         'O, IA.VALOR VRTOTAITEM, IA.ITEMPEDIDO_ID, 0 IMG'
       
         '  FROM ADICIONAIS A INNER JOIN ITADICIONAL IA ON A.ID = IA.ITEM_' +
-        'ID  '
+        'ID'
       '                    INNER JOIN PRODUTO P ON P.ID = A.ITEM_ID'
       
         '                    INNER JOIN ITEMPEDIDO IP ON IP.ID = IA.ITEMP' +
@@ -27851,7 +27858,7 @@ object frmPDV_PDV: TfrmPDV_PDV
       
         '                    INNER JOIN PEDIDO PED ON PED.ID = IP.PEDIDO_' +
         'ID'
-      ' WHERE PED.MESA_ID = :P_MESA_ID'
+      ' WHERE IA.ITEMPEDIDO_ID = :P_ITEMPEDIDO_ID'
       ' ORDER BY P.ID'
       ''
       ''
@@ -28074,60 +28081,59 @@ object frmPDV_PDV: TfrmPDV_PDV
     Top = 376
   end
   object cdsPedidoImpressao: TClientDataSet
+    Active = True
     Aggregates = <>
     AggregatesActive = True
     Filtered = True
     FieldDefs = <
       item
-        Name = 'ID'
-        DataType = ftInteger
-      end
-      item
-        Name = 'PEDIDO_ID'
-        DataType = ftInteger
-      end
-      item
-        Name = 'CARDAPIO_ID'
-        DataType = ftInteger
-      end
-      item
-        Name = 'LOTE_ID'
-        DataType = ftInteger
-      end
-      item
-        Name = 'QTITEM'
-        DataType = ftFloat
-      end
-      item
-        Name = 'VRVENDA'
-        DataType = ftFloat
-      end
-      item
-        Name = 'VRTOTAL'
-        DataType = ftFloat
-      end
-      item
-        Name = 'IDADICIONAL'
-        DataType = ftInteger
-      end
-      item
-        Name = 'NMPRODUTO'
+        Name = 'EMPRESA'
         DataType = ftString
-        Size = 250
+        Size = 25
       end
       item
-        Name = 'PRODUTO_ID'
-        DataType = ftInteger
+        Name = 'UNIDADE'
+        DataType = ftString
+        Size = 20
       end
       item
-        Name = 'IMG'
-        DataType = ftLargeint
+        Name = 'ENDERECO'
+        DataType = ftString
+        Size = 50
+      end
+      item
+        Name = 'REFERENCIA'
+        DataType = ftString
+        Size = 40
+      end
+      item
+        Name = 'TIPOPEDIDO'
+        DataType = ftString
+        Size = 1
+      end
+      item
+        Name = 'VRPEDIDO'
+        DataType = ftCurrency
+      end
+      item
+        Name = 'CONTATO'
+        DataType = ftString
+        Size = 30
       end>
     IndexDefs = <>
     Params = <>
     StoreDefs = True
     Left = 647
     Top = 326
+    Data = {
+      EE0000009619E0BD010000001800000007000000000003000000EE0007454D50
+      52455341010049000000010005574944544802000200190007554E4944414445
+      010049000000010005574944544802000200140008454E44455245434F010049
+      00000001000557494454480200020032000A5245464552454E43494101004900
+      000001000557494454480200020028000A5449504F50454449444F0100490000
+      00010005574944544802000200010008565250454449444F0800040000000100
+      07535542545950450200490006004D6F6E65790007434F4E5441544F01004900
+      00000100055749445448020002001E000000}
     object cdsPedidoImpressaoEMPRESA: TStringField
       FieldName = 'EMPRESA'
       Size = 25
@@ -28143,16 +28149,50 @@ object frmPDV_PDV: TfrmPDV_PDV
       FieldName = 'REFERENCIA'
       Size = 40
     end
-    object cdsPedidoImpressaoVRPEDIDO: TStringField
-      FieldName = 'VRPEDIDO'
-    end
     object cdsPedidoImpressaoTIPOPEDIDO: TStringField
       FieldName = 'TIPOPEDIDO'
       Size = 1
+    end
+    object cdsPedidoImpressaoVRPEDIDO: TCurrencyField
+      FieldName = 'VRPEDIDO'
     end
     object cdsPedidoImpressaoCONTATO: TStringField
       FieldName = 'CONTATO'
       Size = 30
     end
+  end
+  object adqItemPedidoF: TADOQuery
+    Connection = dmConexao.adoConexaoBd
+    Parameters = <
+      item
+        Name = 'P_PEDIDO_ID'
+        Attributes = [paNullable]
+        DataType = ftString
+        NumericScale = 120
+        Precision = 255
+        Size = 255
+        Value = Null
+      end>
+    SQL.Strings = (
+      
+        'SELECT IP.ID, IP.PEDIDO_ID, IP.CARDAPIO_ID, IP.LOTE_ID, IP.QTITE' +
+        'M, IP.VRVENDA,'
+      
+        '       IP.VRTOTAL, IP.IDADICIONAL, P.NMPRODUTO, P.ID PRODUTO_ID,' +
+        ' 0 IMG'
+      
+        '  FROM ITEMPEDIDO IP INNER JOIN PRODUTO P ON IP.PRODUTO_ID = P.I' +
+        'D'
+      
+        '                     INNER JOIN PEDIDO PED ON PED.ID = IP.PEDIDO' +
+        '_ID'
+      ' WHERE IP.PEDIDO_ID = :P_PEDIDO_ID')
+    Left = 584
+    Top = 328
+  end
+  object dspItemPedidoF: TDataSetProvider
+    DataSet = adqItemPedidoF
+    Left = 615
+    Top = 328
   end
 end

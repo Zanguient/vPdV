@@ -17,14 +17,15 @@ type
      function Verif_Impressora: Boolean;
      procedure Layout_Finaliza_Pedido(cdsPedido, cdsProduto, cdsAdicionais: TClientDataSet);
      procedure Layout_Pedido(cdsPedido, cdsProduto, cdsAdicionais: TClientDataSet);
+     function Ajusta(stTexto, stLetra: String; inQtdeTotStr: Integer; stLado: String = 'R'): String;
 //   published
 end;
 
 implementation
 
-  function rStatusImpressora_DUAL_DarumaFramework(): Integer; StdCall; External 'DarumaFrameWork.dll';
-  function iImprimirTexto_DUAL_DarumaFramework(stTexto: String; iTam: Integer ): Integer; StdCall; External 'DarumaFramework.dll';
-
+  function rStatusImpressora_DUAL_DarumaFramework(): Integer; StdCall; External 'C:\Windows\System32\DarumaFrameWork.dll';
+  function iImprimirTexto_DUAL_DarumaFramework(stTexto: String; iTam: Integer ): Integer; StdCall; External 'C:\Windows\System32\DarumaFramework.dll';
+                         
 { TImpressao_Nao_Fiscal }
 
 {
@@ -90,19 +91,41 @@ implementation
   Nivel Correção QrCode: <correcao>x</correcao> (onde x = M, Q ou  H)
 }
 
+function TImpressao_Nao_Fiscal.Ajusta(stTexto, stLetra: String;
+  inQtdeTotStr: Integer; stLado: String = 'R'): String;
+begin
+  Result := '';
+  if Length(stTexto) >= inQtdeTotStr then
+    stTexto := Copy(stTexto, 1, inQtdeTotStr)
+  else
+    while Length(stTexto) < inQtdeTotStr do
+      if stLado = 'R' then
+        stTexto := stTexto + stLetra
+      else
+        stTexto := stLetra + stTexto;
+  Result := stTexto;
+end;
+
 procedure TImpressao_Nao_Fiscal.Layout_Body(cdsProduto,
   cdsAdicionais: TClientDataSet; Texto_Impressao: TMemo);
 begin
-  Texto_Impressao.Lines.Add('<b>Produto<tb><tb><tb>Qtde<tb>Valor</b>');
+  Texto_Impressao.Lines.Add('<b>Produto  <tb><tb><tb>Qtde<tb>   Valor</b>');
   cdsProduto.First;
+
   while not cdsProduto.Eof do begin
-    Texto_Impressao.Lines.Add(cdsProduto.FieldByName('NMPRODUTO').AsString+'<tb><tb><tb>'+cdsProduto.FieldByName('QTITEM').AsString+'<tb>'+cdsProduto.FieldByName('VRTOTAL').AsString);
+    Texto_Impressao.Lines.Add(Ajusta(cdsProduto.FieldByName('NMPRODUTO').AsString, ' ', 22)+
+      Ajusta(' ',' ',3)+Ajusta(FormatFloat('#####0.000', cdsProduto.FieldByName('QTITEM').AsFloat),' ',10,'L')+
+      Ajusta(' ',' ',3)+Ajusta(FormatFloat('#####0.00', cdsProduto.FieldByName('VRTOTAL').AsFloat),' ',9,'L'));
+      
     cdsAdicionais.Filtered := False;
-    cdsAdicionais.Filter := ' ID_PRODUTO = '+cdsProduto.FieldByName('ID').AsString;
-    cdsAdicionais.Filtered := False;
+    cdsAdicionais.Filter := ' ITEMPEDIDO_ID = '+cdsProduto.FieldByName('ID').AsString;
+    cdsAdicionais.Filtered := True;
+
     cdsAdicionais.First;
     while not cdsAdicionais.Eof do begin
-      Texto_Impressao.Lines.Add('<tb>'+cdsProduto.FieldByName('NMPRODUTO').AsString+'<tb><tb>'+cdsProduto.FieldByName('QTITEM').AsString+'<tb>'+cdsProduto.FieldByName('VRTOTAITEM').AsString);
+      Texto_Impressao.Lines.Add(Ajusta(' ',' ',4)+'- '+Ajusta(cdsAdicionais.FieldByName('NMPRODUTO').AsString, ' ', 16)+
+        Ajusta(' ',' ',3)+Ajusta(FormatFloat('####0.000', cdsAdicionais.FieldByName('QTITEM').AsFloat),' ',10,'L')+
+        Ajusta(' ',' ',3)+Ajusta(FormatFloat('####0.00', cdsAdicionais.FieldByName('VRTOTAITEM').AsFloat),' ',9,'L'));
       cdsAdicionais.Next;
     end;
     cdsProduto.Next;
@@ -114,6 +137,8 @@ var
   Texto_Impressao: TMemo;
 begin
   Texto_Impressao := TMemo.Create(nil);
+  Texto_Impressao.Parent := TForm(Application.MainForm);
+  Texto_Impressao.Visible := False;
   {
     #                                       #
     #                Empresa                #
@@ -136,11 +161,11 @@ begin
     #          dd/mm/yyyy - hh:mi           #
   }
 
-  Texto_Impressao.Lines.Add('<sl>3</sl>');
+  Texto_Impressao.Lines.Add('<sl>2</sl>');
   Texto_Impressao.Lines.Add('<e><ce><b>'+cdsPedido.FieldByName('EMPRESA').AsString+'</b></ce></e>');
   Texto_Impressao.Lines.Add('<ce>'+cdsPedido.FieldByName('UNIDADE').AsString+'<ce>');
-  Texto_Impressao.Lines.Add('<l></l>');    
-  
+  Texto_Impressao.Lines.Add('<l></l>');
+
   case AnsiIndexStr(UpperCase(cdsPedido.FieldByName('TIPOPEDIDO').AsString), ['D','M','B']) of
     0: begin
         Texto_Impressao.Lines.Add('<n>Delivery</n>');
@@ -151,7 +176,8 @@ begin
     1: Texto_Impressao.Lines.Add('<n>Mesa: '+cdsPedido.FieldByName('ENDERECO').AsString+'</n>');
     3: begin
         Texto_Impressao.Lines.Add('<n>Balcão</n>');
-        Texto_Impressao.Lines.Add('<n>'+cdsPedido.FieldByName('CONTATO').AsString+'</n>');
+        if not cdsPedido.FieldByName('CONTATO').IsNull then
+          Texto_Impressao.Lines.Add('<n>'+cdsPedido.FieldByName('CONTATO').AsString+'</n>');
        end;
   else
     Texto_Impressao.Lines.Add('<l></l>');
@@ -160,12 +186,12 @@ begin
 
   Layout_Body(cdsProduto, cdsAdicionais, Texto_Impressao);
 
-  Texto_Impressao.Lines.Add('<tb><tb><tb><tb><tb>'+cdsPedido.FieldByName('VRPEDIDO').AsString);
+  Texto_Impressao.Lines.Add('<b>TOTAL '+Ajusta(FormatFloat('######0.00', cdsPedido.FieldByName('VRPEDIDO').AsFloat),' ',41,'L')+'</b>');
   Texto_Impressao.Lines.Add('<l></l>');
   Texto_Impressao.Lines.Add('<ce>Documento sem valor fiscal</ce>');
+  Texto_Impressao.Lines.Add('<ce><dt> - <hr></hr></dt></ce>');     
   Texto_Impressao.Lines.Add('<ce>VMSis</ce>');
-  Texto_Impressao.Lines.Add('<ce><dt> - <hr></hr></dt></ce>');
-  Texto_Impressao.Lines.Add('<sl>4</sl>');
+  Texto_Impressao.Lines.Add('<sl>2</sl>');
   Texto_Impressao.Lines.Add('<l></l>');
 
   try
@@ -178,6 +204,7 @@ begin
   FreeAndNil(cdsPedido);
   FreeAndNil(cdsProduto);
   FreeAndNil(cdsAdicionais);
+  FreeAndNil(Texto_Impressao);
 end;
 
 procedure TImpressao_Nao_Fiscal.Layout_Pedido(cdsPedido, cdsProduto, cdsAdicionais: TClientDataSet);
@@ -229,8 +256,8 @@ begin
   Layout_Body(cdsProduto, cdsAdicionais, Texto_Impressao);
 
   Texto_Impressao.Lines.Add('<l></l>');
-  Texto_Impressao.Lines.Add('<ce>VMSis</ce>');
   Texto_Impressao.Lines.Add('<ce><dt> - <hr></hr></dt></ce>');
+  Texto_Impressao.Lines.Add('<ce>VMSis</ce>');
   Texto_Impressao.Lines.Add('<sl>4</sl>');
   Texto_Impressao.Lines.Add('<l></l>');                                            
 
@@ -248,10 +275,12 @@ end;
 
 function TImpressao_Nao_Fiscal.Verif_Impressora: Boolean;
 var
-  boOK: Boolean;
+  boOK: Boolean;  
+  iRetorno: Integer;
 begin
   boOK := False;
-  case rStatusImpressora_DUAL_DarumaFramework() of
+  iRetorno := rStatusImpressora_DUAL_DarumaFramework();
+  case iRetorno of
     0: Aviso(IMPRESSORA_DESLIGADA);
     1: boOk := True;
     -27: Erro(ERRO_GENERICO);
