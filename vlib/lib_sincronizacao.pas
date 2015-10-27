@@ -2,7 +2,7 @@ unit lib_sincronizacao;
 
 interface
 
-uses IdHTTP, SysUtils, Windows, Classes, Variants, Dialogs, lib_db, XMLDoc, XMLIntf, DateUtils;
+uses IdHTTP, SysUtils, Windows, Classes, Variants, Dialogs, XMLDoc, XMLIntf, DateUtils, lib_db;
 
 type
   TStatusAtualizacao  = (saSucesso, saError);
@@ -16,11 +16,11 @@ type
     FTabelaLocal : string;
     FCamposWebLocal : TListaMapaValor;
     FChavesTabela : string;
+    FCondicoesParaBaixar: String;
     function GetXMLText(FieldsSeparetedByPipe : String = ''): string;
     function CheckNodeValue(const field : IXMLNode): OleVariant;
-  protected
-
   public
+    property FiltroDownload: string read FCondicoesParaBaixar write FCondicoesParaBaixar;
     procedure GetWebData; virtual;
     constructor create(const model, module: string; const CamposWebLocal: TListaMapaValor; const ChavesTabela: string;
       const TabelaLocal: string = '');
@@ -42,9 +42,8 @@ uses StrUtils, lib_tratamentos_sincronizacao, uDmConexao;
 const
    SENHA_VMSIS = 'masterVMSIS123v';
    USUARIO_VMSIS = 'vmsismaster';
-//   URL_BASE = 'http://127.0.0.1:8000/';//'http://177.153.20.166';
-   URL_PARCIAL_GET_XML = '/getmodelasjson/';
-   URL_PARCIAL_SEND_XML = '/setmodelasjson/';
+   URL_PARCIAL_GET_XML = '/getmodelasxml/';
+   URL_PARCIAL_SEND_XML = '/savejsonasmodel/';
 
 {var
  html : string;
@@ -60,6 +59,14 @@ begin
   html := IdHTTP1.Get('http://177.153.20.166/filtro/?model=cliente&module=cadastro.cliente.models');
   RichEdit1.Text := html;}
 
+
+{ modelo de url para enviar
+http://localhost:8000/savejsonasmodel?data={"model":"pais", "module":"cadastro.localidade.pais.models", "rws":[{"empresa_id":"1", "dtcadastro":"2015-10-12",
+   "cdpais":"0055", "nmpais":"BRASIL2", "cdsiscomex":"55555", "sgpais2":"BR", "sgpais3":"BRA",
+   "model_child":[{"model":"estado", "module":"cadastro.localidade.estado.models", "parent_field":"pais_id",
+   "rws":[{"empresa_id":"1", "dtcadastro":"2015-10-12", "cdestado":"32", "nmestado":"ESTADO MINAS", "sgestado":"EM", "dsregiao":"SULDESTE"}]} ] }] }
+
+}
 
 { TSincronizacao }
 
@@ -83,7 +90,7 @@ begin
   Fmodel:= model;
   FModulo:= module;
   FCamposWebLocal:= CamposWebLocal;
-
+  FCondicoesParaBaixar:= EmptyStr;
   if TabelaLocal = EmptyStr then
      FTabelaLocal:= Fmodel
   else
@@ -100,11 +107,14 @@ var
 begin
   http := TIdHTTP.Create(nil);
   try
-    url_param := FUrlToGetXML + Format('?model=%s&module=%s&usuario=%s&senha=%s', [Fmodel, FModulo, USUARIO_VMSIS, SENHA_VMSIS]);
+    url_param := FUrlToGetXML + Format('?model=%s&module=%s&usuario=%s&senha=%s', [Fmodel, FModulo,
+       USUARIO_VMSIS, SENHA_VMSIS]);
 
     if FieldsSeparetedByPipe <> EmptyStr then
        url_param := url_param + '&fields=' + FieldsSeparetedByPipe;
 
+    if FCondicoesParaBaixar <> EmptyStr then
+       url_param := url_param + '&filter=' + FCondicoesParaBaixar;
     XML := http.Get(url_param);
     if Copy(XML, 1, 5) <> '<?xml' then
        Result := EmptyStr
@@ -315,10 +325,37 @@ var
   sinc : TSincronizacao;
   map : TListaMapaValor;
   DataInicio : TDateTime;
+  dbBuscaParametros : TObjetoDB;
+  Empresa, Unidade, Almoxarifado: Integer;
 begin
   Result:= EmptyStr;
   if (Sincronizado) and (not SincronizacaoForcada) then
     Exit;
+
+  dbBuscaParametros:= TObjetoDB.create('empresa');
+  try
+    dbBuscaParametros.Select(['id']);
+    Empresa:= dbBuscaParametros.GetVal('id')
+  finally
+    FreeAndNil(dbBuscaParametros);
+  end;
+
+  dbBuscaParametros:= TObjetoDB.create('unidade');
+  try
+    dbBuscaParametros.Select(['id']);
+    Unidade:= dbBuscaParametros.GetVal('id')
+  finally
+    FreeAndNil(dbBuscaParametros);
+  end;
+
+  dbBuscaParametros:= TObjetoDB.create('Almoxarifado');
+  try
+    dbBuscaParametros.Select(['id']);
+    Almoxarifado:= dbBuscaParametros.GetVal('id');
+  finally
+    FreeAndNil(dbBuscaParametros);
+  end;
+
 
   dmConexao.adoConexaoBd.BeginTrans;
   try try
@@ -332,10 +369,12 @@ begin
     map.Add('sgpais2', 'sgpais2', '');
     map.Add('sgpais3', 'sgpais3', '');
     sinc := TSincronizacao.create('pais', 'cadastro.localidades.pais.models', map, 'cdpais', 'pais');
+    sinc.FiltroDownload:= format('{"empresa":"%d"}', [Empresa]);
     sinc.GetWebData;
     FreeAndNil(sinc);
     FreeAndNil(map);
 
+    
 
     //estado
     map := TListaMapaValor.create;
@@ -346,6 +385,7 @@ begin
     map.Add('pais', 'pais_id', '');
     map.Add('dsregiao', 'dsregiao', '');
     sinc := TSincronizacao.create('estado', 'cadastro.localidades.estado.models', map, 'cdestado,sgestado', 'estado');
+    sinc.FiltroDownload:= format('{"empresa":"%d"}', [Empresa]);
     sinc.GetWebData;
     FreeAndNil(sinc);
     FreeAndNil(map);
@@ -358,6 +398,7 @@ begin
     map.Add('pais', 'pais_id', '');
     map.Add('estado', 'estado_id', '');
     sinc := TSincronizacao.create('cidade', 'cadastro.localidades.cidade.models', map, 'cdcidade', 'cidade');
+    sinc.FiltroDownload:= format('{"empresa":"%d"}', [Empresa]);
     sinc.GetWebData;
     FreeAndNil(sinc);
     FreeAndNil(map);
@@ -370,6 +411,7 @@ begin
     map.Add('nmbairro', 'nmbairro', '');
     map.Add('cidade', 'cidade_id', '');
     sinc := TSincronizacao.create('bairro', 'cadastro.localidades.bairro.models', map, 'cdbairro', 'bairro');
+    sinc.FiltroDownload:= format('{"empresa":"%d"}', [Empresa]);
     sinc.GetWebData;
     FreeAndNil(sinc);
     FreeAndNil(map);
@@ -387,6 +429,7 @@ begin
     map.Add('cdcep', 'cdcep', '');
     map.Add('cdbairro', 'cdbairro_id', '');
     sinc := TSincronizacao.create('cliente', 'cadastro.cliente.models', map, 'telcel', 'cliente');
+    sinc.FiltroDownload:= format('{"empresa":"%d"}', [Empresa]);
     sinc.GetWebData;
     FreeAndNil(sinc);
     FreeAndNil(map);
@@ -404,6 +447,7 @@ begin
     map.Add('cdcep', 'cdcep', '');
     map.Add('cdbairro', 'cdbairro_id', '');
     sinc := TSincronizacao.create('fornecedor', 'cadastro.fornecedor.models', map, 'telcel', 'fornecedor');
+    sinc.FiltroDownload:= format('{"empresa":"%d"}', [Empresa]);    
     sinc.GetWebData;
     FreeAndNil(sinc);
     FreeAndNil(map);
@@ -418,6 +462,7 @@ begin
     map.Add('idtipomed', 'idtipomed', '');
 
     sinc := TSincronizacao.create('unimedida', 'cadastro.unimedida.models', map, 'nmmedida', 'unimedida');
+    sinc.FiltroDownload:= format('{"empresa":"%d"}', [Empresa]);
     sinc.GetWebData;
     FreeAndNil(sinc);
     FreeAndNil(map);
@@ -432,8 +477,8 @@ begin
     map.Add('idprodvenda', 'idprodvenda');
     map.Add('idadicional', 'idadicional');
     map.Add('imgindex', 'imgindex');
-
     sinc := TSincronizacao.create('produto', 'cadastro.produto.models', map, 'nmproduto', 'produto');
+    sinc.FiltroDownload:= format('{"empresa":"%d"}', [Empresa]);
     sinc.GetWebData;
     FreeAndNil(sinc);
     FreeAndNil(map);
@@ -445,6 +490,7 @@ begin
     map.Add('descricao', 'descricao');
 
     sinc := TSincronizacao.create('finalidade', 'estoque.cadastro_estoque.finalidade.models', map, 'descricao', 'finalidade');
+    sinc.FiltroDownload:= format('{"empresa":"%d"}', [Empresa]);
     sinc.GetWebData;
     FreeAndNil(sinc);
     FreeAndNil(map);
@@ -454,6 +500,7 @@ begin
     map.Add('dtentrada', 'dtentrada');
     map.Add('fornecedor', 'fornecedor_id');
     sinc := TSincronizacao.create('Entrada', 'estoque.entrada.models', map, 'pk', 'Entrada');
+    sinc.FiltroDownload:= format('{"unidade_id":"%d"}', [Unidade]);    
     sinc.GetWebData;
     FreeAndNil(sinc);
     FreeAndNil(map);
@@ -465,10 +512,11 @@ begin
     map.Add('finalidade', 'finalidade_id');
     map.Add('idtipo', 'idtipo');
     sinc := TSincronizacao.create('Saida', 'estoque.saida.models', map, 'pk', 'Saida');
+    sinc.FiltroDownload:= format('{"unidade_id":"%d"}', [Unidade]);
     sinc.GetWebData;
     FreeAndNil(sinc);
     FreeAndNil(map);
-
+                                 
     //itemproduto
     map := TListaMapaValor.create;
     map.Add('dtcadastro', 'dtcadastro');
@@ -476,9 +524,10 @@ begin
     map.Add('lote', 'lote_id');
     map.Add('qtdeprod', 'qtdeprod');
     sinc := TSincronizacao.create('Itemproduto', 'estoque.itemproduto.models', map, 'pk', 'Itemproduto');
+    sinc.FiltroDownload:= format('{"almoxarifado_id":"%d"}', [Almoxarifado]);
     sinc.GetWebData;
     FreeAndNil(sinc);
-    FreeAndNil(map);
+    FreeAndNil(map);                                             
 
     TTratamentos.PreencherIdEntradaSaidaItemProduto;
     //lote
@@ -488,6 +537,7 @@ begin
     map.Add('dtvalidade', 'dtvalidade');
     map.Add('dtfabricacao', 'dtfabricacao');
     sinc := TSincronizacao.create('Lote', 'estoque.lote.models', map, 'pk', 'Lote');
+    sinc.FiltroDownload:= format('{"unidade_id":"%d"}', [Unidade]);
     sinc.GetWebData;
     FreeAndNil(sinc);
     FreeAndNil(map);
@@ -499,6 +549,7 @@ begin
     map.Add('lote', 'lote_id');
     map.Add('qtdeproduto', 'qtdeproduto');
     sinc := TSincronizacao.create('posestoque', 'estoque.posestoque.models', map, 'pk', 'posestoque');
+    sinc.FiltroDownload:= format('{"almoxarifado_id":"%d"}', [Almoxarifado]);
     sinc.GetWebData;
     FreeAndNil(sinc);
     FreeAndNil(map);
@@ -567,6 +618,7 @@ begin
     map.Add('dsobsmesa', 'dsobsmesa');
     map.Add('idmesaativ', 'idmesaativ');
     sinc := TSincronizacao.create('Mesa', 'pedido.cadastro_pedido.mesa.models', map, 'nmmesa', 'Mesa');
+    sinc.FiltroDownload:= format('{"unidade_id":"%d"}', [Unidade]);
     sinc.GetWebData;
     FreeAndNil(sinc);
     FreeAndNil(map);

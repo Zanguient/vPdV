@@ -202,7 +202,7 @@ begin
     FUsuario := usrAcesso.Usuario;
     FIdFuncionario := usrAcesso.IdUsuario;
 
-    TSincronizarTabelas.Sincronizar(False);
+    TSincronizarTabelas.Sincronizar(False, );
   finally
     FreeAndNil(usrAcesso);
   end;
