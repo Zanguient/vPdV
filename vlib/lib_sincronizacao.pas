@@ -2,12 +2,13 @@ unit lib_sincronizacao;
 
 interface
 
-uses IdHTTP, SysUtils, Windows, Classes, Variants, Dialogs, XMLDoc, XMLIntf, DateUtils, lib_db;
-
+uses IdHTTP, SysUtils, Windows, Classes, Variants, Dialogs, XMLDoc, XMLIntf, DateUtils, lib_db,
+     DB, DBClient;
 type
-  TStatusAtualizacao  = (saSucesso, saError);
-  TSincronizacao = class(TObject)
-  private
+  TStatusAtualizacao = (saSucesso, saError);
+
+  TSincronizacaoBase = class(TObject)
+  protected
     FUrlToGetXML: string;
     FUrlToSendXML: string;
     FUrlBase: string;
@@ -16,22 +17,59 @@ type
     FTabelaLocal : string;
     FCamposWebLocal : TListaMapaValor;
     FChavesTabela : string;
+  public
+    constructor create(const model, module: string; const CamposWebLocal: TListaMapaValor; const ChavesTabela: string;
+      const TabelaLocal: string = ''); virtual;
+
+  end;
+
+  TSincronizacao = class(TSincronizacaoBase)
+  private
+
     FCondicoesParaBaixar: String;
     function GetXMLText(FieldsSeparetedByPipe : String = ''): string;
     function CheckNodeValue(const field : IXMLNode): OleVariant;
   public
     property FiltroDownload: string read FCondicoesParaBaixar write FCondicoesParaBaixar;
     procedure GetWebData; virtual;
+
     constructor create(const model, module: string; const CamposWebLocal: TListaMapaValor; const ChavesTabela: string;
-      const TabelaLocal: string = '');
+      const TabelaLocal: string = ''); override;
+  end;
+
+  TUpload = class(TSincronizacaoBase)
+  private
+     FCdsConfUpload: TClientDataSet;
+     FCdsModels: TClientDataSet;
+     FJson: string;
+     procedure ConfigurarCdsConfUpload;
+     procedure AddRegistroMapa(Model, Module, CampoWeb, CampoLocal, TabelaLocal, ModelPai, NomeCampoPai: String);
+     procedure AddMapaTabelaPrinciapal;
+     procedure FilterCds(cds: TClientDataSet; const Filtro: String);
+     function GetJsonParcial(const Model, ModelPai, Module: string; const ValorCampoPai: Variant): string;
+  public
+
+    procedure AddModelFilho(const Model, Module, ChavesTabela, TabelaLocal, ModelPai: string;
+      const CamposWebLocal: TListaMapaValor; const NomeTabelaCampoPai: string = 'id');
+
+    function GetURLUpload: String;
+
+    constructor create(const model, module: string; const CamposWebLocal: TListaMapaValor;
+      const ChavesTabela: string; const TabelaLocal: string = ''); override;
+    destructor destroy; override;
   end;
 
   TSincronizarTabelas = class
   public
-    class procedure ExecutarSincObjeto(obj: TSincronizacao);
+
+    class function MapaPais: TListaMapaValor;
+    class function MapaEstado(const MarcarCampoPai: Boolean = False): TListaMapaValor;
+
     class function Sincronizado : Boolean;
     class procedure GravarDataSincronizacao(const Data: TDateTime; const Status: TStatusAtualizacao;
       const Log : string);
+    class function Download(const Empresa, Unidade, Almoxarifado: Integer): String;
+    class function Upload: string;
     class function Sincronizar(const SincronizacaoForcada: Boolean): String;
   end;
 implementation
@@ -60,43 +98,22 @@ begin
   RichEdit1.Text := html;}
 
 
-{ modelo de url para enviar
+(* modelo de url para enviar
 http://localhost:8000/savejsonasmodel?data={"model":"pais", "module":"cadastro.localidade.pais.models", "rws":[{"empresa_id":"1", "dtcadastro":"2015-10-12",
    "cdpais":"0055", "nmpais":"BRASIL2", "cdsiscomex":"55555", "sgpais2":"BR", "sgpais3":"BRA",
    "model_child":[{"model":"estado", "module":"cadastro.localidade.estado.models", "parent_field":"pais_id",
    "rws":[{"empresa_id":"1", "dtcadastro":"2015-10-12", "cdestado":"32", "nmestado":"ESTADO MINAS", "sgestado":"EM", "dsregiao":"SULDESTE"}]} ] }] }
 
-}
+*)
 
 { TSincronizacao }
 
 
-constructor TSincronizacao.create(const model, module: string; const CamposWebLocal : TListaMapaValor; const ChavesTabela : string;
-  const TabelaLocal : string = '');
-var
-  bdSinc: TObjetoDB;
+constructor Tsincronizacao.create(const model, module: string; const CamposWebLocal: TListaMapaValor; const ChavesTabela: string;
+      const TabelaLocal: string = '');
 begin
-  bdSinc:= TObjetoDB.create('ParametrosSincronizacao');
-  FUrlBase:= '';
-  try
-    bdSinc.Select(['IpSincronizacao']);
-    FUrlBase:= bdSinc.GetVal('IpSincronizacao');
-  finally
-    FreeAndNil(bdSinc);
-  end;
-
-  FUrlToGetXML:= FUrlBase + URL_PARCIAL_GET_XML;
-  FUrlToSendXML:= FUrlBase + URL_PARCIAL_SEND_XML;
-  Fmodel:= model;
-  FModulo:= module;
-  FCamposWebLocal:= CamposWebLocal;
-  FCondicoesParaBaixar:= EmptyStr;
-  if TabelaLocal = EmptyStr then
-     FTabelaLocal:= Fmodel
-  else
-    FTabelaLocal:= TabelaLocal;
-
-  FChavesTabela:= ChavesTabela + ',';
+  inherited;
+  FCondicoesParaBaixar:= EmptyStr; 
 end;
 
 function TSincronizacao.GetXMLText(FieldsSeparetedByPipe : string): string;
@@ -231,7 +248,7 @@ var
   field_type : string;
   value : Variant;
 const
-  C_BOLLEAN_FIELD = 'BooleanField';
+  C_BOOLEAN_FIELD = 'BooleanField';
   
 begin
   field_type := VarToStr(field.Attributes['type']);
@@ -243,7 +260,7 @@ begin
     Exit;
   end;
 
-  if field_type = C_BOLLEAN_FIELD then
+  if field_type = C_BOOLEAN_FIELD then
   begin
      if value = 'True' then
        Result := 1
@@ -255,135 +272,117 @@ begin
 
 end;
 
+
+procedure TUpload.AddMapaTabelaPrinciapal;
+var
+  i: Integer;
+begin
+  for i:= 0 to FCamposWebLocal.Count - 1 do
+  begin
+    AddRegistroMapa(Fmodel, FModulo, FCamposWebLocal.GetKey(i), FCamposWebLocal.GetValue(i),
+      FTabelaLocal, EmptyStr, EmptyStr);
+  end;
+end;
+
+procedure TUpload.AddModelFilho(const Model, Module, ChavesTabela,
+  TabelaLocal, ModelPai: string; const CamposWebLocal: TListaMapaValor;
+  const NomeTabelaCampoPai: string = 'id');
+var
+  i: Integer;
+begin
+  for i:= 0 to FCamposWebLocal.Count - 1 do
+  begin
+    if CamposWebLocal.GetAdicional(i) = 'fk' then
+    begin
+      AddRegistroMapa(Model, Module, CamposWebLocal.GetKey(i), CamposWebLocal.GetValue(i),
+        TabelaLocal, ModelPai, NomeTabelaCampoPai);
+    end
+    else
+    begin
+      AddRegistroMapa(Model, Module, CamposWebLocal.GetKey(i), CamposWebLocal.GetValue(i),
+        TabelaLocal, ModelPai, EmptyStr);
+    end;
+  end;
+
+end;
+
+procedure TUpload.AddRegistroMapa(Model, Module, CampoWeb, CampoLocal, TabelaLocal, ModelPai,
+  NomeCampoPai: String);
+  function AsteriscoSeVazio(Valor: String): string;
+  begin
+    Result:= IfThen(Valor = EmptyStr, '*', Valor);
+  end;
+begin
+  FCdsConfUpload.Insert;
+  FCdsConfUpload.FieldByName('Model').AsString:= AsteriscoSeVazio(Model);
+  FCdsConfUpload.FieldByName('Module').AsString:= AsteriscoSeVazio(Module);
+  FCdsConfUpload.FieldByName('CampoWeb').AsString:= AsteriscoSeVazio(CampoWeb);
+  FCdsConfUpload.FieldByName('CampoLocal').AsString:= AsteriscoSeVazio(CampoLocal);
+  FCdsConfUpload.FieldByName('ModelPai').AsString:= AsteriscoSeVazio(ModelPai);
+  FCdsConfUpload.FieldByName('NomeCampoPai').AsString:= AsteriscoSeVazio(NomeCampoPai);
+  FCdsConfUpload.FieldByName('TabelaLocal').AsString:= AsteriscoSeVazio(TabelaLocal);
+  FCdsConfUpload.Post;
+
+  if not FCdsModels.Locate('Model', VarArrayOf([Model]), [loCaseInsensitive]) then
+  begin
+    FCdsModels.Insert;
+    FCdsModels.FieldByName('Model').AsString:= AsteriscoSeVazio(Model);
+    FCdsModels.FieldByName('Module').AsString:= AsteriscoSeVazio(Module);
+    FCdsModels.FieldByName('TabelaLocal').AsString:= AsteriscoSeVazio(TabelaLocal);
+    FCdsModels.FieldByName('ModelPai').AsString:= AsteriscoSeVazio(ModelPai);
+    FCdsModels.Post;
+  end;
+end;
+
+procedure TUpload.ConfigurarCdsConfUpload;
+begin
+  if not Assigned(FCdsConfUpload) then
+  begin
+    FCdsConfUpload:= TClientDataSet.Create(nil);
+    FCdsConfUpload.FieldDefs.Add('Sequencial', ftAutoInc);
+    FCdsConfUpload.FieldDefs.Add('Model', ftString, 100);
+    FCdsConfUpload.FieldDefs.Add('Module', ftString, 300);
+    FCdsConfUpload.FieldDefs.Add('CampoWeb', ftString, 100);
+    FCdsConfUpload.FieldDefs.Add('CampoLocal', ftString, 100);
+    FCdsConfUpload.FieldDefs.Add('ModelPai', ftString, 100);
+    FCdsConfUpload.FieldDefs.Add('NomeCampoPai', ftString, 100);
+    FCdsConfUpload.FieldDefs.Add('TabelaLocal', ftString, 100);
+    FCdsConfUpload.CreateDataSet;
+  end;
+  FCdsConfUpload.IndexFieldNames:= 'Sequencial';
+
+  if not Assigned(FCdsModels) then
+  begin
+    FCdsModels:= TClientDataSet.Create(nil);
+    FCdsModels.FieldDefs.Add('Sequencial', ftAutoInc);
+    FCdsModels.FieldDefs.Add('Model', ftString, 100);
+    FCdsModels.FieldDefs.Add('Module', ftString, 300);
+    FCdsModels.FieldDefs.Add('TabelaLocal', ftString, 100);
+    FCdsModels.FieldDefs.Add('ModelPai', ftString, 100);
+    FCdsModels.CreateDataSet;
+  end;
+  FCdsModels.IndexFieldNames:= 'Sequencial';
+end;
+
 { TSincronizarTabelas }
 
-class procedure TSincronizarTabelas.ExecutarSincObjeto(
-  obj: TSincronizacao);
-begin
-  //if Assigned(obj) then
- // begin
-   // obj.
- // end;
-end;
-
-class procedure TSincronizarTabelas.GravarDataSincronizacao(
-  const Data: TDateTime; const Status: TStatusAtualizacao; const Log : string);
-var
-  bd: TObjetoDB;
-begin
-  bd:= TObjetoDB.create('CotroleSincronizacao');
-  try
-    bd.AddParametro('dtsincronizacao', Data);
-
-    case Status of
-      saSucesso: bd.AddParametro('Status', 'S');
-      saError: bd.AddParametro('Status', 'E');
-    end;
-
-    bd.AddParametro('Log', Log);
-    bd.Insert;
-  finally
-    FreeAndNil(bd);
-  end;
-end;
-
-class function TSincronizarTabelas.Sincronizado: Boolean;
-var
-  bdDtSinc: TObjetoDB;
-  bdParamSinc: TObjetoDB;
-  diferencaMinutos : Integer;
-  minutosParaIntervalo: Integer;
-begin
-  Result:= True;
-  bdDtSinc:= TObjetoDB.create('CotroleSincronizacao');
-  bdParamSinc:= TObjetoDB.create('ParametrosSincronizacao');
-  try
-    bdDtSinc.AddParametro('Status', 'S');
-    bdDtSinc.Select(['IFNULL(MAX(dtsincronizacao), DATE_ADD(CURRENT_TIMESTAMP, INTERVAL -1000 YEAR)) AS Data']);
-    bdParamSinc.Select(['IntervaloHora', 'IntervaloMinuto']);
-
-    if bdParamSinc.IsEmpty then
-    begin
-      Result:= False;
-      Exit;
-    end;
-
-    diferencaMinutos:= MinutesBetween(bdDtSinc.GetVal('Data'), now);
-    minutosParaIntervalo:= (bdParamSinc.GetVal('IntervaloHora') * 60) + bdParamSinc.GetVal('IntervaloMinuto');
-
-    if diferencaMinutos >= minutosParaIntervalo then
-      Result:= False;
-
-  finally
-    FreeAndNil(bdDtSinc);
-    FreeAndNil(bdParamSinc);
-  end;
-end;
-
-class function TSincronizarTabelas.Sincronizar(const SincronizacaoForcada: Boolean): String;
+class function TSincronizarTabelas.Download(const Empresa, Unidade, Almoxarifado: Integer): String;
 var
   sinc : TSincronizacao;
   map : TListaMapaValor;
-  DataInicio : TDateTime;
-  dbBuscaParametros : TObjetoDB;
-  Empresa, Unidade, Almoxarifado: Integer;
 begin
-  Result:= EmptyStr;
-  if (Sincronizado) and (not SincronizacaoForcada) then
-    Exit;
-
-  dbBuscaParametros:= TObjetoDB.create('empresa');
-  try
-    dbBuscaParametros.Select(['id']);
-    Empresa:= dbBuscaParametros.GetVal('id')
-  finally
-    FreeAndNil(dbBuscaParametros);
-  end;
-
-  dbBuscaParametros:= TObjetoDB.create('unidade');
-  try
-    dbBuscaParametros.Select(['id']);
-    Unidade:= dbBuscaParametros.GetVal('id')
-  finally
-    FreeAndNil(dbBuscaParametros);
-  end;
-
-  dbBuscaParametros:= TObjetoDB.create('Almoxarifado');
-  try
-    dbBuscaParametros.Select(['id']);
-    Almoxarifado:= dbBuscaParametros.GetVal('id');
-  finally
-    FreeAndNil(dbBuscaParametros);
-  end;
-
-
   dmConexao.adoConexaoBd.BeginTrans;
   try try
-    DataInicio:= Now;
-    //pais
-    map := TListaMapaValor.create;
-    map.Add('dtcadastro', 'dtcadastro', '');
-    map.Add('cdpais', 'cdpais', '');
-    map.Add('nmpais', 'nmpais', '');
-    map.Add('cdsiscomex', 'cdsiscomex', '');
-    map.Add('sgpais2', 'sgpais2', '');
-    map.Add('sgpais3', 'sgpais3', '');
+
+    map:= MapaPais;
     sinc := TSincronizacao.create('pais', 'cadastro.localidades.pais.models', map, 'cdpais', 'pais');
     sinc.FiltroDownload:= format('{"empresa":"%d"}', [Empresa]);
     sinc.GetWebData;
     FreeAndNil(sinc);
     FreeAndNil(map);
 
-    
-
     //estado
-    map := TListaMapaValor.create;
-    map.Add('dtcadastro', 'dtcadastro', '');
-    map.Add('cdestado', 'cdestado', '');
-    map.Add('nmestado', 'nmestado', '');
-    map.Add('sgestado', 'sgestado', '');
-    map.Add('pais', 'pais_id', '');
-    map.Add('dsregiao', 'dsregiao', '');
+    map:= MapaEstado;
     sinc := TSincronizacao.create('estado', 'cadastro.localidades.estado.models', map, 'cdestado,sgestado', 'estado');
     sinc.FiltroDownload:= format('{"empresa":"%d"}', [Empresa]);
     sinc.GetWebData;
@@ -447,7 +446,7 @@ begin
     map.Add('cdcep', 'cdcep', '');
     map.Add('cdbairro', 'cdbairro_id', '');
     sinc := TSincronizacao.create('fornecedor', 'cadastro.fornecedor.models', map, 'telcel', 'fornecedor');
-    sinc.FiltroDownload:= format('{"empresa":"%d"}', [Empresa]);    
+    sinc.FiltroDownload:= format('{"empresa":"%d"}', [Empresa]);
     sinc.GetWebData;
     FreeAndNil(sinc);
     FreeAndNil(map);
@@ -500,7 +499,7 @@ begin
     map.Add('dtentrada', 'dtentrada');
     map.Add('fornecedor', 'fornecedor_id');
     sinc := TSincronizacao.create('Entrada', 'estoque.entrada.models', map, 'pk', 'Entrada');
-    sinc.FiltroDownload:= format('{"unidade_id":"%d"}', [Unidade]);    
+    sinc.FiltroDownload:= format('{"unidade_id":"%d"}', [Unidade]);
     sinc.GetWebData;
     FreeAndNil(sinc);
     FreeAndNil(map);
@@ -516,7 +515,7 @@ begin
     sinc.GetWebData;
     FreeAndNil(sinc);
     FreeAndNil(map);
-                                 
+
     //itemproduto
     map := TListaMapaValor.create;
     map.Add('dtcadastro', 'dtcadastro');
@@ -527,7 +526,7 @@ begin
     sinc.FiltroDownload:= format('{"almoxarifado_id":"%d"}', [Almoxarifado]);
     sinc.GetWebData;
     FreeAndNil(sinc);
-    FreeAndNil(map);                                             
+    FreeAndNil(map);
 
     TTratamentos.PreencherIdEntradaSaidaItemProduto;
     //lote
@@ -635,15 +634,12 @@ begin
     FreeAndNil(sinc);
     FreeAndNil(map);
 
-    GravarDataSincronizacao(DataInicio, saSucesso, EmptyStr);
-
     dmConexao.adoConexaoBd.CommitTrans;
 
   except
     on E:Exception do
     begin
       dmConexao.adoConexaoBd.RollbackTrans;
-      GravarDataSincronizacao(DataInicio, saError, E.Message);
       Result:= E.Message;
     end;
   end;
@@ -654,8 +650,337 @@ begin
        FreeAndNil(map);
 
   end;
+end;
+
+
+class procedure TSincronizarTabelas.GravarDataSincronizacao(
+  const Data: TDateTime; const Status: TStatusAtualizacao; const Log : string);
+var
+  bd: TObjetoDB;
+begin
+  bd:= TObjetoDB.create('CotroleSincronizacao');
+  try
+    bd.AddParametro('dtsincronizacao', Data);
+
+    case Status of
+      saSucesso: bd.AddParametro('Status', 'S');
+      saError: bd.AddParametro('Status', 'E');
+    end;
+
+    bd.AddParametro('Log', Log);
+    bd.Insert;
+  finally
+    FreeAndNil(bd);
+  end;
+end;
+
+class function TSincronizarTabelas.MapaEstado(const MarcarCampoPai: Boolean = False): TListaMapaValor;
+var
+  map : TListaMapaValor;
+begin
+  map := TListaMapaValor.create;
+  map.Add('dtcadastro', 'dtcadastro', '');
+  map.Add('cdestado', 'cdestado', '');
+  map.Add('nmestado', 'nmestado', '');
+  map.Add('sgestado', 'sgestado', '');
+
+  if MarcarCampoPai then
+    map.Add('pais_id', 'pais_id', 'fk')
+  else
+    map.Add('pais', 'pais_id', '');
+
+  map.Add('dsregiao', 'dsregiao', '');
+  Result:= map;
+end;
+
+class function TSincronizarTabelas.MapaPais: TListaMapaValor;
+var
+  map : TListaMapaValor;
+begin
+  //pais
+  map := TListaMapaValor.create;
+  map.Add('dtcadastro', 'dtcadastro', '');
+  map.Add('cdpais', 'cdpais', '');
+  map.Add('nmpais', 'nmpais', '');
+  map.Add('cdsiscomex', 'cdsiscomex', '');
+  map.Add('sgpais2', 'sgpais2', '');
+  map.Add('sgpais3', 'sgpais3', '');
+  Result:= map;
+end;
+
+class function TSincronizarTabelas.Sincronizado: Boolean;
+var
+  bdDtSinc: TObjetoDB;
+  bdParamSinc: TObjetoDB;
+  diferencaMinutos : Integer;
+  minutosParaIntervalo: Integer;
+begin
+  Result:= True;
+  bdDtSinc:= TObjetoDB.create('CotroleSincronizacao');
+  bdParamSinc:= TObjetoDB.create('ParametrosSincronizacao');
+  try
+    bdDtSinc.AddParametro('Status', 'S');
+    bdDtSinc.Select(['IFNULL(MAX(dtsincronizacao), DATE_ADD(CURRENT_TIMESTAMP, INTERVAL -1000 YEAR)) AS Data']);
+    bdParamSinc.Select(['IntervaloHora', 'IntervaloMinuto']);
+
+    if bdParamSinc.IsEmpty then
+    begin
+      Result:= False;
+      Exit;
+    end;
+
+    diferencaMinutos:= MinutesBetween(bdDtSinc.GetVal('Data'), now);
+    minutosParaIntervalo:= (bdParamSinc.GetVal('IntervaloHora') * 60) + bdParamSinc.GetVal('IntervaloMinuto');
+
+    if diferencaMinutos >= minutosParaIntervalo then
+      Result:= False;
+
+  finally
+    FreeAndNil(bdDtSinc);
+    FreeAndNil(bdParamSinc);
+  end;
+end;
+
+class function TSincronizarTabelas.Sincronizar(const SincronizacaoForcada: Boolean): String;
+var
+  Empresa, Unidade, Almoxarifado: Integer;
+  DataInicio : TDateTime;
+  dbBuscaParametros : TObjetoDB;
+
+begin
+  Result:= EmptyStr;
+  if (Sincronizado) and (not SincronizacaoForcada) then
+    Exit;
+
+  dbBuscaParametros:= TObjetoDB.create('empresa');
+  try
+    dbBuscaParametros.Select(['id']);
+    Empresa:= dbBuscaParametros.GetVal('id')
+  finally
+    FreeAndNil(dbBuscaParametros);
+  end;
+
+  dbBuscaParametros:= TObjetoDB.create('unidade');
+  try
+    dbBuscaParametros.Select(['id']);
+    Unidade:= dbBuscaParametros.GetVal('id')
+  finally
+    FreeAndNil(dbBuscaParametros);
+  end;
+
+  dbBuscaParametros:= TObjetoDB.create('Almoxarifado');
+  try
+    dbBuscaParametros.Select(['id']);
+    Almoxarifado:= dbBuscaParametros.GetVal('id');
+  finally
+    FreeAndNil(dbBuscaParametros);
+  end;
+
+  DataInicio:= Now;
+  
+  Result := Download(Empresa, Unidade, Almoxarifado);
+
+  if Result <> EmptyStr then
+  begin
+     GravarDataSincronizacao(DataInicio, saError, Result);
+     Exit;
+  end;
+
+  Result:= Upload;
+
+  if Result <> EmptyStr then
+  begin
+     GravarDataSincronizacao(DataInicio, saError, Result);
+     Exit;
+  end;
+
+  //GravarDataSincronizacao(DataInicio, saSucesso, EmptyStr);
+
+
+end;
+
+
+class function TSincronizarTabelas.Upload: string;
+var
+  upload: TUpload;
+  mapPais, mapEstado: TListaMapaValor;
+begin
+  Result:= EmptyStr;
+  try try
+    mapPais:= MapaPais;
+    mapEstado:= MapaEstado(True);
+
+    upload:= TUpload.create('Pais', 'cadastro.pais.models', mapPais, 'id');
+    upload.AddModelFilho('Estado', 'cadastro.estado.models', 'id', 'Estado', 'Pais',
+      mapEstado);
+
+    Result:= upload.GetURLUpload;
+  except
+    on E:Exception do
+    begin
+      Result:= E.Message;
+    end;
+  end;
+  finally
+    FreeAndNil(mapPais);
+    FreeAndNil(mapEstado);
+    FreeAndNil(upload);
+  end;
+end;
+
+{ TSincronizacaoBase }
+
+constructor TSincronizacaoBase.create(const model, module: string; const CamposWebLocal: TListaMapaValor; const ChavesTabela: string;
+      const TabelaLocal: string = '');
+var
+  bdSinc: TObjetoDB;
+begin
+  bdSinc:= TObjetoDB.create('ParametrosSincronizacao');
+  FUrlBase:= '';
+  try
+    bdSinc.Select(['IpSincronizacao']);
+    FUrlBase:= bdSinc.GetVal('IpSincronizacao');
+  finally
+    FreeAndNil(bdSinc);
+  end;
+
+  FUrlToGetXML:= FUrlBase + URL_PARCIAL_GET_XML;
+  FUrlToSendXML:= FUrlBase + URL_PARCIAL_SEND_XML;
+  Fmodel:= model;
+  FModulo:= module;
+
+  if TabelaLocal = EmptyStr then
+     FTabelaLocal:= Fmodel
+  else
+    FTabelaLocal:= TabelaLocal;
+
+  FChavesTabela:= ChavesTabela + ',';
+  FCamposWebLocal:= CamposWebLocal;
+end;
+
+constructor TUpload.create(const model, module: string; const CamposWebLocal: TListaMapaValor;
+  const ChavesTabela: string; const TabelaLocal: string = '');
+begin
+  inherited;
+  ConfigurarCdsConfUpload;
+  AddMapaTabelaPrinciapal;
+end;
+
+destructor TUpload.destroy;
+begin
+  FreeAndNil(FCdsConfUpload);
+  inherited;   
+end;
+
+procedure TUpload.FilterCds(cds: TClientDataSet; const Filtro: String);
+begin
+  cds.Filtered:= False;
+  cds.Filter:= Filtro;
+  cds.Filtered:= True;
+end;
+
+function TUpload.GetURLUpload: String;
+begin
+  Result:= FUrlToSendXML + '?data={' + GetJsonParcial(Fmodel, EmptyStr, FModulo, Null) + '}';
+end;
+
+function TUpload.GetJsonParcial(const Model, ModelPai, Module: string;
+  const ValorCampoPai: Variant): string;
+  var
+   cdsPaiTemp, cdsFilhosTemp, cdsFiltro: TClientDataSet;
+   dbGetValores: TObjetoDB;
+   tabelaLocal, json: string;
+
+begin
+  cdsPaiTemp:= TClientDataSet.Create(nil);
+  cdsFilhosTemp:= TClientDataSet.Create(nil);
+  cdsFiltro:= TClientDataSet.Create(nil);
+  try
+    cdsPaiTemp.Data:= FCdsModels.Data;
+    cdsFiltro.Data:= FCdsConfUpload.Data;
+
+    FilterCds(cdsPaiTemp, 'Model = ' + QuotedStr(Model));
+    tabelaLocal:= cdsPaiTemp.FieldByName('TabelaLocal').AsString;
+    dbGetValores:= TObjetoDB.create(tabelaLocal);
+
+    json:= '"model":"' + Model + '","module":"' + Module + '",';
+
+    if ModelPai <> EmptyStr then
+    begin
+      FilterCds(cdsFiltro, 'Model = ' + QuotedStr(Model) + ' and NomeCampoPai <> ' + QuotedStr('*'));
+      json:= json + '"parent_field":"' + cdsFiltro.FieldByName('CampoWeb').AsString + '",';
+      dbGetValores.AddParametro(cdsFiltro.FieldByName('NomeCampoPai').AsString, ValorCampoPai);
+    end;
+
+    json:= json + '"rws":[';
+
+    dbGetValores.Select(['*']);
+    dbGetValores.First;
+    while not dbGetValores.Eof do
+    begin
+      json:= json + '{';
+      FilterCds(cdsFiltro, 'Model = ' + QuotedStr(Model));
+      cdsFiltro.First;
+      while not cdsFiltro.Eof do
+      begin
+        json:= json + '"' + cdsFiltro.FieldByName('CampoWeb').AsString + '":';
+        json:= json + '"' + VarToStr(dbGetValores.GetVal(cdsFiltro.FieldByName('CampoLocal').AsString)) + '"';
+
+        cdsFiltro.Next;
+
+        if not cdsFiltro.Eof then
+          json:= json + ',';
+      end;
+
+      FilterCds(cdsPaiTemp, 'ModelPai = ' + QuotedStr(Model));
+
+      if not cdsPaiTemp.IsEmpty then
+      begin
+        json:= json + ',"model_child":[';
+      end;
+
+      cdsPaiTemp.First;
+      while not cdsPaiTemp.Eof do
+      begin
+        FilterCds(cdsFiltro, 'Model=' + QuotedStr(cdsPaiTemp.FieldByName('Model').AsString)  +
+          ' and NomeCampoPai <> ' + QuotedStr('*'));
+
+        json:= json + '{';
+
+        json:= json + GetJsonParcial(cdsPaiTemp.FieldByName('Model').AsString, Model,
+          cdsPaiTemp.FieldByName('Module').AsString,
+          dbGetValores.GetVal(cdsFiltro.FieldByName('NomeCampoPai').AsString));
+
+        json:= json + '}';
+
+        cdsPaiTemp.Next;
+
+        if not cdsPaiTemp.Eof then
+          json:= json + ',';
+      end;
+
+      if not cdsPaiTemp.IsEmpty then
+      begin
+        json:= json + ']';
+      end;
+      json:= json + '}';
+      dbGetValores.Next;
+
+      if not dbGetValores.Eof then
+        json:= json + ',';
+    end;
+    json:= json + ']';
+    Result:= json;
+  finally
+    if Assigned(dbGetValores) then
+      FreeAndNil(dbGetValores);
+
+    FreeAndNil(cdsPaiTemp);
+    FreeAndNil(cdsFilhosTemp);
+  end;
 
 end;
 
 end.
+
 

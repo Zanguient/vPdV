@@ -66,9 +66,10 @@ uses Windows, Messages, SysUtils, Variants, Classes, ADODB, uDmConexao, DBClient
       procedure Prior;
       procedure Last;
       procedure First;
-
       procedure SetParamsToNewValueUp(const onlyIgnored : Boolean);
+
       function IsEmpty : Boolean;
+      function Eof : Boolean;
       function Find(Field : String; Value : Variant) : Boolean;
       function GetVal(const field : String): variant;
       constructor create(const NomeTabela : String);
@@ -389,6 +390,11 @@ begin
     FParametrosNewValue.Add(key, FParametros.GetValue(contador), '');
   end;
 
+end;
+
+function TObjetoDB.Eof: Boolean;
+begin
+   Result:= Fquery.Eof;
 end;
 
 { TMapaValor }
