@@ -25,6 +25,7 @@ object frmPDV_PDV: TfrmPDV_PDV
     Width = 920
     Height = 91
     Align = alBottom
+    AutoScroll = False
     BevelInner = bvLowered
     BevelOuter = bvNone
     BevelKind = bkFlat

@@ -18,7 +18,7 @@ uses
   dxSkinXmas2008Blue, dxSkinscxPCPainter, cxCustomData, cxFilter, cxData,
   cxDataStorage, cxEdit, cxDBData, cxGridLevel, cxGridCustomTableView,
   cxGridTableView, cxGridDBTableView, cxClasses, cxGridCustomView, cxGrid,
-  Provider, cxImageComboBox, ImgList;
+  Provider, cxImageComboBox, ImgList, cxCurrencyEdit;
 
 type
   TfrmPDVMain = class(TvPadraoFrame)
@@ -59,9 +59,6 @@ type
     cdsMesavalor: TFloatField;
     procedure FrameResize(Sender: TObject);
     procedure btnGavetaClick(Sender: TObject);
-    procedure dtvPedidosCustomDrawCell(Sender: TcxCustomGridTableView;
-      ACanvas: TcxCanvas; AViewInfo: TcxGridTableDataCellViewInfo;
-      var ADone: Boolean);
     procedure btnDeliveryClick(Sender: TObject);
     procedure btnBalcaoClick(Sender: TObject);
     procedure cxButton1Click(Sender: TObject);
@@ -118,19 +115,6 @@ begin
     FreeAndNil(AcessoGaveta);
     FreeAndNil(Acesso_Perifericos);
   end;
-end;
-
-procedure TfrmPDVMain.dtvPedidosCustomDrawCell(
-  Sender: TcxCustomGridTableView; ACanvas: TcxCanvas;
-  AViewInfo: TcxGridTableDataCellViewInfo; var ADone: Boolean);
-begin
-  inherited;
-  if AViewInfo.GridRecord.RecordIndex mod 2 = 0 Then
-    ACanvas.Brush.Color := $9400D3
-  else
-    ACanvas.Brush.Color := $FFFFFF;
-
-  ACanvas.Font.Color := clBlack;
 end;
 
 procedure TfrmPDVMain.OnClickOpcoesPDV(Sender: TObject);
@@ -206,7 +190,7 @@ procedure TfrmPDVMain.gcpStatusGetDisplayText(
   var AText: String);
 begin
   inherited;
-  case AnsiIndexStr(UpperCase(AText), ['L','O']) of
+  case AnsiIndexStr(UpperCase(cdsMesaStatus.AsString), ['L','O']) of
     0: Atext := 'Livre';
     1: Atext := 'Ocupada';
   else
@@ -214,7 +198,7 @@ begin
   end;
 end;
 
-procedure TfrmPDVMain.RefreshMesa; 
+procedure TfrmPDVMain.RefreshMesa;
 var
   Interface_: TInterface;
   contador, retirados, inStatus: Integer;

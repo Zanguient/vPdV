@@ -279,10 +279,10 @@ end;
 procedure TfrmPDV_PDV.FormCreate(Sender: TObject);
 var
    region: hrgn;
-begin
-  Height := Screen.WorkAreaHeight-20;
-  Width  := Screen.WorkAreaWidth-20;
-  Position := poScreenCenter;
+begin                  
+  //Altera o tamanho do formulário para o tamanho da tela
+  Height := Screen.Height;
+  Width  := Screen.Width;
 
   DoubleBuffered := True;
   region := CreateRoundRectRgn(0, 0, width, height, 15, 15);
@@ -293,7 +293,7 @@ procedure TfrmPDV_PDV.OnClickCategoriaPDV(Sender: TObject);
 var
   Interface_: TInterface;
   contador, retirados: Integer;
-begin
+begin                    
   cdsItemCategoria.Filtered := False;
   retirados := 0;
   
@@ -473,15 +473,15 @@ begin
   stStatusPedido := 'F';
   try
     btnGravarClick(btnGravar);
+    
+    AtualizacdsPedido;
+    cdsAddPedido.Filtered := False;
     if not Impressao_Nao_Fiscal.Verif_Impressora then
-      if not Confirma(DESEJA_CONTINUAR_PEDIDO) then
-        Exit;                                        
-    if Impressao_Nao_Fiscal.Verif_Impressora then
     begin
-      AtualizacdsPedido;
-      cdsAddPedido.Filtered := False;
+      if not Confirma(DESEJA_CONTINUAR_PEDIDO) then
+        Exit;
+    end else
       Impressao_Nao_Fiscal.Layout_Finaliza_Pedido(cdsPedidoImpressao, cdsItemPedido, cdsAddPedido);
-    end;
     
     Acesso_Perifericos.AbreGaveta;
 
@@ -503,7 +503,6 @@ begin
     if not Confirma(CONFIRMA_PERDA_DADOS) then
       Exit;
 
-//  frmPDVMain.RefreshMesa;
   Close;
 end;
 

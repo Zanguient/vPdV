@@ -107,7 +107,7 @@ end;
 
 procedure TfrmMainBase.nbgSairClick(Sender: TObject);
 begin
-   Close;
+  Close;
 end;
 
 procedure TfrmMainBase.FormCreate(Sender: TObject);
@@ -120,34 +120,34 @@ begin
   Height := Screen.Height;
   Width  := Screen.Width;
 
-   DoubleBuffered := True;
-   region := CreateRoundRectRgn(0, 0, width, height, 15, 15);
-   SetWindowRgn(handle, region, true);
+  DoubleBuffered := True;
+  region := CreateRoundRectRgn(0, 0, width, height, 15, 15);
+  SetWindowRgn(handle, region, true);
 
-   db := TObjetoDB.create('empresa');
-   try
-     //dados da empresa
-     db.AddSqlAdicional(' LIMIT 1 ');
-     db.Select(['ID', 'NMEMPRESA']);
-     FIdEmpresa := db.GetVal('ID');
-     FNomeEmpresa := db.GetVal('NMEMPRESA')
-   finally
-     FreeAndNil(db);
-   end;
+  db := TObjetoDB.create('empresa');
+  try
+    //dados da empresa
+    db.AddSqlAdicional(' LIMIT 1 ');
+    db.Select(['ID', 'NMEMPRESA']);
+    FIdEmpresa := db.GetVal('ID');
+    FNomeEmpresa := db.GetVal('NMEMPRESA')
+  finally
+    FreeAndNil(db);
+  end;
 
-   dbSincronizacao:= TObjetoDB.create('ParametrosSincronizacao');
-   try
-     dbSincronizacao.Select(['IntervaloHora', 'IntervaloMinuto']);
-     try
-       tmSincronizacao.Interval:= ((dbSincronizacao.GetVal('IntervaloHora') * 3600) +
-         (dbSincronizacao.GetVal('IntervaloMinuto') * 60)) * 1000;
-       tmSincronizacao.Enabled:= True;
-     except
-       tmSincronizacao.Enabled:= False;
-     end
-   finally
-     FreeAndNil(dbSincronizacao);
-   end;
+  dbSincronizacao:= TObjetoDB.create('ParametrosSincronizacao');
+  try
+    dbSincronizacao.Select(['IntervaloHora', 'IntervaloMinuto']);
+    try
+      tmSincronizacao.Interval:= ((dbSincronizacao.GetVal('IntervaloHora') * 3600) +
+        (dbSincronizacao.GetVal('IntervaloMinuto') * 60)) * 1000;
+      tmSincronizacao.Enabled:= True;
+    except
+      tmSincronizacao.Enabled:= False;
+    end
+  finally
+    FreeAndNil(dbSincronizacao);
+  end;
 end;
 
 procedure TfrmMainBase.nbgPDVClick(Sender: TObject);

@@ -32,7 +32,6 @@ inherited frmPDVMain: TfrmPDVMain
         TabOrder = 0
         object dtvPedidos: TcxGridDBTableView
           NavigatorButtons.ConfirmDelete = False
-          OnCustomDrawCell = dtvPedidosCustomDrawCell
           DataController.DataSource = dtsMesa
           DataController.Summary.DefaultGroupSummaryItems = <>
           DataController.Summary.FooterSummaryItems = <>
@@ -58,6 +57,7 @@ inherited frmPDVMain: TfrmPDVMain
             Caption = 'Status'
             DataBinding.FieldName = 'status'
             PropertiesClassName = 'TcxImageComboBoxProperties'
+            Properties.Alignment.Horz = taLeftJustify
             Properties.Items = <
               item
                 Description = 'Valor exibido na tela'
@@ -71,6 +71,8 @@ inherited frmPDVMain: TfrmPDVMain
           object gcpValor: TcxGridDBColumn
             Caption = 'Valor'
             DataBinding.FieldName = 'valor'
+            PropertiesClassName = 'TcxCurrencyEditProperties'
+            Properties.DisplayFormat = '0.00;-0.00'
             Width = 135
           end
         end

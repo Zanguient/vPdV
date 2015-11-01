@@ -22,6 +22,7 @@ object frmAdicional: TfrmAdicional
     Width = 920
     Height = 91
     Align = alBottom
+    AutoScroll = False
     BevelInner = bvNone
     BevelOuter = bvNone
     BorderStyle = bsNone
