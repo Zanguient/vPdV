@@ -27,10 +27,10 @@ implementation
 
 uses
   lib_mensagem, SysUtils;
-
-  function rStatusGaveta_DUAL_DarumaFramework(var iStatusGaveta: Integer): Integer; StdCall; External 'DarumaFrameWork.dll';
-  function iAcionarGaveta_DUAL_DarumaFramework(): Integer; StdCall; External 'DarumaFrameWork.dll';
+                                                                                                   
   function Elgin_LeBalanca(Porta, Baud, Valor: PChar): Integer; Stdcall; External 'Elgin.dll';
+  function rStatusGaveta_DUAL_DarumaFramework(var iStatusGaveta: Integer): Integer; StdCall; External 'C:\Windows\System32\DarumaFramework.dll';
+  function iAcionarGaveta_DUAL_DarumaFramework(): Integer; StdCall; External 'C:\Windows\System32\DarumaFramework.dll';
 
 { Acesso_Online }
 
@@ -110,7 +110,7 @@ begin
   flReturn := 0.0;
   stBaud := '9600';
   stValor := StringOfChar(' ', 5);
-  stPorta := 'COM2';
+  stPorta := 'COM11';
 
   iRetorno := Elgin_LeBalanca(PAnsiChar(stPorta), PAnsiChar(stBaud), PAnsiChar(stValor));
   if iRetorno = 1 then

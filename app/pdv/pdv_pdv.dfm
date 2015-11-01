@@ -27836,10 +27836,10 @@ object frmPDV_PDV: TfrmPDV_PDV
     Connection = dmConexao.adoConexaoBd
     Parameters = <
       item
-        Name = 'P_ITEMPEDIDO_ID'
+        Name = 'P_PEDIDO_ID'
         Attributes = [paNullable]
-        DataType = ftString
-        NumericScale = 112
+        DataType = ftInteger
+        NumericScale = 208
         Precision = 255
         Size = 255
         Value = Null
@@ -27858,7 +27858,7 @@ object frmPDV_PDV: TfrmPDV_PDV
       
         '                    INNER JOIN PEDIDO PED ON PED.ID = IP.PEDIDO_' +
         'ID'
-      ' WHERE IA.ITEMPEDIDO_ID = :P_ITEMPEDIDO_ID'
+      ' WHERE IP.PEDIDO_ID = :P_PEDIDO_ID'
       ' ORDER BY P.ID'
       ''
       ''

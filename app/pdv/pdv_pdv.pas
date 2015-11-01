@@ -247,7 +247,7 @@ begin
   cdsItemPedido.Data := dspItemPedido.Data;
 
   adqAdicional.Close;
-  adqAdicional.Parameters.ParamByName('P_ITEMPEDIDO_ID').Value := cdsItemPedidoID.AsInteger;
+  adqAdicional.Parameters.ParamByName('P_PEDIDO_ID').Value := cdsItemPedidoPEDIDO_ID.AsInteger;
   adqAdicional.Open;
   cdsAddPedido.Data := dspAdicional.Data;
 
@@ -560,7 +560,8 @@ begin
         adqDelAddPedido.ExecSQL;
       end;
       cdsAddPedido.Next;
-    end;
+    end;                                      
+    frmPDV_PDV.cdsAddPedido.Filtered := True;
 
     //ItemPedido
     cdsItemPedido.Filtered := False;
@@ -652,7 +653,7 @@ begin
     end;
 
     adqAdicional.Close;
-    adqAdicional.Parameters.ParamByName('P_ITEMPEDIDO_ID').Value := cdsItemPedidoID.AsInteger;
+    adqAdicional.Parameters.ParamByName('P_PEDIDO_ID').Value := cdsItemPedidoPedido_ID.AsInteger;
     adqAdicional.Open;
     cdsAddPedido.Data := dspAdicional.Data;
 
