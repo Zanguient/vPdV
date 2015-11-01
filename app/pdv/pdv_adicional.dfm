@@ -12,6 +12,7 @@ object frmAdicional: TfrmAdicional
   Font.Style = []
   OldCreateOrder = False
   Position = poScreenCenter
+  OnClose = FormClose
   OnCreate = FormCreate
   OnShow = FormShow
   PixelsPerInch = 96
@@ -1644,7 +1645,7 @@ object frmAdicional: TfrmAdicional
       object dbgAdicionalPedido: TcxGridDBTableView
         NavigatorButtons.ConfirmDelete = False
         OnCellClick = dbgAdicionalPedidoCellClick
-        DataController.DataSource = frmPDV_PDV.dtsAddPedido
+        DataController.DataSource = dtsAddPedido
         DataController.Summary.DefaultGroupSummaryItems = <>
         DataController.Summary.FooterSummaryItems = <>
         DataController.Summary.SummaryGroups = <>
@@ -1852,5 +1853,81 @@ object frmAdicional: TfrmAdicional
       '   AND P.IDADICIONAL = 1')
     Left = 560
     Top = 64
+  end
+  object dtsAddPedido: TDataSource
+    DataSet = cdsAddPedido
+    Left = 587
+    Top = 102
+  end
+  object cdsAddPedido: TClientDataSet
+    Aggregates = <>
+    AggregatesActive = True
+    FieldDefs = <
+      item
+        Name = 'id'
+        DataType = ftInteger
+      end
+      item
+        Name = 'NMPRODUTO'
+        DataType = ftString
+        Size = 250
+      end
+      item
+        Name = 'QTITEM'
+        DataType = ftFloat
+      end
+      item
+        Name = 'VRUNITARIO'
+        DataType = ftFloat
+      end
+      item
+        Name = 'ITEMPEDIDO_ID'
+        DataType = ftInteger
+      end
+      item
+        Name = 'IMG'
+        DataType = ftLargeint
+      end
+      item
+        Name = 'VRTOTAITEM'
+        DataType = ftFloat
+      end>
+    IndexDefs = <>
+    Params = <>
+    StoreDefs = True
+    Left = 559
+    Top = 102
+    object cdsAddPedidoid: TIntegerField
+      FieldName = 'id'
+    end
+    object cdsAddPedidoNMPRODUTO: TStringField
+      FieldName = 'NMPRODUTO'
+      Size = 250
+    end
+    object cdsAddPedidoQTITEM: TFloatField
+      FieldName = 'QTITEM'
+    end
+    object cdsAddPedidoVRUNITARIO: TFloatField
+      FieldName = 'VRUNITARIO'
+    end
+    object cdsAddPedidoITEMPEDIDO_ID: TIntegerField
+      FieldName = 'ITEMPEDIDO_ID'
+    end
+    object cdsAddPedidoIMG: TLargeintField
+      FieldName = 'IMG'
+    end
+    object cdsAddPedidoVRTOTAITEM: TFloatField
+      FieldName = 'VRTOTAITEM'
+    end
+    object cdsAddPedidoSUMVRTOTAL: TAggregateField
+      FieldName = 'SUMVRTOTAL'
+      Active = True
+      Expression = 'SUM(VRUNITARIO*QTITEM)'
+    end
+    object cdsAddPedidoMAXID: TAggregateField
+      FieldName = 'MAXID'
+      Active = True
+      Expression = 'MAX(ID)'
+    end
   end
 end

@@ -57,7 +57,6 @@ type
     cdsMesadsobsmesa: TStringField;
     cdsMesastatus: TStringField;
     cdsMesavalor: TFloatField;
-    procedure FrameResize(Sender: TObject);
     procedure btnGavetaClick(Sender: TObject);
     procedure btnDeliveryClick(Sender: TObject);
     procedure btnBalcaoClick(Sender: TObject);
@@ -66,6 +65,8 @@ type
       ARecord: TcxCustomGridRecord; var AText: String);
     procedure pmiLiberarClick(Sender: TObject);
     procedure pmiOcupadaClick(Sender: TObject);
+    procedure sbxOpcoesPDVResize(Sender: TObject);
+    procedure FrameResize(Sender: TObject);
   private
     { Private declarations }
   public
@@ -84,19 +85,6 @@ implementation
 uses
   lib_interface, lib_mensagem, pdv_pdv, pdv_adicional, uDmConexao, lib_vmsis,
   lib_acesso, main_base, pdv_abertura_fechamento_caixa, StrUtils;
-
-procedure TfrmPDVMain.FrameResize(Sender: TObject);
-var
-  iComp: Integer;
-begin
-  RefreshMesa;
-
-  for iComp := 0 to pred(scbOpcoes.ControlCount) do
-  begin
-    scbOpcoes.Controls[iComp].Width := Trunc(panLeft.Width/scbOpcoes.ControlCount);
-    scbOpcoes.Controls[iComp].Left  := Trunc(panLeft.Width/scbOpcoes.ControlCount)*(iComp+1);
-  end;
-end;
 
 procedure TfrmPDVMain.btnGavetaClick(Sender: TObject);
 var
@@ -246,6 +234,8 @@ begin
     Interface_ := TInterface.Create();
     Interface_.OrganizaScrollBox(sbxOpcoesPDV,1);
   end;
+  
+  Abort;
 end;
 
 procedure TfrmPDVMain.pmiLiberarClick(Sender: TObject);
@@ -272,6 +262,24 @@ begin
   adqAuxUpdMesa.Parameters.ParamByName('ID').Value := pumMesaO.PopupComponent.Tag;
   adqAuxUpdMesa.ExecSQL;
   
+  RefreshMesa;
+end;
+
+procedure TfrmPDVMain.sbxOpcoesPDVResize(Sender: TObject);
+var
+  iComp: Integer;
+begin
+  inherited;
+  for iComp := 0 to pred(scbOpcoes.ControlCount) do
+  begin
+    scbOpcoes.Controls[iComp].Width := Trunc(panLeft.Width/scbOpcoes.ControlCount);
+    scbOpcoes.Controls[iComp].Left  := Trunc(panLeft.Width/scbOpcoes.ControlCount)*(iComp+1);
+  end;
+end;
+
+procedure TfrmPDVMain.FrameResize(Sender: TObject);
+begin
+  inherited;  
   RefreshMesa;
 end;
 

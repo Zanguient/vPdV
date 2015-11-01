@@ -2236,6 +2236,7 @@ inherited frmPDVMain: TfrmPDVMain
         Color = clCream
         ParentColor = False
         TabOrder = 1
+        OnResize = sbxOpcoesPDVResize
       end
     end
   end

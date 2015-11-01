@@ -185,6 +185,7 @@ type
       ACellViewInfo: TcxGridTableDataCellViewInfo; AButton: TMouseButton;
       AShift: TShiftState; var AHandled: Boolean);
     procedure cdsAddPedidoQTITEMChange(Sender: TField);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
   private
     { Private declarations }
     FParametros: TParametros;
@@ -804,6 +805,11 @@ begin
   cdsPedidoImpressaoVRPEDIDO.AsFloat := StrToFloat(edtTotal.Text);
 
   cdsPedidoImpressao.Post;
+end;
+
+procedure TfrmPDV_PDV.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+  Release;
 end;
 
 end.

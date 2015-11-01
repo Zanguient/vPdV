@@ -53,6 +53,17 @@ type
     dbgAdicionalDBBandedTableView1Column4: TcxGridDBBandedColumn;
     dbgAdicionalLevel1: TcxGridLevel;
     cdbgExcluir: TcxGridDBColumn;
+    dtsAddPedido: TDataSource;
+    cdsAddPedido: TClientDataSet;
+    cdsAddPedidoid: TIntegerField;
+    cdsAddPedidoNMPRODUTO: TStringField;
+    cdsAddPedidoQTITEM: TFloatField;
+    cdsAddPedidoVRUNITARIO: TFloatField;
+    cdsAddPedidoITEMPEDIDO_ID: TIntegerField;
+    cdsAddPedidoIMG: TLargeintField;
+    cdsAddPedidoVRTOTAITEM: TFloatField;
+    cdsAddPedidoSUMVRTOTAL: TAggregateField;
+    cdsAddPedidoMAXID: TAggregateField;
     procedure FormCreate(Sender: TObject);
     procedure btnCancelarClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -61,6 +72,7 @@ type
     procedure dbgAdicionalPedidoCellClick(Sender: TcxCustomGridTableView;
       ACellViewInfo: TcxGridTableDataCellViewInfo; AButton: TMouseButton;
       AShift: TShiftState; var AHandled: Boolean);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
   private
     { Private declarations }
     FOk: Boolean;
@@ -88,6 +100,8 @@ begin
   //Altera o tamanho do formulário para o tamanho da tela
   Height := Screen.Height;
   Width  := Screen.Width;
+
+  cdsAddPedido.Data := frmPDV_PDV.cdsAddPedido.Data;
 
   DoubleBuffered := True;
   region := CreateRoundRectRgn(0, 0, width, height, 15, 15);
@@ -133,33 +147,33 @@ begin
     Interface_.OrganizaScrollBox(scbAgrupAdicional,1);
   end;
 
-  frmPDV_PDV.cdsAddPedido.Filtered := False;
-  frmPDV_PDV.cdsAddPedido.Filter := '  QTITEM > 0 AND ITEMPEDIDO_ID = ' + IntToStr(frmPDV_PDV.cdsItemPedidoID.AsInteger);
-  frmPDV_PDV.cdsAddPedido.Filtered := True;
+  cdsAddPedido.Filtered := False;
+  cdsAddPedido.Filter := '  QTITEM > 0 AND ITEMPEDIDO_ID = ' + IntToStr(frmPDV_PDV.cdsItemPedidoID.AsInteger);
+  cdsAddPedido.Filtered := True;
 end;
 
 procedure TfrmAdicional.OnClickAdicionalPDV(Sender: TObject);
 begin                                                                           
   cdsAdicional.Locate('ID', (Sender as TcxButton).Tag, [loCaseInsensitive]);
-  if frmPDV_PDV.cdsAddPedido.Locate('ID', cdsAdicionalID.AsInteger, [loCaseInsensitive]) then
+  if cdsAddPedido.Locate('ID', cdsAdicionalID.AsInteger, [loCaseInsensitive]) then
   begin
-    frmPDV_PDV.cdsAddPedido.Edit;
-    frmPDV_PDV.cdsAddPedidoQTITEM.AsFloat     := frmPDV_PDV.cdsAddPedidoQTITEM.AsFloat+1.0;
-    frmPDV_PDV.cdsAddPedidoVRUNITARIO.AsFloat   := cdsAdicionalVALOR.AsFloat;
+    cdsAddPedido.Edit;
+    cdsAddPedidoQTITEM.AsFloat     := frmPDV_PDV.cdsAddPedidoQTITEM.AsFloat+1.0;
+    cdsAddPedidoVRUNITARIO.AsFloat   := cdsAdicionalVALOR.AsFloat;
 //    frmPDV_PDV.cdsAddPedidoV.AsFloat := frmPDV_PDV.cdsAddPedidoVRUNITARIO.AsFloat*frmPDV_PDV.cdsAddPedidoQTITEM.AsFloat;
-    frmPDV_PDV.cdsAddPedido.Post;
+    cdsAddPedido.Post;
   end else
   begin
-    frmPDV_PDV.cdsAddPedido.Insert;
-    frmPDV_PDV.cdsAddPedidoIMG.AsInteger        := 0;
-    frmPDV_PDV.cdsAddPedidoid.AsInteger         := cdsAdicionalID.AsInteger;
-    frmPDV_PDV.cdsAddPedidoVRUNITARIO.AsFloat   := cdsAdicionalVALOR.AsFloat;
-    frmPDV_PDV.cdsAddPedidoVRTOTAITEM.AsFloat   := cdsAdicionalVALOR.AsFloat;
-    frmPDV_PDV.cdsAddPedidoQTITEM.AsFloat       := 1.0;
-    frmPDV_PDV.cdsAddPedidoITEMPEDIDO_ID.AsInteger := frmPDV_PDV.cdsITEMPEDIDOID.AsInteger;
-    frmPDV_PDV.cdsAddPedidoNMPRODUTO.AsString   := cdsAdicionalNMPRODUTO.AsString;
-    frmPDV_PDV.cdsAddPedidoIMG.AsInteger        := 0;
-    frmPDV_PDV.cdsAddPedido.Post;
+    cdsAddPedido.Insert;
+    cdsAddPedidoIMG.AsInteger        := 0;
+    cdsAddPedidoid.AsInteger         := cdsAdicionalID.AsInteger;
+    cdsAddPedidoVRUNITARIO.AsFloat   := cdsAdicionalVALOR.AsFloat;
+    cdsAddPedidoVRTOTAITEM.AsFloat   := cdsAdicionalVALOR.AsFloat;
+    cdsAddPedidoQTITEM.AsFloat       := 1.0;
+    cdsAddPedidoITEMPEDIDO_ID.AsInteger := frmPDV_PDV.cdsITEMPEDIDOID.AsInteger;
+    cdsAddPedidoNMPRODUTO.AsString   := cdsAdicionalNMPRODUTO.AsString;
+    cdsAddPedidoIMG.AsInteger        := 0;
+    cdsAddPedido.Post;
   end;
 end;
 
@@ -171,21 +185,17 @@ end;
 procedure TfrmAdicional.btnSemAddClick(Sender: TObject);
 begin
   FOk := True;
-  frmPDV_PDV.cdsAddPedido.First;
-  while not frmPDV_PDV.cdsAddPedido.Eof do
-  begin
-    frmPDV_PDV.cdsAddPedido.Edit;
-    frmPDV_PDV.cdsAddPedidoQTITEM.AsFloat := 0.0;
-    frmPDV_PDV.cdsAddPedido.Post;
-
-    frmPDV_PDV.cdsAddPedido.Next;
-  end;
+  cdsAddPedido.First;
+  while not cdsAddPedido.Eof do
+    cdsAddPedido.Delete;
+  frmPDV_PDV.cdsAddPedido.Data := cdsAddPedido.Data;
   Close;
 end;
 
 procedure TfrmAdicional.btnConfirmaClick(Sender: TObject);
 begin
   FOk := True;
+  frmPDV_PDV.cdsAddPedido.Data := cdsAddPedido.Data;
   Close;
 end;
 
@@ -238,20 +248,17 @@ procedure TfrmAdicional.dbgAdicionalPedidoCellClick(
 begin
   if ACellViewInfo.Item.Name = 'cdbgExcluir' then
     if Confirma(EXCLUIR_ITEM) then
-    begin
-//      frmPDV_PDV.cdsAddPedido.DisableControls;
-//      frmPDV_PDV.cdsAddPedido.Filtered := False;
+      cdsAddPedido.Delete;
+  Abort;
+end;
 
-      frmPDV_PDV.cdsAddPedido.Edit;
-      frmPDV_PDV.cdsAddPedidoQTITEM.AsFloat := 0.0;
-      frmPDV_PDV.cdsAddPedido.Post;
-
-//      frmPDV_PDV.cdsAddPedido.Filtered := True;
-//      frmPDV_PDV.cdsAddPedido.EnableControls;
-
-//      if frmPDV_PDV.cdsAddPedido.RecordCount > 0 then
-        frmPDV_PDV.cdsAddPedido.First;
-    end;
+procedure TfrmAdicional.FormClose(Sender: TObject;
+  var Action: TCloseAction);
+begin
+  Release;
+  FreeAndNil(cdsAddPedido);
+  FreeAndNil(cdsAdicional);
+  FreeAndNil(adqAdicional);
 end;
 
 end.

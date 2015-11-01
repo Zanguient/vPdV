@@ -15,6 +15,7 @@ object frmPDV_PDV: TfrmPDV_PDV
   KeyPreview = True
   OldCreateOrder = False
   Position = poScreenCenter
+  OnClose = FormClose
   OnCreate = FormCreate
   OnShow = FormShow
   PixelsPerInch = 96
