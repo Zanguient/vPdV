@@ -112,13 +112,13 @@ end;
 
 procedure TfrmMainBase.FormCreate(Sender: TObject);
 var
-   region: hrgn;
-   db : TObjetoDB;
-   dbSincronizacao: TObjetoDB;
+  region: hrgn;
+  db : TObjetoDB;
+  dbSincronizacao: TObjetoDB;
 begin
-   Height := Screen.WorkAreaHeight-20;
-   Width  := Screen.WorkAreaWidth-20;
-   Position := poScreenCenter;
+  //Altera o tamanho do formulário para o tamanho da tela
+  Height := Screen.Height;
+  Width  := Screen.Width;
 
    DoubleBuffered := True;
    region := CreateRoundRectRgn(0, 0, width, height, 15, 15);
@@ -148,20 +148,7 @@ begin
    finally
      FreeAndNil(dbSincronizacao);
    end;
-
 end;
-
-//procedure TfrmMainBase.Invocadordebpl(stClasse: String);
-//var
-//   Classe: TPersistentClass;
-//begin
-//   Classe := GetClass(stClasse);
-//   if Classe <> nil then
-//   begin
-//      with TComponentClass(Classe).Create(Application) as TFrame do
-//         Visible := True;
-//   end;
-//end;
 
 procedure TfrmMainBase.nbgPDVClick(Sender: TObject);
 begin
