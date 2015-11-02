@@ -162,7 +162,7 @@ object vPadraoCadastro: TvPadraoCadastro
           Left = 119
           Top = 1
           Width = 81
-          Height = 27
+          Height = 13
           Align = alLeft
           Caption = '[Nome do Frame]'
           Visible = False
@@ -255,6 +255,7 @@ object vPadraoCadastro: TvPadraoCadastro
           Align = alClient
           BevelOuter = bvNone
           TabOrder = 1
+          Visible = False
           object pnlNavigator: TPanel
             Left = 0
             Top = 0

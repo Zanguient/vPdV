@@ -126,7 +126,7 @@ begin
 
     if(FUsuario.IsEmpty) then
     begin
-      Aviso('Usuário informado nãoo existe.');
+      Aviso('Usuário informado não existe.');
       Abort;
     end;
 
