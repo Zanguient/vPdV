@@ -20,7 +20,8 @@ uses
   StdCtrls, cxButtons, dxNavBarCollns, cxClasses, dxNavBarBase, dxNavBar,
   cxNavigator, cxDBNavigator, cxGridLevel, cxGridCustomView,
   cxGridCustomTableView, cxGridTableView, cxGridDBTableView, cxGrid,
-  cxInplaceContainer, ExtCtrls, cxPC, cxImageComboBox;
+  cxInplaceContainer, ExtCtrls, cxPC, cxImageComboBox, cxCurrencyEdit,
+  cxMaskEdit, cxCalendar, cxDBLookupComboBox;
 
 type
   TvCadastroCliente = class(TvPadraoCadastro)
@@ -44,26 +45,35 @@ type
     cxvGrid1identificador: TcxDBEditorRow;
     cxvGrid1telfixo: TcxDBEditorRow;
     cxvGrid1telcel: TcxDBEditorRow;
-    adqDetailid: TAutoIncField;
-    adqDetailnmrua: TWideStringField;
-    adqDetailcdnumero: TWideStringField;
-    adqDetailcdcep: TWideStringField;
-    adqDetaildtcadastro: TDateField;
-    adqDetailcdbairro_id: TIntegerField;
-    adqDetailcliente_id: TIntegerField;
-    adqDetailcomplemento: TStringField;
-    cxGridDBTableView1nmrua: TcxGridDBColumn;
-    cxGridDBTableView1cdnumero: TcxGridDBColumn;
-    cxGridDBTableView1complemento: TcxGridDBColumn;
-    cxGridDBTableView1cdcep: TcxGridDBColumn;
-    cxGridDBTableView1cdbairro_id: TcxGridDBColumn;
-    cxGridDBTableView1dtcadastro: TcxGridDBColumn;
+    adqPadraonmrua: TWideStringField;
+    adqPadraocdnumero: TWideStringField;
+    adqPadraocomplemento: TStringField;
+    adqPadraocdcep: TWideStringField;
+    adqPadraocdbairro_id: TIntegerField;
+    adqPadraoid_web: TIntegerField;
+    adqPadraodtcadastro: TDateTimeField;
+    catEndereco: TcxCategoryRow;
+    cxvGrid1nmrua: TcxDBEditorRow;
+    cxvGrid1cdnumero: TcxDBEditorRow;
+    cxvGrid1complemento: TcxDBEditorRow;
+    cxvGrid1cdbairro_id: TcxDBEditorRow;
+    cxvGrid1cdcep: TcxDBEditorRow;
+    cxvGrid1dtcadastro: TcxDBEditorRow;
+    adqBairro: TADOQuery;
+    adqBairroid: TAutoIncField;
+    adqBairrodtcadastro: TDateField;
+    adqBairrocdbairro: TWideStringField;
+    adqBairronmbairro: TWideStringField;
+    adqBairrocidade_id: TIntegerField;
+    adqBairroid_web: TIntegerField;
+    dtsBairro: TDataSource;
     procedure adqPadraoidentificadorChange(Sender: TField);
     procedure adqPadraoNewRecord(DataSet: TDataSet);
   private
     { Private declarations }
   public
     { Public declarations }
+    constructor Create(AOwner: TComponent); override;    
   end;
 
 var
@@ -86,6 +96,14 @@ procedure TvCadastroCliente.adqPadraoNewRecord(DataSet: TDataSet);
 begin
   inherited;
   adqPadraoidentificador.AsString := 'F';
+  adqPadraodtcadastro.AsDateTime := Date;
+end;
+
+constructor TvCadastroCliente.Create(AOwner: TComponent);
+begin
+  inherited;
+  adqBairro.Close;
+  adqBairro.Open;
 end;
 
 end.

@@ -9,7 +9,7 @@ object vPadraoCadastro: TvPadraoCadastro
     Top = 0
     Width = 505
     Height = 467
-    ActivePage = tabCadastro
+    ActivePage = tabVisao
     Align = alClient
     TabOrder = 0
     OnChange = pgcPadraoChange
@@ -255,6 +255,7 @@ object vPadraoCadastro: TvPadraoCadastro
           Align = alClient
           BevelOuter = bvNone
           TabOrder = 1
+          Visible = False
           object pnlNavigator: TPanel
             Left = 0
             Top = 0
@@ -404,7 +405,6 @@ object vPadraoCadastro: TvPadraoCadastro
     Top = 40
   end
   object dtsPadrao: TDataSource
-    AutoEdit = False
     DataSet = adqPadrao
     OnStateChange = dtsPadraoStateChange
     Left = 400

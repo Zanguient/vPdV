@@ -638,6 +638,7 @@ ALTER TABLE PEDIDO ADD dsmotivo TEXT NULL;
 ALTER TABLE mesa ADD idstatus character varying(1) NOT NULL  default 'L' check(idstatus in ('L', 'O'));
 
 
+<<<<<<< HEAD
 ALTER TABLE aberfechcaixa ADD DtCreated datetime NOT NULL DEFAULT CURRENT_TIMESTAMP;
 ALTER TABLE adicionais ADD DtCreated datetime NOT NULL DEFAULT CURRENT_TIMESTAMP;
 ALTER TABLE agrupadicional ADD DtCreated datetime NOT NULL DEFAULT CURRENT_TIMESTAMP;
@@ -717,3 +718,12 @@ ALTER TABLE AberFechCaixa ADD id_web INTEGER NULL;
 ALTER TABLE MovCaixa ADD id_web INTEGER NULL;
 ALTER TABLE funcionario ADD id_web INTEGER NULL;
 ALTER TABLE itadicional add VrVenda FLOAT(14, 2) NOT NULL DEFAULT 0;
+
+ALTER TABLE itemproduto ADD vlprod DOUBLE NOT NULL;
+
+ALTER TABLE posestoque ADD customedio DOUBLE NULL;
+
+ALTER TABLE cliente ADD complemento character varying(255);
+
+ALTER TABLE fornecedor ADD complemento character varying(255),
+

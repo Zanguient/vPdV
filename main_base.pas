@@ -51,6 +51,7 @@ type
     procedure nbiCancelarPedidoClick(Sender: TObject);
     procedure nbiSincronizacaoClick(Sender: TObject);
     procedure tmSincronizacaoTimer(Sender: TObject);
+    procedure nbiEntradaClick(Sender: TObject);
   private
     { Private declarations }
 //    procedure InvocadordeBpl(stClasse: String);
@@ -90,7 +91,8 @@ implementation
 
 uses
    libframes, pdv_main, pdv_aberturacaixa, pdv_abertura_fechamento_caixa, uvCadastroClienteFrame,
-   uvCadastroFornecedorFrame, lib_db, pdv_cancelar_pedido, uParametrosSincronizacao, lib_sincronizacao;
+   uvCadastroFornecedorFrame, lib_db, pdv_cancelar_pedido, uParametrosSincronizacao, lib_sincronizacao,
+   uvEstoqueEntradaFrame;
 
 
 procedure CriarMainForm(const IdUsuario, IdEmpresa, IdUnidade : Integer;
@@ -107,61 +109,48 @@ end;
 
 procedure TfrmMainBase.nbgSairClick(Sender: TObject);
 begin
-   Close;
+  Close;
 end;
 
 procedure TfrmMainBase.FormCreate(Sender: TObject);
 var
-   region: hrgn;
-   db : TObjetoDB;
-   dbSincronizacao: TObjetoDB;
+  region: hrgn;
+  db : TObjetoDB;
+  dbSincronizacao: TObjetoDB;
 begin
-   Height := Screen.WorkAreaHeight-20;
-   Width  := Screen.WorkAreaWidth-20;
-   Position := poScreenCenter;
+  //Altera o tamanho do formulário para o tamanho da tela
+  Height := Screen.Height;
+  Width  := Screen.Width;
 
-   DoubleBuffered := True;
-   region := CreateRoundRectRgn(0, 0, width, height, 15, 15);
-   SetWindowRgn(handle, region, true);
+  DoubleBuffered := True;
+  region := CreateRoundRectRgn(0, 0, width, height, 15, 15);
+  SetWindowRgn(handle, region, true);
 
-   db := TObjetoDB.create('empresa');
-   try
-     //dados da empresa
-     db.AddSqlAdicional(' LIMIT 1 ');
-     db.Select(['ID', 'NMEMPRESA']);
-     FIdEmpresa := db.GetVal('ID');
-     FNomeEmpresa := db.GetVal('NMEMPRESA')
-   finally
-     FreeAndNil(db);
-   end;
+  db := TObjetoDB.create('empresa');
+  try
+    //dados da empresa
+    db.AddSqlAdicional(' LIMIT 1 ');
+    db.Select(['ID', 'NMEMPRESA']);
+    FIdEmpresa := db.GetVal('ID');
+    FNomeEmpresa := db.GetVal('NMEMPRESA')
+  finally
+    FreeAndNil(db);
+  end;
 
-   dbSincronizacao:= TObjetoDB.create('ParametrosSincronizacao');
-   try
-     dbSincronizacao.Select(['IntervaloHora', 'IntervaloMinuto']);
-     try
-       tmSincronizacao.Interval:= ((dbSincronizacao.GetVal('IntervaloHora') * 3600) +
-         (dbSincronizacao.GetVal('IntervaloMinuto') * 60)) * 1000;
-       tmSincronizacao.Enabled:= True;
-     except
-       tmSincronizacao.Enabled:= False;
-     end
-   finally
-     FreeAndNil(dbSincronizacao);
-   end;
-
+  dbSincronizacao:= TObjetoDB.create('ParametrosSincronizacao');
+  try
+    dbSincronizacao.Select(['IntervaloHora', 'IntervaloMinuto']);
+    try
+      tmSincronizacao.Interval:= ((dbSincronizacao.GetVal('IntervaloHora') * 3600) +
+        (dbSincronizacao.GetVal('IntervaloMinuto') * 60)) * 1000;
+      tmSincronizacao.Enabled:= True;
+    except
+      tmSincronizacao.Enabled:= False;
+    end
+  finally
+    FreeAndNil(dbSincronizacao);
+  end;
 end;
-
-//procedure TfrmMainBase.Invocadordebpl(stClasse: String);
-//var
-//   Classe: TPersistentClass;
-//begin
-//   Classe := GetClass(stClasse);
-//   if Classe <> nil then
-//   begin
-//      with TComponentClass(Classe).Create(Application) as TFrame do
-//         Visible := True;
-//   end;
-//end;
 
 procedure TfrmMainBase.nbgPDVClick(Sender: TObject);
 begin
@@ -192,6 +181,11 @@ end;
 procedure TfrmMainBase.tmSincronizacaoTimer(Sender: TObject);
 begin
   TSincronizarTabelas.Sincronizar(True);
+end;
+
+procedure TfrmMainBase.nbiEntradaClick(Sender: TObject);
+begin
+  TAbasNavegacao.CriarAba(pgcPrincipal, TvEstoqueEntradaFrame);
 end;
 
 end.

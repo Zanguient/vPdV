@@ -25,7 +25,7 @@ implementation
 
   function rStatusImpressora_DUAL_DarumaFramework(): Integer; StdCall; External 'C:\Windows\System32\DarumaFrameWork.dll';
   function iImprimirTexto_DUAL_DarumaFramework(stTexto: String; iTam: Integer ): Integer; StdCall; External 'C:\Windows\System32\DarumaFramework.dll';
-                         
+
 { TImpressao_Nao_Fiscal }
 
 {
@@ -116,7 +116,7 @@ begin
     Texto_Impressao.Lines.Add(Ajusta(cdsProduto.FieldByName('NMPRODUTO').AsString, ' ', 22)+
       Ajusta(' ',' ',3)+Ajusta(FormatFloat('#####0.000', cdsProduto.FieldByName('QTITEM').AsFloat),' ',10,'L')+
       Ajusta(' ',' ',3)+Ajusta(FormatFloat('#####0.00', cdsProduto.FieldByName('VRTOTAL').AsFloat),' ',9,'L'));
-      
+
     cdsAdicionais.Filtered := False;
     cdsAdicionais.Filter := ' ITEMPEDIDO_ID = '+cdsProduto.FieldByName('ID').AsString;
     cdsAdicionais.Filtered := True;
@@ -161,9 +161,8 @@ begin
     #          dd/mm/yyyy - hh:mi           #
   }
 
-  Texto_Impressao.Lines.Add('<sl>2</sl>');
   Texto_Impressao.Lines.Add('<e><ce><b>'+cdsPedido.FieldByName('EMPRESA').AsString+'</b></ce></e>');
-  Texto_Impressao.Lines.Add('<ce>'+cdsPedido.FieldByName('UNIDADE').AsString+'<ce>');
+  Texto_Impressao.Lines.Add('<ce>'+cdsPedido.FieldByName('UNIDADE').AsString+'</ce>');
   Texto_Impressao.Lines.Add('<l></l>');
 
   case AnsiIndexStr(UpperCase(cdsPedido.FieldByName('TIPOPEDIDO').AsString), ['D','M','B']) of
@@ -171,13 +170,18 @@ begin
         Texto_Impressao.Lines.Add('<n>Delivery</n>');
         Texto_Impressao.Lines.Add('<n>'+cdsPedido.FieldByName('ENDERECO').AsString+'</n>');
         Texto_Impressao.Lines.Add('<n>'+cdsPedido.FieldByName('REFERENCIA').AsString+'</n>');
-        Texto_Impressao.Lines.Add('<n>'+cdsPedido.FieldByName('CONTATO').AsString+'</n>');
+        Texto_Impressao.Lines.Add('<n>'+cdsPedido.FieldByName('CONTATO').AsString+'</n>');          
+        Texto_Impressao.Lines.Add('<b>Vendedor</b> Luara Di Latella');
        end;
-    1: Texto_Impressao.Lines.Add('<n>Mesa: '+cdsPedido.FieldByName('ENDERECO').AsString+'</n>');
+    1: begin
+        Texto_Impressao.Lines.Add('<b>Mesa</b> '+cdsPedido.FieldByName('ENDERECO').AsString+'</n>');
+        Texto_Impressao.Lines.Add('<b>Vendedor</b> Luara Di Latella');
+       end;
     3: begin
         Texto_Impressao.Lines.Add('<n>Balcão</n>');
         if not cdsPedido.FieldByName('CONTATO').IsNull then
           Texto_Impressao.Lines.Add('<n>'+cdsPedido.FieldByName('CONTATO').AsString+'</n>');
+        Texto_Impressao.Lines.Add('<b>Vendedor</b> Luara Di Latella');
        end;
   else
     Texto_Impressao.Lines.Add('<l></l>');
@@ -187,11 +191,12 @@ begin
   Layout_Body(cdsProduto, cdsAdicionais, Texto_Impressao);
 
   Texto_Impressao.Lines.Add('<b>TOTAL '+Ajusta(FormatFloat('######0.00', cdsPedido.FieldByName('VRPEDIDO').AsFloat),' ',41,'L')+'</b>');
-  Texto_Impressao.Lines.Add('<l></l>');
+  Texto_Impressao.Lines.Add('<l></l>');    
+  Texto_Impressao.Lines.Add('Fidelidade');
   Texto_Impressao.Lines.Add('<ce>Documento sem valor fiscal</ce>');
   Texto_Impressao.Lines.Add('<ce><dt> - <hr></hr></dt></ce>');     
   Texto_Impressao.Lines.Add('<ce>VMSis</ce>');
-  Texto_Impressao.Lines.Add('<sl>2</sl>');
+  Texto_Impressao.Lines.Add('<sl>1</sl>');
   Texto_Impressao.Lines.Add('<l></l>');
 
   try
