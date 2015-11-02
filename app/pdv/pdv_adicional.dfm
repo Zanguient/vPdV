@@ -1860,6 +1860,7 @@ object frmAdicional: TfrmAdicional
     Top = 102
   end
   object cdsAddPedido: TClientDataSet
+    Active = True
     Aggregates = <>
     AggregatesActive = True
     FieldDefs = <
@@ -1897,6 +1898,13 @@ object frmAdicional: TfrmAdicional
     StoreDefs = True
     Left = 559
     Top = 102
+    Data = {
+      AA0000009619E0BD010000001800000008000000000003000000AA0002696404
+      00010000000000094E4D50524F4455544F010049000000010005574944544802
+      000200FA000651544954454D08000400000000000A5652554E49544152494F08
+      000400000000000D4954454D50454449444F5F4944040001000000000003494D
+      4708000100000000000A5652544F54414954454D080004000000000007565256
+      454E444108000400000000000000}
     object cdsAddPedidoid: TIntegerField
       FieldName = 'id'
     end
@@ -1906,6 +1914,7 @@ object frmAdicional: TfrmAdicional
     end
     object cdsAddPedidoQTITEM: TFloatField
       FieldName = 'QTITEM'
+      OnChange = cdsAddPedidoQTITEMChange
     end
     object cdsAddPedidoVRUNITARIO: TFloatField
       FieldName = 'VRUNITARIO'
@@ -1928,6 +1937,38 @@ object frmAdicional: TfrmAdicional
       FieldName = 'MAXID'
       Active = True
       Expression = 'MAX(ID)'
+    end
+  end
+  object adqAuxAdicional: TADOQuery
+    Connection = dmConexao.adoConexaoBd
+    Parameters = <
+      item
+        Name = 'P_CARDAPIO_ID'
+        Attributes = [paNullable]
+        DataType = ftString
+        NumericScale = 8
+        Precision = 255
+        Size = 255
+        Value = Null
+      end>
+    SQL.Strings = (
+      
+        'SELECT IC.PRODUTO_ID, IC.VRVENDA, IC.QTADICGRATIS, AA.ID, AA.VRA' +
+        'GRUPADIC'
+      
+        '  FROM ITEMCATEGORIA IC INNER JOIN ITAGRUPADICIONAL IA ON IA.CAR' +
+        'DAPIO_ID = IC.ID'
+      
+        '                        INNER JOIN AGRUPADICIONAL   AA ON AA.ID ' +
+        '= IA.AGRUPADICIONAL_ID                        '
+      ' WHERE AA.IDAGRUPATIV = '#39'A'#39
+      '   AND IC.ID = :P_CARDAPIO_ID'
+      '')
+    Left = 560
+    Top = 144
+    object AutoIncField1: TAutoIncField
+      FieldName = 'ID'
+      ReadOnly = True
     end
   end
 end

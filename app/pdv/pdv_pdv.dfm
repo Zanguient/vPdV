@@ -2919,6 +2919,7 @@ object frmPDV_PDV: TfrmPDV_PDV
     Top = 190
   end
   object cdsAddPedido: TClientDataSet
+    Active = True
     Aggregates = <>
     AggregatesActive = True
     FieldDefs = <
@@ -2956,6 +2957,13 @@ object frmPDV_PDV: TfrmPDV_PDV
     StoreDefs = True
     Left = 847
     Top = 222
+    Data = {
+      AA0000009619E0BD010000001800000008000000000003000000AA0002696404
+      00010000000000094E4D50524F4455544F010049000000010005574944544802
+      000200FA000651544954454D08000400000000000A5652554E49544152494F08
+      000400000000000D4954454D50454449444F5F4944040001000000000003494D
+      4708000100000000000A5652544F54414954454D080004000000000007565256
+      454E444108000400000000000000}
     object cdsAddPedidoid: TIntegerField
       FieldName = 'id'
     end
@@ -2965,7 +2973,6 @@ object frmPDV_PDV: TfrmPDV_PDV
     end
     object cdsAddPedidoQTITEM: TFloatField
       FieldName = 'QTITEM'
-      OnChange = cdsAddPedidoQTITEMChange
     end
     object cdsAddPedidoVRUNITARIO: TFloatField
       FieldName = 'VRUNITARIO'
@@ -2982,7 +2989,7 @@ object frmPDV_PDV: TfrmPDV_PDV
     object cdsAddPedidoSUMVRTOTAL: TAggregateField
       FieldName = 'SUMVRTOTAL'
       Active = True
-      Expression = 'SUM(VRUNITARIO*QTITEM)'
+      Expression = 'SUM(VRTOTAITEM)'
     end
     object cdsAddPedidoMAXID: TAggregateField
       FieldName = 'MAXID'
@@ -3336,7 +3343,6 @@ object frmPDV_PDV: TfrmPDV_PDV
         Name = 'P_itempedido_id'
         Attributes = [paNullable]
         DataType = ftString
-        NumericScale = 104
         Precision = 255
         Size = 255
         Value = Null
@@ -3345,7 +3351,6 @@ object frmPDV_PDV: TfrmPDV_PDV
         Name = 'P_item_id'
         Attributes = [paNullable]
         DataType = ftString
-        NumericScale = 104
         Precision = 255
         Size = 255
         Value = Null
@@ -3354,7 +3359,6 @@ object frmPDV_PDV: TfrmPDV_PDV
         Name = 'P_qtitem'
         Attributes = [paNullable]
         DataType = ftFloat
-        NumericScale = 104
         Precision = 255
         Size = 255
         Value = Null
@@ -3363,16 +3367,25 @@ object frmPDV_PDV: TfrmPDV_PDV
         Name = 'P_VALOR'
         Attributes = [paNullable]
         DataType = ftFloat
-        NumericScale = 104
+        Precision = 255
+        Size = 255
+        Value = Null
+      end
+      item
+        Name = 'P_VRVENDA'
+        Attributes = [paNullable]
+        DataType = ftFloat
         Precision = 255
         Size = 255
         Value = Null
       end>
     SQL.Strings = (
       'INSERT INTO ITADICIONAL'
-      '  (ITEMPEDIDO_ID, ITEM_ID, QTITEM, VALOR)'
+      '  (ITEMPEDIDO_ID, ITEM_ID, QTITEM, VALOR, VRVENDA)'
       'VALUES'
-      '  (:P_ITEMPEDIDO_ID, :P_ITEM_ID, :P_QTITEM, :P_VALOR)')
+      
+        '  (:P_ITEMPEDIDO_ID, :P_ITEM_ID, :P_QTITEM, :P_VALOR, :P_VRVENDA' +
+        ')')
     Left = 872
     Top = 344
   end
@@ -27840,8 +27853,8 @@ object frmPDV_PDV: TfrmPDV_PDV
       item
         Name = 'P_PEDIDO_ID'
         Attributes = [paNullable]
-        DataType = ftInteger
-        NumericScale = 208
+        DataType = ftString
+        NumericScale = 136
         Precision = 255
         Size = 255
         Value = Null
@@ -27849,7 +27862,7 @@ object frmPDV_PDV: TfrmPDV_PDV
     SQL.Strings = (
       
         'SELECT IA.ITEM_ID ID, P.NMPRODUTO, IA.QTITEM, IA.VALOR VRUNITARI' +
-        'O, IA.VALOR VRTOTAITEM, IA.ITEMPEDIDO_ID, 0 IMG'
+        'O, IA.VRVENDA VRTOTAITEM, IA.ITEMPEDIDO_ID, 0 IMG'
       
         '  FROM ADICIONAIS A INNER JOIN ITADICIONAL IA ON A.ID = IA.ITEM_' +
         'ID'
@@ -27909,25 +27922,34 @@ object frmPDV_PDV: TfrmPDV_PDV
         Name = 'P_QTITEM'
         Attributes = [paNullable]
         DataType = ftFloat
-        NumericScale = 184
+        NumericScale = 80
         Precision = 255
         Size = 255
-        Value = 0.000000000000000000
+        Value = '0'
       end
       item
         Name = 'P_VALOR'
         Attributes = [paNullable]
         DataType = ftFloat
-        NumericScale = 184
+        NumericScale = 80
         Precision = 255
         Size = 255
-        Value = 0.000000000000000000
+        Value = '0'
+      end
+      item
+        Name = 'P_VRVENDA'
+        Attributes = [paNullable]
+        DataType = ftFloat
+        NumericScale = 80
+        Precision = 255
+        Size = 255
+        Value = Null
       end
       item
         Name = 'P_ITEMPEDIDO_ID'
         Attributes = [paNullable]
         DataType = ftString
-        NumericScale = 184
+        NumericScale = 80
         Precision = 255
         Size = 255
         Value = Null
@@ -27936,7 +27958,7 @@ object frmPDV_PDV: TfrmPDV_PDV
         Name = 'P_ITEM_ID'
         Attributes = [paNullable]
         DataType = ftString
-        NumericScale = 184
+        NumericScale = 80
         Precision = 255
         Size = 255
         Value = Null
@@ -27944,7 +27966,8 @@ object frmPDV_PDV: TfrmPDV_PDV
     SQL.Strings = (
       'UPDATE ITADICIONAL'
       '   SET QTITEM = :P_QTITEM,'
-      '       VALOR  = :P_VALOR'
+      '       VALOR  = :P_VALOR,'
+      '       VRVENDA= :P_VRVENDA'
       ' WHERE ITEMPEDIDO_ID = :P_ITEMPEDIDO_ID'
       '   AND ITEM_ID = :P_ITEM_ID')
     Left = 872
@@ -27958,38 +27981,6 @@ object frmPDV_PDV: TfrmPDV_PDV
       '   FROM ITEMPEDIDO')
     Left = 776
     Top = 408
-  end
-  object adqAuxAdicional: TADOQuery
-    Connection = dmConexao.adoConexaoBd
-    Parameters = <
-      item
-        Name = 'P_CARDAPIO_ID'
-        Attributes = [paNullable]
-        DataType = ftString
-        NumericScale = 8
-        Precision = 255
-        Size = 255
-        Value = Null
-      end>
-    SQL.Strings = (
-      
-        'SELECT IC.PRODUTO_ID, IC.VRVENDA, IC.QTADICGRATIS, AA.ID, AA.VRA' +
-        'GRUPADIC'
-      
-        '  FROM ITEMCATEGORIA IC INNER JOIN ITAGRUPADICIONAL IA ON IA.CAR' +
-        'DAPIO_ID = IC.ID'
-      
-        '                        INNER JOIN AGRUPADICIONAL   AA ON AA.ID ' +
-        '= IA.AGRUPADICIONAL_ID                        '
-      ' WHERE AA.IDAGRUPATIV = '#39'A'#39
-      '   AND IC.ID = :P_CARDAPIO_ID'
-      '')
-    Left = 648
-    Top = 256
-    object AutoIncField1: TAutoIncField
-      FieldName = 'ID'
-      ReadOnly = True
-    end
   end
   object styGridPDV: TcxStyleRepository
     Top = 32

@@ -64,6 +64,8 @@ type
     cdsAddPedidoVRTOTAITEM: TFloatField;
     cdsAddPedidoSUMVRTOTAL: TAggregateField;
     cdsAddPedidoMAXID: TAggregateField;
+    adqAuxAdicional: TADOQuery;
+    AutoIncField1: TAutoIncField;
     procedure FormCreate(Sender: TObject);
     procedure btnCancelarClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -73,6 +75,7 @@ type
       ACellViewInfo: TcxGridTableDataCellViewInfo; AButton: TMouseButton;
       AShift: TShiftState; var AHandled: Boolean);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure cdsAddPedidoQTITEMChange(Sender: TField);
   private
     { Private declarations }
     FOk: Boolean;
@@ -259,6 +262,11 @@ begin
   FreeAndNil(cdsAddPedido);
   FreeAndNil(cdsAdicional);
   FreeAndNil(adqAdicional);
+end;
+
+procedure TfrmAdicional.cdsAddPedidoQTITEMChange(Sender: TField);
+begin
+  cdsAddPedidoVRTOTAITEM.AsFloat := cdsAddPedidoVRUNITARIO.AsFloat*cdsAddPedidoQTITEM.AsFloat;
 end;
 
 end.

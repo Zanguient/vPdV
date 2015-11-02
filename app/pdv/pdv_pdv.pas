@@ -149,8 +149,6 @@ type
     adqDelAddPedido: TADOQuery;
     adqUpdAdicionalPedido: TADOQuery;
     adqConsItemPedidoID: TADOQuery;
-    adqAuxAdicional: TADOQuery;
-    AutoIncField1: TAutoIncField;
     styGridPDV: TcxStyleRepository;
     styGridBackgroud: TcxStyle;
     styGridContent: TcxStyle;
@@ -184,7 +182,6 @@ type
     procedure gdbPedidoCellClick(Sender: TcxCustomGridTableView;
       ACellViewInfo: TcxGridTableDataCellViewInfo; AButton: TMouseButton;
       AShift: TShiftState; var AHandled: Boolean);
-    procedure cdsAddPedidoQTITEMChange(Sender: TField);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
   private
     { Private declarations }
@@ -194,14 +191,13 @@ type
     procedure OnClickCategoriaPDV(Sender: TObject);
     procedure OnClickProdutosPDV(Sender: TObject);
     procedure AtualizaValorPedido;
-    procedure AtualizaValorAdicional;
     procedure AtualizacdsPedido;
   end;
 
 var
   frmPDV_PDV: TfrmPDV_PDV;
   stStatusPedido: String;
-  boOk: Boolean;
+  boOk, boJaPostou: Boolean;
 
 implementation
 
@@ -219,6 +215,7 @@ begin
   Interface_ := TInterface.Create();
 
   stStatusPedido := 'A';
+  boJaPostou := False;
   boOk := True;
   lblFrom.Caption := FParametros.Caption;
   frmPDV_PDV.Tag  := FParametros.Tag;                  
@@ -409,6 +406,7 @@ begin
     try
       frmAdicional.Tag := (Sender as TcxButton).Tag;
       frmAdicional.ShowModal;
+      AtualizaValorPedido;
       if frmAdicional.GetBlz then
       begin
         if ((cdsAddPedido.RecordCount > 0) and (cdsItemPedido.State in [dsEdit])) then
@@ -534,9 +532,15 @@ begin
     begin
       adqInsPedido.Close;
       adqInsPedido.Parameters.ParamByName('P_IDTIPOPEDIDO').Value := Copy(FParametros.Caption,1,1);
-      adqInsPedido.Parameters.ParamByName('P_CLIENTE_ID').Value   := 1;
-      adqInsPedido.Parameters.ParamByName('P_NMCLIENTE').Value    := edtNome.Text;
-      adqInsPedido.Parameters.ParamByName('P_MESA_ID').Value      := FParametros.Tag;
+      case AnsiIndexStr(UpperCase(Copy(FParametros.Caption,1,1)), ['M','D','B']) of
+        1,2: begin
+              adqInsPedido.Parameters.ParamByName('P_CLIENTE_ID').Value := 1;
+              adqInsPedido.Parameters.ParamByName('P_NMCLIENTE').Value  := edtNome.Text;
+             end;
+        0:   begin
+               adqInsPedido.Parameters.ParamByName('P_MESA_ID').Value   := FParametros.Tag;
+             end;
+      end;
       adqInsPedido.Parameters.ParamByName('P_VRPEDIDO').Value     := StrToFloat(edtTotal.Text);
       adqInsPedido.Parameters.ParamByName('P_IDSTATUSPED').Value  := stStatusPedido;
       adqInsPedido.ExecSQL;
@@ -619,6 +623,7 @@ begin
             adqInsAdicionalPedido.Parameters.ParamByName('P_ITEM_ID').Value       := cdsAddPedidoID.AsInteger;
             adqInsAdicionalPedido.Parameters.ParamByName('P_QTITEM').Value        := cdsAddPedidoQTITEM.AsFloat;
             adqInsAdicionalPedido.Parameters.ParamByName('P_VALOR').Value         := cdsAddPedidoVRUNITARIO.AsFloat;
+            adqInsAdicionalPedido.Parameters.ParamByName('P_VRVENDA').Value       := cdsAddPedidoVRTOTAITEM.AsFloat;
             adqInsAdicionalPedido.ExecSQL;
           end else
           begin
@@ -626,7 +631,8 @@ begin
             adqUpdAdicionalPedido.Parameters.ParamByName('P_ITEMPEDIDO_ID').Value := cdsAddPedidoITEMPEDIDO_ID.AsInteger;
             adqUpdAdicionalPedido.Parameters.ParamByName('P_ITEM_ID').Value       := cdsAddPedidoID.AsInteger;
             adqUpdAdicionalPedido.Parameters.ParamByName('P_QTITEM').Value        := cdsAddPedidoQTITEM.AsFloat;
-            adqInsAdicionalPedido.Parameters.ParamByName('P_VALOR').Value         := cdsAddPedidoVRUNITARIO.AsFloat;
+            adqUpdAdicionalPedido.Parameters.ParamByName('P_VALOR').Value         := cdsAddPedidoVRUNITARIO.AsFloat;
+            adqUpdAdicionalPedido.Parameters.ParamByName('P_VRVENDA').Value       := cdsAddPedidoVRTOTAITEM.AsFloat;
             adqUpdAdicionalPedido.ExecSQL;
           end;
 
@@ -672,11 +678,21 @@ end;
 
 procedure TfrmPDV_PDV.cdsItemPedidoAfterPost(DataSet: TDataSet);
 begin
-  AtualizaValorPedido;
+  if not boJaPostou then
+    AtualizaValorPedido;
+  boJaPostou := False;
 end;
 
 procedure TfrmPDV_PDV.AtualizaValorPedido;
 begin
+  if not VarIsNull(cdsAddPedidoSUMVRTOTAL.Value) then
+  begin
+    cdsItemPedido.Edit;
+    cdsItemPedidoVRTOTAL.AsFloat := (cdsItemPedidoQTITEM.AsFloat * cdsItemPedidoVRVENDA.AsFloat) + StrToFloat(cdsAddPedidoSUMVRTOTAL.Value);
+    boJaPostou := True;
+    cdsItemPedido.Post;
+  end;
+
   if VarIsNull(cdsItemPedidoSUMVRTOTAL.Value) then
     edtTotal.Text := '0,00'
   else
@@ -707,6 +723,7 @@ begin
 
       try
         frmAdicional.ShowModal;
+        AtualizaValorPedido;
       finally
         FreeAndNil(frmAdicional);
       end;
@@ -742,35 +759,6 @@ begin
       boOk := False;
     end;
   end;
-end;
-
-procedure TfrmPDV_PDV.cdsAddPedidoQTITEMChange(Sender: TField);
-begin
-  cdsAddPedidoVRTOTAITEM.AsFloat := cdsAddPedidoVRUNITARIO.AsFloat*cdsAddPedidoQTITEM.AsFloat;
-end;
-
-procedure TfrmPDV_PDV.AtualizaValorAdicional;
-var
-  flItemPedidoTotal: Double;
-begin
-  adqAuxAdicional.Close;
-  adqAuxAdicional.Parameters.ParamByName('P_CARDAPIO_ID').Value := cdsItemPedidoCARDAPIO_ID.AsInteger;
-  adqAuxAdicional.Open;
-
-  cdsAddPedido.DisableControls;
-  cdsAddPedido.First;
-  while not cdsAddPedido.Eof do
-  begin
-
-    if not adqAuxAdicional.Locate('ID', cdsAddPedidoID.Value, [loCaseInsensitive]) then
-    begin
-
-    end;
-
-    cdsAddPedido.Next;
-  end;
-
-  cdsAddPedido.EnableControls;
 end;
 
 procedure TfrmPDV_PDV.AtualizacdsPedido;
