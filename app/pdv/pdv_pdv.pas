@@ -486,6 +486,7 @@ begin
 
     adqUpdPedido.Close;
     adqUpdPedido.Parameters.ParamByName('P_ID').Value := adqItemPedido.FieldByName('PEDIDO_ID').Value;
+    adqUpdPedido.Parameters.ParamByName('P_VRPEDIDO').Value := StrToFloat(edtTotal.Text);
     adqUpdPedido.Parameters.ParamByName('P_IDSTATUSPED').Value := 'F';
     adqUpdPedido.ExecSQL;
 
@@ -549,7 +550,15 @@ begin
       adqConsID.Open;
       inPedido_ID := adqConsID.FieldByName('ID').AsInteger;
     end else
+    begin
       inPedido_ID := adqItemPedido.FieldByName('PEDIDO_ID').Value;
+
+      adqUpdPedido.Close;
+      adqUpdPedido.Parameters.ParamByName('P_ID').Value := inPedido_ID;
+      adqUpdPedido.Parameters.ParamByName('P_VRPEDIDO').Value := StrToFloat(edtTotal.Text);
+      adqUpdPedido.Parameters.ParamByName('P_IDSTATUSPED').Value := 'A';
+      adqUpdPedido.ExecSQL;      
+    end;
 
     //Exclusao adicionais zerados
     frmPDV_PDV.cdsAddPedido.Filtered := False;

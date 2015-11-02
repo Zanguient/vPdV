@@ -27703,24 +27703,22 @@ object frmPDV_PDV: TfrmPDV_PDV
         Name = 'P_MESA_ID'
         Attributes = [paNullable]
         DataType = ftString
-        NumericScale = 216
+        NumericScale = 104
         Precision = 255
         Size = 255
         Value = Null
       end>
     SQL.Strings = (
       
-        'SELECT IP.ID, IP.PEDIDO_ID, IP.CARDAPIO_ID, IP.LOTE_ID, IP.QTITE' +
-        'M, IP.VRVENDA,'
+        'SELECT IP.ID, PED.ID PEDIDO_ID, IP.CARDAPIO_ID, IP.LOTE_ID, IP.Q' +
+        'TITEM, IP.VRVENDA,'
       
         '       IP.VRTOTAL, IP.IDADICIONAL, P.NMPRODUTO, P.ID PRODUTO_ID,' +
         ' 0 IMG'
       
-        '  FROM ITEMPEDIDO IP INNER JOIN PRODUTO P ON IP.PRODUTO_ID = P.I' +
-        'D'
-      
-        '                     INNER JOIN PEDIDO PED ON PED.ID = IP.PEDIDO' +
-        '_ID'
+        '  FROM PEDIDO PED LEFT JOIN ITEMPEDIDO IP ON PED.ID = IP.PEDIDO_' +
+        'ID'
+      #9#9#9#9#9'        LEFT JOIN PRODUTO P ON IP.PRODUTO_ID = P.ID'
       ' WHERE PED.IDSTATUSPED = '#39'A'#39
       '   AND PED.MESA_ID = :P_MESA_ID')
     Left = 728
@@ -28052,7 +28050,16 @@ object frmPDV_PDV: TfrmPDV_PDV
         Name = 'P_IDSTATUSPED'
         Attributes = [paNullable]
         DataType = ftString
-        NumericScale = 24
+        NumericScale = 128
+        Precision = 255
+        Size = 255
+        Value = Null
+      end
+      item
+        Name = 'P_VRPEDIDO'
+        Attributes = [paNullable]
+        DataType = ftFloat
+        NumericScale = 128
         Precision = 255
         Size = 255
         Value = Null
@@ -28061,14 +28068,15 @@ object frmPDV_PDV: TfrmPDV_PDV
         Name = 'P_ID'
         Attributes = [paNullable]
         DataType = ftString
-        NumericScale = 24
+        NumericScale = 128
         Precision = 255
         Size = 255
         Value = Null
       end>
     SQL.Strings = (
       'UPDATE PEDIDO'
-      '   SET IDSTATUSPED = :P_IDSTATUSPED'
+      '   SET IDSTATUSPED = :P_IDSTATUSPED,'
+      '       VRPEDIDO    = :P_VRPEDIDO'
       ' WHERE ID = :P_ID')
     Left = 808
     Top = 376
