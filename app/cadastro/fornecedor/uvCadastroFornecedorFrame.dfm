@@ -1,10 +1,45 @@
 inherited vCadastroFornecedorFrame: TvCadastroFornecedorFrame
   inherited pgcPadrao: TcxPageControl
-    ActivePage = tabCadastro
     inherited tabVisao: TcxTabSheet
       inherited panClient: TPanel
         inherited cxgridFiltro: TcxVerticalGrid
           Version = 1
+          object nmcliente: TcxEditorRow
+            Properties.Caption = 'Nome'
+            Properties.DataBinding.ValueType = 'String'
+            Properties.Value = Null
+            ID = 0
+            ParentID = -1
+            Index = 0
+            Version = 1
+          end
+          object telfixo: TcxEditorRow
+            Properties.Caption = 'Telefone'
+            Properties.DataBinding.ValueType = 'String'
+            Properties.Value = Null
+            ID = 1
+            ParentID = -1
+            Index = 1
+            Version = 1
+          end
+          object telcelular: TcxEditorRow
+            Properties.Caption = 'Celular'
+            Properties.DataBinding.ValueType = 'String'
+            Properties.Value = Null
+            ID = 2
+            ParentID = -1
+            Index = 2
+            Version = 1
+          end
+          object nrinscjurd: TcxEditorRow
+            Properties.Caption = 'CPF/CNPJ'
+            Properties.DataBinding.ValueType = 'String'
+            Properties.Value = Null
+            ID = 3
+            ParentID = -1
+            Index = 3
+            Version = 1
+          end
         end
         inherited cxGrid1: TcxGrid
           LookAndFeel.SkinName = ''

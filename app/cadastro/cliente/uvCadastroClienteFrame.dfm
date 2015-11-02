@@ -2,7 +2,6 @@ inherited vCadastroCliente: TvCadastroCliente
   Width = 564
   inherited pgcPadrao: TcxPageControl
     Width = 564
-    ActivePage = tabCadastro
     ClientRectRight = 560
     inherited tabVisao: TcxTabSheet
       inherited panClient: TPanel
@@ -118,12 +117,12 @@ inherited vCadastroCliente: TvCadastroCliente
             Properties.EditPropertiesClassName = 'TcxImageComboBoxProperties'
             Properties.EditProperties.Items = <
               item
-                Description = 'F'#237'sica'
+                Description = 'Física'
                 ImageIndex = 0
                 Value = 'F'
               end
               item
-                Description = 'Jur'#237'dica'
+                Description = 'Jurídica'
                 Value = 'J'
               end>
             Properties.DataBinding.FieldName = 'identificador'
@@ -155,7 +154,7 @@ inherited vCadastroCliente: TvCadastroCliente
           end
           object catEndereco: TcxCategoryRow
             Options.Focusing = False
-            Properties.Caption = 'Endere'#231'o'
+            Properties.Caption = 'Endereço'
             ID = 5
             ParentID = -1
             Index = 5
@@ -234,7 +233,7 @@ inherited vCadastroCliente: TvCadastroCliente
               Left = 236
             end
             inherited lblGridCaption: TcxLabel
-              Caption = 'Endere'#231'o'
+              Caption = 'Endereço'
               Style.IsFontAssigned = True
             end
           end
@@ -246,6 +245,9 @@ inherited vCadastroCliente: TvCadastroCliente
       end
       inherited Panel2: TPanel
         Width = 556
+        inherited Label1: TLabel
+          Height = 27
+        end
         inherited cxButton1: TcxButton
           Left = 531
         end
@@ -261,7 +263,7 @@ inherited vCadastroCliente: TvCadastroCliente
       'select * from cliente'
       'where 1=1')
     object adqPadraoid: TAutoIncField
-      DisplayLabel = 'C'#243'digo'
+      DisplayLabel = 'Código'
       FieldName = 'id'
       ReadOnly = True
     end
@@ -299,7 +301,7 @@ inherited vCadastroCliente: TvCadastroCliente
       Size = 200
     end
     object adqPadraocdnumero: TWideStringField
-      DisplayLabel = 'N'#250'mero'
+      DisplayLabel = 'Número'
       FieldName = 'cdnumero'
       Size = 30
     end

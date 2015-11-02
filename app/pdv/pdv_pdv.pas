@@ -182,7 +182,7 @@ type
     adqClientedtcadastro: TDateTimeField;
     adqClientecomplemento: TWideStringField;
     edtTelefone: TcxLookupComboBox;
-    cxLookupComboBox1: TcxLookupComboBox;
+    edtNome: TcxLookupComboBox;
     procedure FormShow(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     constructor PCreate(Form: TComponent; Parametros: TParametros); Overload;

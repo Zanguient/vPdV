@@ -2373,7 +2373,7 @@ object frmPDV_PDV: TfrmPDV_PDV
           Height = 28
           Width = 145
         end
-        object cxLookupComboBox1: TcxLookupComboBox
+        object edtNome: TcxLookupComboBox
           Left = 268
           Top = 10
           AutoSize = False
