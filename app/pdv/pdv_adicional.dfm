@@ -1,6 +1,6 @@
 object frmAdicional: TfrmAdicional
-  Left = 192
-  Top = 103
+  Left = 196
+  Top = 225
   BorderStyle = bsNone
   ClientHeight = 517
   ClientWidth = 920
@@ -1969,7 +1969,7 @@ object frmAdicional: TfrmAdicional
       '   AND IC.ID = :P_CARDAPIO_ID'
       '')
     Left = 560
-    Top = 144
+    Top = 142
   end
   object cdsAuxAddPedido: TClientDataSet
     Active = True
@@ -2008,19 +2008,37 @@ object frmAdicional: TfrmAdicional
       item
         Name = 'QTGRATUI'
         DataType = ftInteger
+      end
+      item
+        Name = 'VRADICIONAL'
+        DataType = ftFloat
       end>
-    IndexDefs = <>
+    IndexDefs = <
+      item
+        Name = 'DEFAULT_ORDER'
+      end
+      item
+        Name = 'CHANGEINDEX'
+      end
+      item
+        Name = 'cdsAuxAddPedidoIndex3'
+        DescFields = 'VRADICIONAL'
+        Fields = 'VRADICIONAL'
+        Options = [ixDescending]
+      end>
+    IndexName = 'cdsAuxAddPedidoIndex3'
     Params = <>
     StoreDefs = True
     Left = 527
     Top = 102
     Data = {
-      AB0000009619E0BD010000001800000008000000000003000000AB0002696404
+      BF0000009619E0BD010000001800000009000000000003000000BF0002696404
       00010000000000094E4D50524F4455544F010049000000010005574944544802
       000200FA000651544954454D08000400000000000A5652554E49544152494F08
       000400000000000D4954454D50454449444F5F4944040001000000000003494D
       4708000100000000000A5652544F54414954454D080004000000000008515447
-      524154554904000100000000000000}
+      524154554904000100000000000B565241444943494F4E414C08000400000000
+      000000}
     object cdsAuxAddPedidoid: TIntegerField
       FieldName = 'id'
     end
@@ -2030,7 +2048,6 @@ object frmAdicional: TfrmAdicional
     end
     object cdsAuxAddPedidoQTITEM: TFloatField
       FieldName = 'QTITEM'
-      OnChange = cdsAddPedidoQTITEMChange
     end
     object cdsAuxAddPedidoVRUNITARIO: TFloatField
       FieldName = 'VRUNITARIO'
@@ -2046,6 +2063,9 @@ object frmAdicional: TfrmAdicional
     end
     object cdsAuxAddPedidoQTGRATUI: TIntegerField
       FieldName = 'QTGRATUI'
+    end
+    object cdsAuxAddPedidoVRADICIONAL: TFloatField
+      FieldName = 'VRADICIONAL'
     end
     object cdsAuxAddPedidoSUMQTITEM: TAggregateField
       FieldName = 'SUMQTITEM'
@@ -2067,5 +2087,71 @@ object frmAdicional: TfrmAdicional
       Active = True
       Expression = 'SUM(QTGRATUI)'
     end
+  end
+  object cdsAuxAdicional: TClientDataSet
+    Active = True
+    Aggregates = <>
+    AggregatesActive = True
+    FieldDefs = <
+      item
+        Name = 'PRODUTO_ID'
+        DataType = ftInteger
+      end
+      item
+        Name = 'VRVENDA'
+        DataType = ftFloat
+      end
+      item
+        Name = 'QTADICGRATIS'
+        DataType = ftInteger
+      end
+      item
+        Name = 'ID'
+        Attributes = [faReadonly]
+        DataType = ftAutoInc
+      end
+      item
+        Name = 'VRAGRUPADIC'
+        DataType = ftFloat
+      end>
+    IndexDefs = <
+      item
+        Name = 'DEFAULT_ORDER'
+      end
+      item
+        Name = 'CHANGEINDEX'
+      end>
+    IndexFieldNames = 'VRAGRUPADIC'
+    Params = <>
+    StoreDefs = True
+    Left = 533
+    Top = 142
+    Data = {
+      9C0000009619E0BD0100000018000000050000000000030000009C000A50524F
+      4455544F5F4944040001000000000007565256454E444108000400000000000C
+      5154414449434752415449530400010000000000024944040001000200010007
+      535542545950450200490008004175746F696E63000B56524147525550414449
+      43080004000000000001000C4155544F494E4356414C55450400010001000000}
+    object cdsAuxAdicionalPRODUTO_ID: TIntegerField
+      FieldName = 'PRODUTO_ID'
+    end
+    object cdsAuxAdicionalVRVENDA: TFloatField
+      FieldName = 'VRVENDA'
+    end
+    object cdsAuxAdicionalQTADICGRATIS: TIntegerField
+      FieldName = 'QTADICGRATIS'
+    end
+    object cdsAuxAdicionalID: TAutoIncField
+      FieldName = 'ID'
+      ReadOnly = True
+    end
+    object cdsAuxAdicionalVRAGRUPADIC: TFloatField
+      FieldName = 'VRAGRUPADIC'
+    end
+  end
+  object dspAuxAdicional: TDataSetProvider
+    DataSet = adqAuxAdicional
+    Left = 591
+    Top = 144
   end
 end
