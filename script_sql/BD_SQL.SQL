@@ -638,3 +638,10 @@ ALTER TABLE PEDIDO ADD dsmotivo TEXT NULL;
 ALTER TABLE mesa ADD idstatus character varying(1) NOT NULL  default 'L' check(idstatus in ('L', 'O'));
 
 
+ALTER TABLE itemproduto ADD vlprod DOUBLE NOT NULL;
+
+ALTER TABLE posestoque ADD customedio DOUBLE NULL;
+
+ALTER TABLE cliente ADD complemento character varying(255);
+
+ALTER TABLE fornecedor ADD complemento character varying(255),

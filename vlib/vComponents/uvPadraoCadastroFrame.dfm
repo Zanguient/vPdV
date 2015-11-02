@@ -9,7 +9,7 @@ object vPadraoCadastro: TvPadraoCadastro
     Top = 0
     Width = 505
     Height = 467
-    ActivePage = tabCadastro
+    ActivePage = tabVisao
     Align = alClient
     TabOrder = 0
     OnChange = pgcPadraoChange
@@ -162,7 +162,7 @@ object vPadraoCadastro: TvPadraoCadastro
           Left = 119
           Top = 1
           Width = 81
-          Height = 13
+          Height = 27
           Align = alLeft
           Caption = '[Nome do Frame]'
           Visible = False
@@ -405,7 +405,6 @@ object vPadraoCadastro: TvPadraoCadastro
     Top = 40
   end
   object dtsPadrao: TDataSource
-    AutoEdit = False
     DataSet = adqPadrao
     OnStateChange = dtsPadraoStateChange
     Left = 400

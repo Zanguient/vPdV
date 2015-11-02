@@ -21,7 +21,7 @@ uses
   cxNavigator, cxDBNavigator, cxGridLevel, cxGridCustomView,
   cxGridCustomTableView, cxGridTableView, cxGridDBTableView, cxGrid,
   cxInplaceContainer, ExtCtrls, cxPC, cxCurrencyEdit, cxMaskEdit,
-  cxCalendar, cxDBLookupComboBox;
+  cxCalendar, cxDBLookupComboBox, cxImageComboBox;
 
 type
   TvCadastroFornecedorFrame = class(TvPadraoCadastro)
@@ -63,10 +63,12 @@ type
     adqBairroid_web: TIntegerField;
     dtsBairro: TDataSource;
     procedure adqPadraoidentificadorChange(Sender: TField);
+    procedure adqPadraoNewRecord(DataSet: TDataSet);
   private
     { Private declarations }
   public
     { Public declarations }
+    constructor Create(AOwner: TComponent); override;
   end;
 
 var
@@ -83,6 +85,20 @@ begin
     adqPadraonrinscjurd.EditMask := '000.000.000-00;0; '
   else
     adqPadraonrinscjurd.EditMask := '00.000.000/0000-00;0; ';
+end;
+
+constructor TvCadastroFornecedorFrame.Create(AOwner: TComponent);
+begin
+  inherited;
+  adqBairro.Close;
+  adqBairro.Open;
+end;
+
+procedure TvCadastroFornecedorFrame.adqPadraoNewRecord(DataSet: TDataSet);
+begin
+  inherited;
+  adqPadraoidentificador.AsString := 'F';
+  adqPadraodtcadastro.AsDateTime := Date;
 end;
 
 end.

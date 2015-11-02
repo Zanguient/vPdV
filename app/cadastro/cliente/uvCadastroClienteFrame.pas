@@ -73,6 +73,7 @@ type
     { Private declarations }
   public
     { Public declarations }
+    constructor Create(AOwner: TComponent); override;    
   end;
 
 var
@@ -96,6 +97,13 @@ begin
   inherited;
   adqPadraoidentificador.AsString := 'F';
   adqPadraodtcadastro.AsDateTime := Date;
+end;
+
+constructor TvCadastroCliente.Create(AOwner: TComponent);
+begin
+  inherited;
+  adqBairro.Close;
+  adqBairro.Open;
 end;
 
 end.

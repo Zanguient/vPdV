@@ -51,6 +51,7 @@ type
     procedure nbiCancelarPedidoClick(Sender: TObject);
     procedure nbiSincronizacaoClick(Sender: TObject);
     procedure tmSincronizacaoTimer(Sender: TObject);
+    procedure nbiEntradaClick(Sender: TObject);
   private
     { Private declarations }
 //    procedure InvocadordeBpl(stClasse: String);
@@ -90,7 +91,8 @@ implementation
 
 uses
    libframes, pdv_main, pdv_aberturacaixa, pdv_abertura_fechamento_caixa, uvCadastroClienteFrame,
-   uvCadastroFornecedorFrame, lib_db, pdv_cancelar_pedido, uParametrosSincronizacao, lib_sincronizacao;
+   uvCadastroFornecedorFrame, lib_db, pdv_cancelar_pedido, uParametrosSincronizacao, lib_sincronizacao,
+   uvEstoqueEntradaFrame;
 
 
 procedure CriarMainForm(const IdUsuario, IdEmpresa, IdUnidade : Integer;
@@ -179,6 +181,11 @@ end;
 procedure TfrmMainBase.tmSincronizacaoTimer(Sender: TObject);
 begin
   TSincronizarTabelas.Sincronizar(True);
+end;
+
+procedure TfrmMainBase.nbiEntradaClick(Sender: TObject);
+begin
+  TAbasNavegacao.CriarAba(pgcPrincipal, TvEstoqueEntradaFrame);
 end;
 
 end.

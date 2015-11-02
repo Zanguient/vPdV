@@ -2,6 +2,7 @@ inherited vCadastroCliente: TvCadastroCliente
   Width = 564
   inherited pgcPadrao: TcxPageControl
     Width = 564
+    ActivePage = tabCadastro
     ClientRectRight = 560
     inherited tabVisao: TcxTabSheet
       inherited panClient: TPanel
@@ -126,33 +127,34 @@ inherited vCadastroCliente: TvCadastroCliente
                 Value = 'J'
               end>
             Properties.DataBinding.FieldName = 'identificador'
-            ID = 3
+            ID = 1
             ParentID = -1
             Index = 1
             Version = 1
           end
           object cxvGrid1nrinscjurd: TcxDBEditorRow
             Properties.DataBinding.FieldName = 'nrinscjurd'
-            ID = 4
+            ID = 2
             ParentID = -1
             Index = 2
             Version = 1
           end
           object cxvGrid1telfixo: TcxDBEditorRow
             Properties.DataBinding.FieldName = 'telfixo'
-            ID = 1
+            ID = 3
             ParentID = -1
             Index = 3
             Version = 1
           end
           object cxvGrid1telcel: TcxDBEditorRow
             Properties.DataBinding.FieldName = 'telcel'
-            ID = 2
+            ID = 4
             ParentID = -1
             Index = 4
             Version = 1
           end
           object catEndereco: TcxCategoryRow
+            Options.Focusing = False
             Properties.Caption = 'Endere'#231'o'
             ID = 5
             ParentID = -1
@@ -186,6 +188,8 @@ inherited vCadastroCliente: TvCadastroCliente
           end
           object cxvGrid1cdbairro_id: TcxDBEditorRow
             Properties.EditPropertiesClassName = 'TcxLookupComboBoxProperties'
+            Properties.EditProperties.DropDownAutoSize = True
+            Properties.EditProperties.ImmediatePost = True
             Properties.EditProperties.KeyFieldNames = 'id'
             Properties.EditProperties.ListColumns = <
               item
@@ -335,6 +339,7 @@ inherited vCadastroCliente: TvCadastroCliente
   end
   object adqBairro: TADOQuery
     Connection = dmConexao.adoConexaoBd
+    CursorType = ctStatic
     OnNewRecord = adqPadraoNewRecord
     Parameters = <>
     SQL.Strings = (
@@ -353,6 +358,8 @@ inherited vCadastroCliente: TvCadastroCliente
       Size = 10
     end
     object adqBairronmbairro: TWideStringField
+      DisplayLabel = 'Bairro'
+      DisplayWidth = 80
       FieldName = 'nmbairro'
       Size = 250
     end
@@ -364,7 +371,6 @@ inherited vCadastroCliente: TvCadastroCliente
     end
   end
   object dtsBairro: TDataSource
-    AutoEdit = False
     DataSet = adqBairro
     OnStateChange = dtsPadraoStateChange
     Left = 384

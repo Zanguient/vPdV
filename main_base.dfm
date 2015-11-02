@@ -156,6 +156,7 @@ object frmMainBase: TfrmMainBase
       CustomStyles.ItemDisabled = sty_menu_lat
       CustomStyles.ItemHotTracked = sty_menu_lat_hottra
       CustomStyles.ItemPressed = nbMain_BaseStyleItem3
+      OnClick = nbiEntradaClick
     end
     object nbiSaida: TdxNavBarItem
       Caption = 'Sa'#237'da'
