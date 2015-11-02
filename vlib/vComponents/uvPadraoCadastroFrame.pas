@@ -230,7 +230,7 @@ end;
 procedure TvPadraoCadastro.pgcPadraoChange(Sender: TObject);
 begin
   setCadastroCaption;
-  openDetail;
+//  openDetail;
 end;
 
 procedure TvPadraoCadastro.openDetail;

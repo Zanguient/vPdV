@@ -38,7 +38,6 @@ inherited vCadastroFornecedorFrame: TvCadastroFornecedorFrame
       inherited panTop: TPanel
         inherited lblNomeFrame: TLabel
           Width = 54
-          Height = 27
           Caption = 'Fornecedor'
         end
       end
@@ -46,6 +45,7 @@ inherited vCadastroFornecedorFrame: TvCadastroFornecedorFrame
     inherited tabCadastro: TcxTabSheet
       inherited Panel1: TPanel
         inherited cxvGrid1: TcxDBVerticalGrid
+          Height = 289
           Version = 1
           object cxvGrid1nmfornecedor: TcxDBEditorRow
             Properties.DataBinding.FieldName = 'nmfornecedor'
@@ -82,8 +82,76 @@ inherited vCadastroFornecedorFrame: TvCadastroFornecedorFrame
             Index = 4
             Version = 1
           end
+          object catEndereco: TcxCategoryRow
+            Properties.Caption = 'Endere'#231'o'
+            ID = 5
+            ParentID = -1
+            Index = 5
+            Version = 1
+          end
+          object cxvGrid1nmrua: TcxDBEditorRow
+            Properties.DataBinding.FieldName = 'nmrua'
+            ID = 6
+            ParentID = -1
+            Index = 6
+            Version = 1
+          end
+          object cxvGrid1cdnumero: TcxDBEditorRow
+            Properties.EditPropertiesClassName = 'TcxCurrencyEditProperties'
+            Properties.EditProperties.AssignedValues.DisplayFormat = True
+            Properties.EditProperties.DecimalPlaces = 0
+            Properties.EditProperties.MaxLength = 9
+            Properties.DataBinding.FieldName = 'cdnumero'
+            ID = 7
+            ParentID = -1
+            Index = 7
+            Version = 1
+          end
+          object cxvGrid1complemento: TcxDBEditorRow
+            Properties.DataBinding.FieldName = 'complemento'
+            ID = 8
+            ParentID = -1
+            Index = 8
+            Version = 1
+          end
+          object cxvGrid1cdbairro_id: TcxDBEditorRow
+            Properties.EditPropertiesClassName = 'TcxLookupComboBoxProperties'
+            Properties.EditProperties.KeyFieldNames = 'id'
+            Properties.EditProperties.ListColumns = <
+              item
+                FieldName = 'nmbairro'
+              end>
+            Properties.EditProperties.ListSource = dtsBairro
+            Properties.DataBinding.FieldName = 'cdbairro_id'
+            ID = 9
+            ParentID = -1
+            Index = 9
+            Version = 1
+          end
+          object cxvGrid1cdcep: TcxDBEditorRow
+            Properties.EditPropertiesClassName = 'TcxMaskEditProperties'
+            Properties.DataBinding.FieldName = 'cdcep'
+            ID = 10
+            ParentID = -1
+            Index = 10
+            Version = 1
+          end
+          object cxvGrid1DBEditorRow6: TcxDBEditorRow
+            Properties.Caption = 'Data Cadastro'
+            Properties.EditPropertiesClassName = 'TcxDateEditProperties'
+            Properties.EditProperties.ReadOnly = True
+            Properties.EditProperties.SaveTime = False
+            Properties.EditProperties.ShowTime = False
+            Properties.DataBinding.FieldName = 'dtcadastro'
+            ID = 11
+            ParentID = -1
+            Index = 11
+            Version = 1
+          end
         end
         inherited panGrid: TPanel
+          Top = 289
+          Height = 121
           inherited pnlNavigator: TPanel
             inherited lblGridCaption: TcxLabel
               Caption = 'Endere'#231'o'
@@ -91,30 +159,7 @@ inherited vCadastroFornecedorFrame: TvCadastroFornecedorFrame
             end
           end
           inherited cxGrid2: TcxGrid
-            inherited cxGridDBTableView1: TcxGridDBTableView
-              object cxGridDBTableView1nmrua: TcxGridDBColumn
-                DataBinding.FieldName = 'nmrua'
-                Width = 150
-              end
-              object cxGridDBTableView1cdnumero: TcxGridDBColumn
-                DataBinding.FieldName = 'cdnumero'
-                Width = 50
-              end
-              object cxGridDBTableView1complemento: TcxGridDBColumn
-                DataBinding.FieldName = 'complemento'
-                Width = 100
-              end
-              object cxGridDBTableView1cdcep: TcxGridDBColumn
-                DataBinding.FieldName = 'cdcep'
-              end
-              object cxGridDBTableView1cdbairro_id: TcxGridDBColumn
-                DataBinding.FieldName = 'cdbairro_id'
-              end
-              object cxGridDBTableView1dtcadastro: TcxGridDBColumn
-                DataBinding.FieldName = 'dtcadastro'
-                Width = 80
-              end
-            end
+            Height = 97
           end
         end
       end
@@ -153,59 +198,85 @@ inherited vCadastroFornecedorFrame: TvCadastroFornecedorFrame
       FieldName = 'telfixo'
       Size = 15
     end
-  end
-  inherited adqDetail: TADOQuery
-    Parameters = <
-      item
-        Name = 'fornecedor_id'
-        Attributes = [paNullable]
-        DataType = ftInteger
-        NumericScale = 2
-        Precision = 255
-        Size = 255
-        Value = Null
-      end>
-    SQL.Strings = (
-      'select *'
-      '  from endereco'
-      'where fornecedor_id = :fornecedor_id')
-    object adqDetailid: TAutoIncField
-      FieldName = 'id'
-      ReadOnly = True
-    end
-    object adqDetailnmrua: TWideStringField
+    object adqPadraonmrua: TWideStringField
       DisplayLabel = 'Logradouro'
+      DisplayWidth = 80
       FieldName = 'nmrua'
       Size = 200
     end
-    object adqDetailcdnumero: TWideStringField
+    object adqPadraocdnumero: TWideStringField
       DisplayLabel = 'N'#250'mero'
       FieldName = 'cdnumero'
       Size = 30
     end
-    object adqDetailcdcep: TWideStringField
-      DisplayLabel = 'CEP'
-      FieldName = 'cdcep'
-      Size = 10
-    end
-    object adqDetaildtcadastro: TDateField
-      DisplayLabel = 'Data cadastro'
-      FieldName = 'dtcadastro'
-    end
-    object adqDetailcdbairro_id: TIntegerField
-      DisplayLabel = 'Bairro'
-      FieldName = 'cdbairro_id'
-    end
-    object adqDetailcliente_id: TIntegerField
-      FieldName = 'cliente_id'
-    end
-    object adqDetailfornecedor_id: TIntegerField
-      FieldName = 'fornecedor_id'
-    end
-    object adqDetailcomplemento: TWideStringField
+    object adqPadraocomplemento: TStringField
       DisplayLabel = 'Complemento'
+      DisplayWidth = 80
       FieldName = 'complemento'
       Size = 255
     end
+    object adqPadraocdcep: TWideStringField
+      DisplayLabel = 'Cep'
+      FieldName = 'cdcep'
+      Size = 10
+    end
+    object adqPadraocdbairro_id: TIntegerField
+      DisplayLabel = 'Bairro'
+      FieldName = 'cdbairro_id'
+    end
+    object adqPadraodtcadastro: TDateTimeField
+      DisplayLabel = 'Cadastro'
+      FieldName = 'dtcadastro'
+    end
+    object adqPadraoid_web: TIntegerField
+      FieldName = 'id_web'
+      Visible = False
+    end
+  end
+  inherited adqDetail: TADOQuery
+    SQL.Strings = (
+      '')
+    Left = 168
+    Top = 384
+  end
+  inherited dtsDetail: TDataSource
+    Left = 200
+    Top = 384
+  end
+  object adqBairro: TADOQuery
+    Connection = dmConexao.adoConexaoBd
+    Parameters = <>
+    SQL.Strings = (
+      'select * from bairro')
+    Left = 352
+    Top = 176
+    object adqBairroid: TAutoIncField
+      FieldName = 'id'
+      ReadOnly = True
+    end
+    object adqBairrodtcadastro: TDateField
+      FieldName = 'dtcadastro'
+    end
+    object adqBairrocdbairro: TWideStringField
+      FieldName = 'cdbairro'
+      Size = 10
+    end
+    object adqBairronmbairro: TWideStringField
+      FieldName = 'nmbairro'
+      Size = 250
+    end
+    object adqBairrocidade_id: TIntegerField
+      FieldName = 'cidade_id'
+    end
+    object adqBairroid_web: TIntegerField
+      FieldName = 'id_web'
+    end
+  end
+  object dtsBairro: TDataSource
+    AutoEdit = False
+    DataSet = adqBairro
+    OnStateChange = dtsPadraoStateChange
+    Left = 384
+    Top = 176
   end
 end

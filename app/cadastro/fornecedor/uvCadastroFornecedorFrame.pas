@@ -20,7 +20,8 @@ uses
   StdCtrls, cxButtons, dxNavBarCollns, cxClasses, dxNavBarBase, dxNavBar,
   cxNavigator, cxDBNavigator, cxGridLevel, cxGridCustomView,
   cxGridCustomTableView, cxGridTableView, cxGridDBTableView, cxGrid,
-  cxInplaceContainer, ExtCtrls, cxPC;
+  cxInplaceContainer, ExtCtrls, cxPC, cxCurrencyEdit, cxMaskEdit,
+  cxCalendar, cxDBLookupComboBox;
 
 type
   TvCadastroFornecedorFrame = class(TvPadraoCadastro)
@@ -39,21 +40,28 @@ type
     cxvGrid1identificador: TcxDBEditorRow;
     cxvGrid1telcel: TcxDBEditorRow;
     cxvGrid1telfixo: TcxDBEditorRow;
-    adqDetailid: TAutoIncField;
-    adqDetailnmrua: TWideStringField;
-    adqDetailcdnumero: TWideStringField;
-    adqDetailcdcep: TWideStringField;
-    adqDetaildtcadastro: TDateField;
-    adqDetailcdbairro_id: TIntegerField;
-    adqDetailcliente_id: TIntegerField;
-    adqDetailfornecedor_id: TIntegerField;
-    adqDetailcomplemento: TWideStringField;
-    cxGridDBTableView1nmrua: TcxGridDBColumn;
-    cxGridDBTableView1cdnumero: TcxGridDBColumn;
-    cxGridDBTableView1cdcep: TcxGridDBColumn;
-    cxGridDBTableView1dtcadastro: TcxGridDBColumn;
-    cxGridDBTableView1cdbairro_id: TcxGridDBColumn;
-    cxGridDBTableView1complemento: TcxGridDBColumn;
+    adqPadraonmrua: TWideStringField;
+    adqPadraocdnumero: TWideStringField;
+    adqPadraocomplemento: TStringField;
+    adqPadraocdcep: TWideStringField;
+    adqPadraocdbairro_id: TIntegerField;
+    adqPadraodtcadastro: TDateTimeField;
+    adqPadraoid_web: TIntegerField;
+    catEndereco: TcxCategoryRow;
+    cxvGrid1nmrua: TcxDBEditorRow;
+    cxvGrid1cdnumero: TcxDBEditorRow;
+    cxvGrid1complemento: TcxDBEditorRow;
+    cxvGrid1cdbairro_id: TcxDBEditorRow;
+    cxvGrid1cdcep: TcxDBEditorRow;
+    cxvGrid1DBEditorRow6: TcxDBEditorRow;
+    adqBairro: TADOQuery;
+    adqBairroid: TAutoIncField;
+    adqBairrodtcadastro: TDateField;
+    adqBairrocdbairro: TWideStringField;
+    adqBairronmbairro: TWideStringField;
+    adqBairrocidade_id: TIntegerField;
+    adqBairroid_web: TIntegerField;
+    dtsBairro: TDataSource;
     procedure adqPadraoidentificadorChange(Sender: TField);
   private
     { Private declarations }
