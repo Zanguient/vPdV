@@ -117,6 +117,7 @@ end;
 procedure TvPadraoCadastro.btnFecharClick(Sender: TObject);
 begin
   Owner.Free;
+  Abort; //cala a boca
 end;
 
 procedure TvPadraoCadastro.actLimparExecute(Sender: TObject);
@@ -141,7 +142,8 @@ begin
   inherited;
   stSql := adqPadrao.SQL.Text;
   stpk := adqPadrao.Fields[0].FieldName;
-  stfk := adqDetail.Parameters.Items[0].Name;
+  if  Pos('SELECT',UpperCase(adqDetail.SQL.Text)) > 0 then
+    stfk := adqDetail.Parameters.Items[0].Name;
   stDescricao := adqPadrao.Fields[1].FieldName;
   pgcPadrao.ActivePageIndex := 0;
   tabCadastro.TabVisible := False;
@@ -223,7 +225,7 @@ begin
     if (adqPadrao.State = dsInsert) or (adqPadrao.RecordCount < 1) then
       tabCadastro.Caption := lblNomeFrame.Caption
     else
-      tabCadastro.Caption := lblNomeFrame.Caption + adqPadrao.FieldValues[stDescricao];
+      tabCadastro.Caption := lblNomeFrame.Caption +' - ' + adqPadrao.FieldValues[stDescricao];
   end;
 end;
 

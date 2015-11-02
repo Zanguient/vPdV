@@ -1,5 +1,6 @@
 inherited vCadastroFornecedorFrame: TvCadastroFornecedorFrame
   inherited pgcPadrao: TcxPageControl
+    ActivePage = tabCadastro
     inherited tabVisao: TcxTabSheet
       inherited panClient: TPanel
         inherited cxgridFiltro: TcxVerticalGrid
@@ -55,6 +56,17 @@ inherited vCadastroFornecedorFrame: TvCadastroFornecedorFrame
             Version = 1
           end
           object cxvGrid1identificador: TcxDBEditorRow
+            Properties.EditPropertiesClassName = 'TcxImageComboBoxProperties'
+            Properties.EditProperties.Items = <
+              item
+                Description = 'F'#237'sica'
+                ImageIndex = 0
+                Value = 'F'
+              end
+              item
+                Description = 'Jur'#237'dica'
+                Value = 'J'
+              end>
             Properties.DataBinding.FieldName = 'identificador'
             ID = 1
             ParentID = -1
@@ -83,6 +95,7 @@ inherited vCadastroFornecedorFrame: TvCadastroFornecedorFrame
             Version = 1
           end
           object catEndereco: TcxCategoryRow
+            Options.Focusing = False
             Properties.Caption = 'Endere'#231'o'
             ID = 5
             ParentID = -1
@@ -166,6 +179,7 @@ inherited vCadastroFornecedorFrame: TvCadastroFornecedorFrame
     end
   end
   inherited adqPadrao: TADOQuery
+    OnNewRecord = adqPadraoNewRecord
     SQL.Strings = (
       'select * from fornecedor'
       'where 1=1')
@@ -262,6 +276,8 @@ inherited vCadastroFornecedorFrame: TvCadastroFornecedorFrame
       Size = 10
     end
     object adqBairronmbairro: TWideStringField
+      DisplayLabel = 'Bairro'
+      DisplayWidth = 80
       FieldName = 'nmbairro'
       Size = 250
     end
