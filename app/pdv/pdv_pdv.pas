@@ -474,13 +474,15 @@ begin
     btnGravarClick(btnGravar);
     
     AtualizacdsPedido;
-    cdsAddPedido.Filtered := False;
     if not Impressao_Nao_Fiscal.Verif_Impressora then
     begin
       if not Confirma(DESEJA_CONTINUAR_PEDIDO) then
         Exit;
     end else
+    begin
+      cdsAddPedido.Filtered := False;
       Impressao_Nao_Fiscal.Layout_Finaliza_Pedido(cdsPedidoImpressao, cdsItemPedido, cdsAddPedido);
+    end;
     
     Acesso_Perifericos.AbreGaveta;
 

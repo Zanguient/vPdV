@@ -1892,6 +1892,10 @@ object frmAdicional: TfrmAdicional
       item
         Name = 'VRTOTAITEM'
         DataType = ftFloat
+      end
+      item
+        Name = 'VRVENDA'
+        DataType = ftFloat
       end>
     IndexDefs = <>
     Params = <>
@@ -1966,9 +1970,102 @@ object frmAdicional: TfrmAdicional
       '')
     Left = 560
     Top = 144
-    object AutoIncField1: TAutoIncField
-      FieldName = 'ID'
-      ReadOnly = True
+  end
+  object cdsAuxAddPedido: TClientDataSet
+    Active = True
+    Aggregates = <>
+    AggregatesActive = True
+    FieldDefs = <
+      item
+        Name = 'id'
+        DataType = ftInteger
+      end
+      item
+        Name = 'NMPRODUTO'
+        DataType = ftString
+        Size = 250
+      end
+      item
+        Name = 'QTITEM'
+        DataType = ftFloat
+      end
+      item
+        Name = 'VRUNITARIO'
+        DataType = ftFloat
+      end
+      item
+        Name = 'ITEMPEDIDO_ID'
+        DataType = ftInteger
+      end
+      item
+        Name = 'IMG'
+        DataType = ftLargeint
+      end
+      item
+        Name = 'VRTOTAITEM'
+        DataType = ftFloat
+      end
+      item
+        Name = 'QTGRATUI'
+        DataType = ftInteger
+      end>
+    IndexDefs = <>
+    Params = <>
+    StoreDefs = True
+    Left = 527
+    Top = 102
+    Data = {
+      AB0000009619E0BD010000001800000008000000000003000000AB0002696404
+      00010000000000094E4D50524F4455544F010049000000010005574944544802
+      000200FA000651544954454D08000400000000000A5652554E49544152494F08
+      000400000000000D4954454D50454449444F5F4944040001000000000003494D
+      4708000100000000000A5652544F54414954454D080004000000000008515447
+      524154554904000100000000000000}
+    object cdsAuxAddPedidoid: TIntegerField
+      FieldName = 'id'
+    end
+    object cdsAuxAddPedidoNMPRODUTO: TStringField
+      FieldName = 'NMPRODUTO'
+      Size = 250
+    end
+    object cdsAuxAddPedidoQTITEM: TFloatField
+      FieldName = 'QTITEM'
+      OnChange = cdsAddPedidoQTITEMChange
+    end
+    object cdsAuxAddPedidoVRUNITARIO: TFloatField
+      FieldName = 'VRUNITARIO'
+    end
+    object cdsAuxAddPedidoITEMPEDIDO_ID: TIntegerField
+      FieldName = 'ITEMPEDIDO_ID'
+    end
+    object cdsAuxAddPedidoIMG: TLargeintField
+      FieldName = 'IMG'
+    end
+    object cdsAuxAddPedidoVRTOTAITEM: TFloatField
+      FieldName = 'VRTOTAITEM'
+    end
+    object cdsAuxAddPedidoQTGRATUI: TIntegerField
+      FieldName = 'QTGRATUI'
+    end
+    object cdsAuxAddPedidoSUMQTITEM: TAggregateField
+      FieldName = 'SUMQTITEM'
+      Active = True
+      Expression = 'SUM(QTITEM)'
+    end
+    object cdsAuxAddPedidoSUMVRTOTAITEM: TAggregateField
+      FieldName = 'SUMVRTOTAITEM'
+      Active = True
+      Expression = 'SUM(VRTOTAITEM)'
+    end
+    object cdsAuxAddPedidoSUMVRTOTAL: TAggregateField
+      FieldName = 'SUMVRTOTAL'
+      Active = True
+      Expression = 'SUM(VRUNITARIO*QTITEM)'
+    end
+    object cdsAuxAddPedidoSUMQTGRATUI: TAggregateField
+      FieldName = 'SUMQTGRATUI'
+      Active = True
+      Expression = 'SUM(QTGRATUI)'
     end
   end
 end

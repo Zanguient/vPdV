@@ -65,7 +65,19 @@ type
     cdsAddPedidoSUMVRTOTAL: TAggregateField;
     cdsAddPedidoMAXID: TAggregateField;
     adqAuxAdicional: TADOQuery;
-    AutoIncField1: TAutoIncField;
+    cdsAuxAddPedido: TClientDataSet;
+    cdsAuxAddPedidoid: TIntegerField;
+    cdsAuxAddPedidoNMPRODUTO: TStringField;
+    cdsAuxAddPedidoQTITEM: TFloatField;
+    cdsAuxAddPedidoVRUNITARIO: TFloatField;
+    cdsAuxAddPedidoITEMPEDIDO_ID: TIntegerField;
+    cdsAuxAddPedidoIMG: TLargeintField;
+    cdsAuxAddPedidoVRTOTAITEM: TFloatField;
+    cdsAuxAddPedidoSUMVRTOTAL: TAggregateField;
+    cdsAuxAddPedidoSUMVRTOTAITEM: TAggregateField;
+    cdsAuxAddPedidoSUMQTITEM: TAggregateField;
+    cdsAuxAddPedidoQTGRATUI: TIntegerField;
+    cdsAuxAddPedidoSUMQTGRATUI: TAggregateField;
     procedure FormCreate(Sender: TObject);
     procedure btnCancelarClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -84,17 +96,20 @@ type
     procedure OnClickAdicionalPDV(Sender: TObject);
     procedure OnClickAgrupAdicionalPDV(Sender: TObject);
     function GetBlz: Boolean;
+    function ConfereGratuidade: Boolean;
   end;
 
 var
   frmAdicional: TfrmAdicional;
+//  boGratuitoOk: Boolean;
+  inQuantGratis: Integer;
 
 implementation
 
 {$R *.dfm}
 
 uses
-  lib_mensagem, lib_interface, uDmConexao, pdv_pdv;
+  lib_mensagem, lib_interface, uDmConexao, pdv_pdv, math;
 
 procedure TfrmAdicional.FormCreate(Sender: TObject);
 var
@@ -103,8 +118,35 @@ begin
   //Altera o tamanho do formulário para o tamanho da tela
   Height := Screen.Height;
   Width  := Screen.Width;
+//  boGratuitoOk := False;
+  cdsAuxAddPedido.EmptyDataSet;
 
   cdsAddPedido.Data := frmPDV_PDV.cdsAddPedido.Data;
+
+  cdsAddPedido.First;
+  while not cdsAddPedido.Eof do
+  begin
+    cdsAuxAddPedido.Insert;
+    cdsAuxAddPedidoid.AsInteger            := cdsAddPedidoid.AsInteger;
+    cdsAuxAddPedidoNMPRODUTO.AsString      := cdsAddPedidoNMPRODUTO.AsString;
+    cdsAuxAddPedidoQTITEM.AsFloat          := cdsAddPedidoQTITEM.AsFloat;
+    cdsAuxAddPedidoVRUNITARIO.AsFloat      := cdsAddPedidoVRUNITARIO.AsFloat;
+    cdsAuxAddPedidoITEMPEDIDO_ID.AsInteger := cdsAddPedidoITEMPEDIDO_ID.AsInteger;
+    cdsAuxAddPedidoIMG.AsInteger           := cdsAddPedidoIMG.AsInteger;
+    cdsAuxAddPedidoVRTOTAITEM.AsFloat      := cdsAddPedidoVRTOTAITEM.AsFloat;
+    cdsAuxAddPedidoQTGRATUI.AsInteger      := 0;
+    cdsAuxAddPedido.Post;
+
+    cdsAddPedido.Next;
+  end;
+
+  adqAuxAdicional.Close;
+  adqAuxAdicional.Parameters.ParamByName('P_CARDAPIO_ID').Value := frmPDV_PDV.cdsItemPedidoCARDAPIO_ID.AsInteger;
+  adqAuxAdicional.Open;
+  inQuantGratis := adqAuxAdicional.FieldByName('QTADICGRATIS').AsInteger;
+  adqAuxAdicional.Close;
+
+//  boGratuitoOk := ConfereGratuidade;
 
   DoubleBuffered := True;
   region := CreateRoundRectRgn(0, 0, width, height, 15, 15);
@@ -156,14 +198,35 @@ begin
 end;
 
 procedure TfrmAdicional.OnClickAdicionalPDV(Sender: TObject);
-begin                                                                           
+  function CalculaTotalItem: Double;
+  var
+    inQtdeItens: Integer;
+  begin
+    cdsAuxAddPedido.Locate('ID', cdsAddPedidoID.AsInteger, [loCaseInsensitive]);
+    if not VarIsNull(cdsAuxAddPedidoSUMQTITEM.Value) then
+      if RoundTo(StrToFloat(cdsAuxAddPedidoSUMQTITEM.Value),0) >= inQuantGratis then
+      begin
+        Result := cdsAdicionalVALOR.AsFloat;
+        Exit;
+      end;
+    if inQuantGratis > 0 then
+    begin
+      cdsAuxAddPedidoQTGRATUI.AsInteger := cdsAuxAddPedidoQTGRATUI.AsInteger+1;
+      Result := 0.0;
+    end else
+      Result := cdsAdicionalVALOR.AsFloat;
+  end;
+var
+  flValorCalculado: Double;
+begin
+//  boGratuitoOk := False;
   cdsAdicional.Locate('ID', (Sender as TcxButton).Tag, [loCaseInsensitive]);
   if cdsAddPedido.Locate('ID', cdsAdicionalID.AsInteger, [loCaseInsensitive]) then
   begin
     cdsAddPedido.Edit;
-    cdsAddPedidoQTITEM.AsFloat     := frmPDV_PDV.cdsAddPedidoQTITEM.AsFloat+1.0;
-    cdsAddPedidoVRUNITARIO.AsFloat   := cdsAdicionalVALOR.AsFloat;
-//    frmPDV_PDV.cdsAddPedidoV.AsFloat := frmPDV_PDV.cdsAddPedidoVRUNITARIO.AsFloat*frmPDV_PDV.cdsAddPedidoQTITEM.AsFloat;
+    cdsAddPedidoQTITEM.AsFloat     := cdsAddPedidoQTITEM.AsFloat+1.0;
+    cdsAddPedidoVRUNITARIO.AsFloat := cdsAdicionalVALOR.AsFloat;
+    cdsAddPedidoVRTOTAITEM.AsFloat := CalculaTotalItem;
     cdsAddPedido.Post;
   end else
   begin
@@ -171,9 +234,9 @@ begin
     cdsAddPedidoIMG.AsInteger        := 0;
     cdsAddPedidoid.AsInteger         := cdsAdicionalID.AsInteger;
     cdsAddPedidoVRUNITARIO.AsFloat   := cdsAdicionalVALOR.AsFloat;
-    cdsAddPedidoVRTOTAITEM.AsFloat   := cdsAdicionalVALOR.AsFloat;
-    cdsAddPedidoQTITEM.AsFloat       := 1.0;
     cdsAddPedidoITEMPEDIDO_ID.AsInteger := frmPDV_PDV.cdsITEMPEDIDOID.AsInteger;
+    cdsAddPedidoQTITEM.AsFloat       := 1.0;
+    cdsAddPedidoVRTOTAITEM.AsFloat   := CalculaTotalItem;
     cdsAddPedidoNMPRODUTO.AsString   := cdsAdicionalNMPRODUTO.AsString;
     cdsAddPedidoIMG.AsInteger        := 0;
     cdsAddPedido.Post;
@@ -262,11 +325,32 @@ begin
   FreeAndNil(cdsAddPedido);
   FreeAndNil(cdsAdicional);
   FreeAndNil(adqAdicional);
+  FreeAndNil(cdsAuxAddPedido);
 end;
 
 procedure TfrmAdicional.cdsAddPedidoQTITEMChange(Sender: TField);
 begin
-  cdsAddPedidoVRTOTAITEM.AsFloat := cdsAddPedidoVRUNITARIO.AsFloat*cdsAddPedidoQTITEM.AsFloat;
+  if cdsAddPedido.State in [dsEdit, dsInsert] then
+    cdsAddPedidoVRTOTAITEM.AsFloat := cdsAddPedidoVRUNITARIO.AsFloat*cdsAddPedidoQTITEM.AsFloat;
+end;
+
+function TfrmAdicional.ConfereGratuidade: Boolean;
+var
+  flAux: Double;
+begin
+  flAux := 0.0;
+  cdsAddPedido.DisableControls;
+  cdsAddPedido.First;
+  while not cdsAddPedido.Eof do
+  begin
+    if RoundTo((cdsAddPedidoQTITEM.AsFloat*cdsAddPedidoVRUNITARIO.AsFloat),-2) <> RoundTo(cdsAddPedidoVRTOTAITEM.AsFloat,-2) then
+    begin
+      flAux := flAux+cdsAddPedidoQTITEM.AsFloat-(cdsAddPedidoVRTOTAITEM.AsFloat/cdsAddPedidoVRUNITARIO.AsFloat);
+    end;
+    cdsAddPedido.Next;
+  end;
+  Result := (RoundTo(flAux,0) <= inQuantGratis);
+  cdsAddPedido.EnableControls;
 end;
 
 end.
