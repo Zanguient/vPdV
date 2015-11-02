@@ -20,7 +20,9 @@ uses
   cxGridDBBandedTableView, cxGridCustomTableView, cxGridTableView,
   cxGridDBTableView, cxClasses, cxGrid, DBClient,
   cxContainer, cxTextEdit, cxLabel, Provider, ADODB, cxButtonEdit, cxImage,
-  cxImageComboBox, ImgList, cxCalc, cxCurrencyEdit, cxGridCustomView;
+  cxImageComboBox, ImgList, cxCalc, cxCurrencyEdit, cxGridCustomView,
+  cxMaskEdit, cxDropDownEdit, cxLookupEdit, cxDBLookupEdit,
+  cxDBLookupComboBox, DBCtrls;
 
 type
   TParametros = Record
@@ -90,10 +92,7 @@ type
     lblTotal: TcxLabel;
     panDados: TPanel;
     lblTelefone: TcxLabel;
-    edtTelefone: TcxTextEdit;
-    edtNome: TcxTextEdit;
     lblNome: TcxLabel;
-    btnPesqCliente: TcxButton;
     dspAgrupAdicional: TDataSetProvider;
     dspCategoria: TDataSetProvider;
     dspItemCategoria: TDataSetProvider;
@@ -167,6 +166,23 @@ type
     cdsPedidoImpressaoVRPEDIDO: TCurrencyField;
     adqItemPedidoF: TADOQuery;
     dspItemPedidoF: TDataSetProvider;
+    adqCliente: TADOQuery;
+    dtsCliente: TDataSource;
+    adqClienteid: TAutoIncField;
+    adqClientenrinscjurd: TWideStringField;
+    adqClientenmcliente: TWideStringField;
+    adqClienteidentificador: TWideStringField;
+    adqClientetelcel: TWideStringField;
+    adqClientetelfixo: TWideStringField;
+    adqClientenmrua: TWideStringField;
+    adqClientecdnumero: TWideStringField;
+    adqClientecdcep: TWideStringField;
+    adqClientecdbairro_id: TIntegerField;
+    adqClienteid_web: TIntegerField;
+    adqClientedtcadastro: TDateTimeField;
+    adqClientecomplemento: TWideStringField;
+    edtTelefone: TcxLookupComboBox;
+    cxLookupComboBox1: TcxLookupComboBox;
     procedure FormShow(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     constructor PCreate(Form: TComponent; Parametros: TParametros); Overload;
@@ -226,7 +242,7 @@ begin
   btnGravar.Visible := FParametros.btnGravar_Visible;
   iGrava := Integer(not FParametros.btnGravar_Visible);
 
-  edtNome.Width := (panDados.Width - edtNome.Left) - btnPesqCliente.Width;
+  edtNome.Width := (panDados.Width - edtNome.Left);
 
   scbProduto.Height := Trunc(scbGrupo.Height/2)-scbTotalizador.Height;
 
@@ -285,6 +301,9 @@ begin
   DoubleBuffered := True;
   region := CreateRoundRectRgn(0, 0, width, height, 15, 15);
   SetWindowRgn(handle, region, true);
+
+  adqCliente.Close;
+  adqCliente.Open;
 end;
 
 procedure TfrmPDV_PDV.OnClickCategoriaPDV(Sender: TObject);
@@ -537,8 +556,16 @@ begin
       adqInsPedido.Parameters.ParamByName('P_IDTIPOPEDIDO').Value := Copy(FParametros.Caption,1,1);
       case AnsiIndexStr(UpperCase(Copy(FParametros.Caption,1,1)), ['M','D','B']) of
         1,2: begin
-              adqInsPedido.Parameters.ParamByName('P_CLIENTE_ID').Value := 1;
-              adqInsPedido.Parameters.ParamByName('P_NMCLIENTE').Value  := edtNome.Text;
+              if edtTelefone.EditValue <> '' then
+              begin
+                adqInsPedido.Parameters.ParamByName('P_NMCLIENTE').Value  := edtTelefone.Properties.ListColumns[1].Field.Value;
+                adqInsPedido.Parameters.ParamByName('P_CLIENTE_ID').Value  := edtTelefone.Properties.ListColumns[2].Field.Value;
+              end
+              else
+              begin
+                adqInsPedido.Parameters.ParamByName('P_NMCLIENTE').Value  := edtTelefone.Properties.ListColumns[0].Field.Value;
+                adqInsPedido.Parameters.ParamByName('P_CLIENTE_ID').Value  := edtTelefone.Properties.ListColumns[2].Field.Value;
+              end;
              end;
         0:   begin
                adqInsPedido.Parameters.ParamByName('P_MESA_ID').Value   := FParametros.Tag;

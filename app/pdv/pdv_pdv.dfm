@@ -1,6 +1,6 @@
 object frmPDV_PDV: TfrmPDV_PDV
-  Left = 287
-  Top = 119
+  Left = 270
+  Top = 163
   AlphaBlendValue = 250
   BorderIcons = []
   BorderStyle = bsNone
@@ -2335,58 +2335,6 @@ object frmPDV_PDV: TfrmPDV_PDV
           Style.IsFontAssigned = True
           Transparent = True
         end
-        object edtTelefone: TcxTextEdit
-          Left = 76
-          Top = 7
-          Hint = 'Total'
-          ParentFont = False
-          Properties.Alignment.Horz = taLeftJustify
-          Style.Font.Charset = DEFAULT_CHARSET
-          Style.Font.Color = clBackground
-          Style.Font.Height = -16
-          Style.Font.Name = 'MS Sans Serif'
-          Style.Font.Style = [fsBold]
-          Style.Shadow = False
-          Style.IsFontAssigned = True
-          StyleDisabled.BorderColor = clActiveCaption
-          StyleDisabled.Color = clSilver
-          StyleDisabled.TextColor = clBtnHighlight
-          StyleFocused.BorderColor = clRed
-          StyleFocused.Color = clBtnHighlight
-          StyleFocused.TextColor = clBackground
-          StyleHot.BorderColor = clBackground
-          StyleHot.Color = clSkyBlue
-          StyleHot.TextColor = clHighlightText
-          StyleHot.TextStyle = [fsBold]
-          TabOrder = 1
-          Width = 137
-        end
-        object edtNome: TcxTextEdit
-          Left = 275
-          Top = 7
-          Hint = 'Total'
-          ParentFont = False
-          Properties.Alignment.Horz = taLeftJustify
-          Style.Font.Charset = DEFAULT_CHARSET
-          Style.Font.Color = clBackground
-          Style.Font.Height = -16
-          Style.Font.Name = 'MS Sans Serif'
-          Style.Font.Style = [fsBold]
-          Style.Shadow = False
-          Style.IsFontAssigned = True
-          StyleDisabled.BorderColor = clActiveCaption
-          StyleDisabled.Color = clSilver
-          StyleDisabled.TextColor = clBtnHighlight
-          StyleFocused.BorderColor = clRed
-          StyleFocused.Color = clBtnHighlight
-          StyleFocused.TextColor = clBackground
-          StyleHot.BorderColor = clBackground
-          StyleHot.Color = clSkyBlue
-          StyleHot.TextColor = clHighlightText
-          StyleHot.TextStyle = [fsBold]
-          TabOrder = 2
-          Width = 296
-        end
         object lblNome: TcxLabel
           Left = 221
           Top = 7
@@ -2401,17 +2349,53 @@ object frmPDV_PDV: TfrmPDV_PDV
           Style.IsFontAssigned = True
           Transparent = True
         end
-        object btnPesqCliente: TcxButton
-          Left = 331
-          Top = 0
-          Width = 30
-          Height = 41
-          Caption = '...'
-          TabOrder = 4
-          Align = alRight
-          SpeedButtonOptions.CanBeFocused = False
-          SpeedButtonOptions.Flat = True
-          SpeedButtonOptions.Transparent = True
+        object edtTelefone: TcxLookupComboBox
+          Left = 75
+          Top = 10
+          AutoSize = False
+          Properties.DropDownAutoSize = True
+          Properties.GridMode = True
+          Properties.KeyFieldNames = 'id'
+          Properties.ListColumns = <
+            item
+              FieldName = 'telfixo'
+            end
+            item
+              FieldName = 'nmcliente'
+            end
+            item
+              FieldName = 'id'
+            end>
+          Properties.ListSource = dtsCliente
+          Properties.MaxLength = 250
+          EditValue = ''
+          TabOrder = 2
+          Height = 28
+          Width = 145
+        end
+        object cxLookupComboBox1: TcxLookupComboBox
+          Left = 268
+          Top = 10
+          AutoSize = False
+          Properties.DropDownAutoSize = True
+          Properties.GridMode = True
+          Properties.KeyFieldNames = 'id'
+          Properties.ListColumns = <
+            item
+              FieldName = 'telfixo'
+            end
+            item
+              FieldName = 'nmcliente'
+            end
+            item
+              FieldName = 'id'
+            end>
+          Properties.ListSource = dtsCliente
+          Properties.MaxLength = 250
+          EditValue = ''
+          TabOrder = 3
+          Height = 28
+          Width = 533
         end
       end
     end
@@ -28199,5 +28183,70 @@ object frmPDV_PDV: TfrmPDV_PDV
     DataSet = adqItemPedidoF
     Left = 615
     Top = 328
+  end
+  object adqCliente: TADOQuery
+    Connection = dmConexao.adoConexaoBd
+    Parameters = <>
+    SQL.Strings = (
+      'SELECT * from cliente')
+    Left = 752
+    Top = 40
+    object adqClienteid: TAutoIncField
+      FieldName = 'id'
+    end
+    object adqClientenrinscjurd: TWideStringField
+      FieldName = 'nrinscjurd'
+    end
+    object adqClientenmcliente: TWideStringField
+      DisplayLabel = 'Cliente'
+      DisplayWidth = 50
+      FieldName = 'nmcliente'
+      Size = 250
+    end
+    object adqClienteidentificador: TWideStringField
+      FieldName = 'identificador'
+      Size = 1
+    end
+    object adqClientetelcel: TWideStringField
+      DisplayLabel = 'Telefone'
+      FieldName = 'telcel'
+      Size = 15
+    end
+    object adqClientetelfixo: TWideStringField
+      DisplayLabel = 'Telefone'
+      DisplayWidth = 30
+      FieldName = 'telfixo'
+      Size = 15
+    end
+    object adqClientenmrua: TWideStringField
+      FieldName = 'nmrua'
+      Size = 200
+    end
+    object adqClientecdnumero: TWideStringField
+      FieldName = 'cdnumero'
+      Size = 30
+    end
+    object adqClientecdcep: TWideStringField
+      FieldName = 'cdcep'
+      Size = 10
+    end
+    object adqClientecdbairro_id: TIntegerField
+      FieldName = 'cdbairro_id'
+    end
+    object adqClienteid_web: TIntegerField
+      FieldName = 'id_web'
+    end
+    object adqClientedtcadastro: TDateTimeField
+      FieldName = 'dtcadastro'
+    end
+    object adqClientecomplemento: TWideStringField
+      FieldName = 'complemento'
+      Size = 255
+    end
+  end
+  object dtsCliente: TDataSource
+    DataSet = adqCliente
+    Left = 783
+    Top = 41
   end
 end
