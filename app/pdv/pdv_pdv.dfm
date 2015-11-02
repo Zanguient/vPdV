@@ -2438,7 +2438,7 @@ object frmPDV_PDV: TfrmPDV_PDV
         object gdbAddPedidoColumn1: TcxGridDBColumn
           Caption = 'Adicional'
           DataBinding.FieldName = 'NMPRODUTO'
-          Width = 264
+          Width = 244
         end
         object gdbAddPedidoColumn2: TcxGridDBColumn
           Caption = 'Quantidade'
@@ -2463,7 +2463,7 @@ object frmPDV_PDV: TfrmPDV_PDV
           PropertiesClassName = 'TcxCurrencyEditProperties'
           Properties.DisplayFormat = '0.00;-0.00'
           Properties.MaxLength = 13
-          Width = 100
+          Width = 95
         end
       end
       object dbgAdicionalDBBandedTableView1: TcxGridDBBandedTableView
@@ -2937,7 +2937,11 @@ object frmPDV_PDV: TfrmPDV_PDV
         DataType = ftFloat
       end
       item
-        Name = 'VRVENDA'
+        Name = 'QTGRATUI'
+        DataType = ftInteger
+      end
+      item
+        Name = 'VRADICIONAL'
         DataType = ftFloat
       end>
     IndexDefs = <>
@@ -2946,12 +2950,13 @@ object frmPDV_PDV: TfrmPDV_PDV
     Left = 847
     Top = 222
     Data = {
-      AA0000009619E0BD010000001800000008000000000003000000AA0002696404
+      BF0000009619E0BD010000001800000009000000000003000000BF0002696404
       00010000000000094E4D50524F4455544F010049000000010005574944544802
       000200FA000651544954454D08000400000000000A5652554E49544152494F08
       000400000000000D4954454D50454449444F5F4944040001000000000003494D
-      4708000100000000000A5652544F54414954454D080004000000000007565256
-      454E444108000400000000000000}
+      4708000100000000000A5652544F54414954454D080004000000000008515447
+      524154554904000100000000000B565241444943494F4E414C08000400000000
+      000000}
     object cdsAddPedidoid: TIntegerField
       FieldName = 'id'
     end
@@ -2973,6 +2978,12 @@ object frmPDV_PDV: TfrmPDV_PDV
     end
     object cdsAddPedidoVRTOTAITEM: TFloatField
       FieldName = 'VRTOTAITEM'
+    end
+    object cdsAddPedidoQTGRATUI: TIntegerField
+      FieldName = 'QTGRATUI'
+    end
+    object cdsAddPedidoVRADICIONAL: TFloatField
+      FieldName = 'VRADICIONAL'
     end
     object cdsAddPedidoSUMVRTOTAL: TAggregateField
       FieldName = 'SUMVRTOTAL'
@@ -27840,7 +27851,7 @@ object frmPDV_PDV: TfrmPDV_PDV
         Name = 'P_PEDIDO_ID'
         Attributes = [paNullable]
         DataType = ftString
-        NumericScale = 136
+        NumericScale = 8
         Precision = 255
         Size = 255
         Value = Null
@@ -27848,7 +27859,8 @@ object frmPDV_PDV: TfrmPDV_PDV
     SQL.Strings = (
       
         'SELECT IA.ITEM_ID ID, P.NMPRODUTO, IA.QTITEM, IA.VALOR VRUNITARI' +
-        'O, IA.VRVENDA VRTOTAITEM, IA.ITEMPEDIDO_ID, 0 IMG'
+        'O, IA.VRVENDA VRTOTAITEM, IA.ITEMPEDIDO_ID, 0 IMG,'
+      '       IA.ITEM_ID QTGRATUI, IA.VALOR VRADICIONAL'
       
         '  FROM ADICIONAIS A INNER JOIN ITADICIONAL IA ON A.ID = IA.ITEM_' +
         'ID'

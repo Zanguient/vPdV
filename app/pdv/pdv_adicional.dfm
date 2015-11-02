@@ -1894,21 +1894,33 @@ object frmAdicional: TfrmAdicional
         DataType = ftFloat
       end
       item
-        Name = 'VRVENDA'
+        Name = 'VRADICIONAL'
         DataType = ftFloat
+      end
+      item
+        Name = 'QTGRATUI'
+        DataType = ftInteger
       end>
-    IndexDefs = <>
+    IndexDefs = <
+      item
+        Name = 'cdsAddPedidoIndex1'
+        DescFields = 'VRADICIONAL'
+        Fields = 'VRADICIONAL'
+        Options = [ixDescending]
+      end>
+    IndexName = 'cdsAddPedidoIndex1'
     Params = <>
     StoreDefs = True
     Left = 559
     Top = 102
     Data = {
-      AA0000009619E0BD010000001800000008000000000003000000AA0002696404
+      BF0000009619E0BD010000001800000009000000000003000000BF0002696404
       00010000000000094E4D50524F4455544F010049000000010005574944544802
       000200FA000651544954454D08000400000000000A5652554E49544152494F08
       000400000000000D4954454D50454449444F5F4944040001000000000003494D
-      4708000100000000000A5652544F54414954454D080004000000000007565256
-      454E444108000400000000000000}
+      4708000100000000000A5652544F54414954454D08000400000000000B565241
+      444943494F4E414C080004000000000008515447524154554904000100000000
+      000000}
     object cdsAddPedidoid: TIntegerField
       FieldName = 'id'
     end
@@ -1918,7 +1930,6 @@ object frmAdicional: TfrmAdicional
     end
     object cdsAddPedidoQTITEM: TFloatField
       FieldName = 'QTITEM'
-      OnChange = cdsAddPedidoQTITEMChange
     end
     object cdsAddPedidoVRUNITARIO: TFloatField
       FieldName = 'VRUNITARIO'
@@ -1932,6 +1943,12 @@ object frmAdicional: TfrmAdicional
     object cdsAddPedidoVRTOTAITEM: TFloatField
       FieldName = 'VRTOTAITEM'
     end
+    object cdsAddPedidoVRADICIONAL: TFloatField
+      FieldName = 'VRADICIONAL'
+    end
+    object cdsAddPedidoQTGRATUI: TIntegerField
+      FieldName = 'QTGRATUI'
+    end
     object cdsAddPedidoSUMVRTOTAL: TAggregateField
       FieldName = 'SUMVRTOTAL'
       Active = True
@@ -1941,6 +1958,21 @@ object frmAdicional: TfrmAdicional
       FieldName = 'MAXID'
       Active = True
       Expression = 'MAX(ID)'
+    end
+    object cdsAddPedidoSUMQTITEM: TAggregateField
+      FieldName = 'SUMQTITEM'
+      Active = True
+      Expression = 'SUM(QTITEM)'
+    end
+    object cdsAddPedidoSUMVRTOTAITEM: TAggregateField
+      FieldName = 'SUMVRTOTAITEM'
+      Active = True
+      Expression = 'SUM(VRTOTAITEM)'
+    end
+    object cdsAddPedidoSUMQTGRATUI: TAggregateField
+      FieldName = 'SUMQTGRATUI'
+      Active = True
+      Expression = 'SUM(QTGRATUI)'
     end
   end
   object adqAuxAdicional: TADOQuery
@@ -1970,123 +2002,6 @@ object frmAdicional: TfrmAdicional
       '')
     Left = 560
     Top = 142
-  end
-  object cdsAuxAddPedido: TClientDataSet
-    Active = True
-    Aggregates = <>
-    AggregatesActive = True
-    FieldDefs = <
-      item
-        Name = 'id'
-        DataType = ftInteger
-      end
-      item
-        Name = 'NMPRODUTO'
-        DataType = ftString
-        Size = 250
-      end
-      item
-        Name = 'QTITEM'
-        DataType = ftFloat
-      end
-      item
-        Name = 'VRUNITARIO'
-        DataType = ftFloat
-      end
-      item
-        Name = 'ITEMPEDIDO_ID'
-        DataType = ftInteger
-      end
-      item
-        Name = 'IMG'
-        DataType = ftLargeint
-      end
-      item
-        Name = 'VRTOTAITEM'
-        DataType = ftFloat
-      end
-      item
-        Name = 'QTGRATUI'
-        DataType = ftInteger
-      end
-      item
-        Name = 'VRADICIONAL'
-        DataType = ftFloat
-      end>
-    IndexDefs = <
-      item
-        Name = 'DEFAULT_ORDER'
-      end
-      item
-        Name = 'CHANGEINDEX'
-      end
-      item
-        Name = 'cdsAuxAddPedidoIndex3'
-        DescFields = 'VRADICIONAL'
-        Fields = 'VRADICIONAL'
-        Options = [ixDescending]
-      end>
-    IndexName = 'cdsAuxAddPedidoIndex3'
-    Params = <>
-    StoreDefs = True
-    Left = 527
-    Top = 102
-    Data = {
-      BF0000009619E0BD010000001800000009000000000003000000BF0002696404
-      00010000000000094E4D50524F4455544F010049000000010005574944544802
-      000200FA000651544954454D08000400000000000A5652554E49544152494F08
-      000400000000000D4954454D50454449444F5F4944040001000000000003494D
-      4708000100000000000A5652544F54414954454D080004000000000008515447
-      524154554904000100000000000B565241444943494F4E414C08000400000000
-      000000}
-    object cdsAuxAddPedidoid: TIntegerField
-      FieldName = 'id'
-    end
-    object cdsAuxAddPedidoNMPRODUTO: TStringField
-      FieldName = 'NMPRODUTO'
-      Size = 250
-    end
-    object cdsAuxAddPedidoQTITEM: TFloatField
-      FieldName = 'QTITEM'
-    end
-    object cdsAuxAddPedidoVRUNITARIO: TFloatField
-      FieldName = 'VRUNITARIO'
-    end
-    object cdsAuxAddPedidoITEMPEDIDO_ID: TIntegerField
-      FieldName = 'ITEMPEDIDO_ID'
-    end
-    object cdsAuxAddPedidoIMG: TLargeintField
-      FieldName = 'IMG'
-    end
-    object cdsAuxAddPedidoVRTOTAITEM: TFloatField
-      FieldName = 'VRTOTAITEM'
-    end
-    object cdsAuxAddPedidoQTGRATUI: TIntegerField
-      FieldName = 'QTGRATUI'
-    end
-    object cdsAuxAddPedidoVRADICIONAL: TFloatField
-      FieldName = 'VRADICIONAL'
-    end
-    object cdsAuxAddPedidoSUMQTITEM: TAggregateField
-      FieldName = 'SUMQTITEM'
-      Active = True
-      Expression = 'SUM(QTITEM)'
-    end
-    object cdsAuxAddPedidoSUMVRTOTAITEM: TAggregateField
-      FieldName = 'SUMVRTOTAITEM'
-      Active = True
-      Expression = 'SUM(VRTOTAITEM)'
-    end
-    object cdsAuxAddPedidoSUMVRTOTAL: TAggregateField
-      FieldName = 'SUMVRTOTAL'
-      Active = True
-      Expression = 'SUM(VRUNITARIO*QTITEM)'
-    end
-    object cdsAuxAddPedidoSUMQTGRATUI: TAggregateField
-      FieldName = 'SUMQTGRATUI'
-      Active = True
-      Expression = 'SUM(QTGRATUI)'
-    end
   end
   object cdsAuxAdicional: TClientDataSet
     Active = True

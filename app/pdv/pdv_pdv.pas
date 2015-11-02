@@ -183,6 +183,8 @@ type
     adqClientecomplemento: TWideStringField;
     edtTelefone: TcxLookupComboBox;
     edtNome: TcxLookupComboBox;
+    cdsAddPedidoVRADICIONAL: TFloatField;
+    cdsAddPedidoQTGRATUI: TIntegerField;
     procedure FormShow(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     constructor PCreate(Form: TComponent; Parametros: TParametros); Overload;
