@@ -47,6 +47,8 @@ uses Windows, Messages, SysUtils, Variants, Classes, ADODB, uDmConexao, DBClient
       procedure SetParams;
       procedure SetNewValueParamUp;
     public
+      FNomesParamAdic: array of string;
+      FValoresParamAdic: array of Variant;
       procedure AddIgnoreParam(Param : String);
       procedure ClearIgnoreParam;
       procedure AddParametro(const field : string; valor : variant; comparador : String = '=');
@@ -67,6 +69,7 @@ uses Windows, Messages, SysUtils, Variants, Classes, ADODB, uDmConexao, DBClient
       procedure Last;
       procedure First;
       procedure SetParamsToNewValueUp(const onlyIgnored : Boolean);
+      function ParamCount: Integer;
 
       function IsEmpty : Boolean;
       function Eof : Boolean;
@@ -195,6 +198,14 @@ begin
       end;
       Fquery.Parameters.ParamByName(key).Value := FParametros.GetValue(contador);
     end
+  end;
+
+  for contador:= 0 to Length(FNomesParamAdic) - 1 do
+  begin
+    case VarType(FValoresParamAdic[contador]) of
+      varDate: Fquery.Parameters.ParamByName(FNomesParamAdic[contador]).ParameterObject.Type_:= adDBTimeStamp ;
+    end;
+    Fquery.Parameters.ParamByName(FNomesParamAdic[contador]).Value := FValoresParamAdic[contador];
   end;
 end;
 
@@ -395,6 +406,11 @@ end;
 function TObjetoDB.Eof: Boolean;
 begin
    Result:= Fquery.Eof;
+end;
+
+function TObjetoDB.ParamCount: Integer;
+begin
+  Result:= FParametros.Count + Length(FNomesParamAdic)
 end;
 
 { TMapaValor }

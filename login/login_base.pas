@@ -161,7 +161,7 @@ var
 begin
   FLogado := False;
 
-  CadastrosIniciais := TCadastrosIniciais.Create;
+{  CadastrosIniciais := TCadastrosIniciais.Create;
   try
     try
       CadastrosIniciais.Executar;
@@ -170,12 +170,12 @@ begin
       FidUnidade := CadastrosIniciais.FidUnidade;
       FNomeEmpresa := CadastrosIniciais.FNomeEmpresa;
       FNomeUnidade := CadastrosIniciais.FNomeUnidade;
-    except                 
+    except
       //cala boca
     end
   finally
     FreeAndNil(CadastrosIniciais);
-  end;
+  end;}
 
   if Trim(edtUsuario.Text) = EmptyStr then
   begin
@@ -202,7 +202,7 @@ begin
     FUsuario := usrAcesso.Usuario;
     FIdFuncionario := usrAcesso.IdUsuario;
 
-    TSincronizarTabelas.Sincronizar(False, );
+    TSincronizarTabelas.Sincronizar(False);
   finally
     FreeAndNil(usrAcesso);
   end;

@@ -360,7 +360,7 @@ CREATE TABLE pedido
   nmcliente character varying(250),
   mesa_id integer null,
   vrpedido FLOAT(14,2) NOT NULL,
-  idstatusped character varying(1) NOT NULL check(idstatusped in ('P', 'C')),/*pendente, concluido*/
+  idstatusped character varying(1) NOT NULL check(idstatusped in ('F', 'C', 'A')),/*pendente, concluido*/
   CONSTRAINT pedido_pkey PRIMARY KEY (id),
   CONSTRAINT mesa_id_refs_id_8a44dbc3 FOREIGN KEY (mesa_id)
       REFERENCES mesa(id),
@@ -437,25 +437,25 @@ CREATE INDEX frentecaixa_itadicional_itempedido_id ON itadicional(itempedido_id)
 CREATE TABLE funcionario
 (
   id integer NOT NULL AUTO_INCREMENT,
-  dtcadastro date,
+  dtcadastro datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   nome character varying(255) NOT NULL,
   usuario character varying(255) NOT NULL,
-  sexo character varying(1) NOT NULL,
-  dtnascimento date NOT NULL,
+  sexo character varying(1) NULL,
+  dtnascimento date NULL,
   email character varying(255) NOT NULL,
   senha character varying(128) NOT NULL,
   confsenha character varying(128) NOT NULL,
-  endereco character varying(255) NOT NULL,
-  numero character varying(20) NOT NULL,
+  endereco character varying(255) NULL,
+  numero character varying(20) NULL,
   complemento character varying(255),
   cep character varying(9),
-  pais_id integer NOT NULL,
-  estado_id integer NOT NULL,
-  cidade_id integer NOT NULL,
+  pais_id integer NULL,
+  estado_id integer NULL,
+  cidade_id integer NULL,
   bairro_id integer,
   dtadmissao date,
   dtdemissao date,
-  pessoa character varying(2) NOT NULL,
+  pessoa character varying(2) NULL,
   CONSTRAINT funcionario_pkey PRIMARY KEY (id),
   CONSTRAINT funcionario_bairro_id_fkey FOREIGN KEY (bairro_id)
       REFERENCES bairro (id),
@@ -570,6 +570,24 @@ CREATE TABLE itemproduto (
 );
 
 
+CREATE TABLE CotroleSincronizacao(
+  id integer NOT NULL AUTO_INCREMENT,
+  dtsincronizacao DATETIME NOT NULL,
+  Status character varying(1) NULL check (Status in ('S', 'E')),
+  Log character varying(500) NULL,
+  constraint CotroleSincronizacao_pkey PRIMARY KEY(ID)
+);
+
+
+
+CREATE TABLE ParametrosSincronizacao(
+  id integer NOT NULL AUTO_INCREMENT,
+  IntervaloHora INTEGER NOT NULL DEFAULT 24,
+  IntervaloMinuto INTEGER NOT NULL DEFAULT 0,
+  IpSincronizacao character varying(255) NOT NULL,
+  constraint ParametrosSincronizacao_pkey PRIMARY KEY(id)
+);
+
 
 alter table endereco add complemento character varying(255) NULL;
 alter table empresa add id_web integer NULL;
@@ -592,7 +610,7 @@ alter table ComposicaoProd add id_web integer NULL;
 alter table ItemCategoria add id_web integer NULL;
 alter table itagrupadicional add id_web integer NULL;
 alter table mesa add id_web integer NULL;
-alter table cliente add dtcadastro datetime not NULL DEFAULT CURRENT_TIMESTAMP;
+alter table cliente add dtcadastro datetime NOT NULL DEFAULT CURRENT_TIMESTAMP;
 alter table fornecedor add dtcadastro datetime not NULL DEFAULT CURRENT_TIMESTAMP;
 
 ALTER TABLE ITEMPEDIDO ADD Produto_id integer NOT NULL;
@@ -620,3 +638,82 @@ ALTER TABLE PEDIDO ADD dsmotivo TEXT NULL;
 ALTER TABLE mesa ADD idstatus character varying(1) NOT NULL  default 'L' check(idstatus in ('L', 'O'));
 
 
+ALTER TABLE aberfechcaixa ADD DtCreated datetime NOT NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE adicionais ADD DtCreated datetime NOT NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE agrupadicional ADD DtCreated datetime NOT NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE almoxarifado ADD DtCreated datetime NOT NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE bairro ADD DtCreated datetime NOT NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE caixa ADD DtCreated datetime NOT NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE categoria ADD DtCreated datetime NOT NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE cidade ADD DtCreated datetime NOT NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE cliente ADD DtCreated datetime NOT NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE composicaoprod ADD DtCreated datetime NOT NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE cotrolesincronizacao ADD DtCreated datetime NOT NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE empresa ADD DtCreated datetime NOT NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE endereco ADD DtCreated datetime NOT NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE entrada ADD DtCreated datetime NOT NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE estado ADD DtCreated datetime NOT NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE finalidade ADD DtCreated datetime NOT NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE fornecedor ADD DtCreated datetime NOT NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE funcionario ADD DtCreated datetime NOT NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE itadicional ADD DtCreated datetime NOT NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE itagrupadicional ADD DtCreated datetime NOT NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE itemcategoria ADD DtCreated datetime NOT NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE itempedido ADD DtCreated datetime NOT NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE itemproduto ADD DtCreated datetime NOT NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE lote ADD DtCreated datetime NOT NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE mesa ADD DtCreated datetime NOT NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE movcaixa ADD DtCreated datetime NOT NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE pais ADD DtCreated datetime NOT NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE parametrossincronizacao ADD DtCreated datetime NOT NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE pedido ADD DtCreated datetime NOT NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE permusr ADD DtCreated datetime NOT NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE posestoque ADD DtCreated datetime NOT NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE produto ADD DtCreated datetime NOT NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE rotina ADD DtCreated datetime NOT NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE saida ADD DtCreated datetime NOT NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE unidade ADD DtCreated datetime NOT NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE unimedida ADD DtCreated datetime NOT NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE aberfechcaixa ADD ModifiedTime TIMESTAMP;
+ALTER TABLE adicionais ADD ModifiedTime TIMESTAMP;
+ALTER TABLE agrupadicional ADD ModifiedTime TIMESTAMP;
+ALTER TABLE almoxarifado ADD ModifiedTime TIMESTAMP;
+ALTER TABLE bairro ADD ModifiedTime TIMESTAMP;
+ALTER TABLE caixa ADD ModifiedTime TIMESTAMP;
+ALTER TABLE categoria ADD ModifiedTime TIMESTAMP;
+ALTER TABLE cidade ADD ModifiedTime TIMESTAMP;
+ALTER TABLE cliente ADD ModifiedTime TIMESTAMP;
+ALTER TABLE composicaoprod ADD ModifiedTime TIMESTAMP;
+ALTER TABLE cotrolesincronizacao ADD ModifiedTime TIMESTAMP;
+ALTER TABLE empresa ADD ModifiedTime TIMESTAMP;
+ALTER TABLE endereco ADD ModifiedTime TIMESTAMP;
+ALTER TABLE entrada ADD ModifiedTime TIMESTAMP;
+ALTER TABLE estado ADD ModifiedTime TIMESTAMP;
+ALTER TABLE finalidade ADD ModifiedTime TIMESTAMP;
+ALTER TABLE fornecedor ADD ModifiedTime TIMESTAMP;
+ALTER TABLE funcionario ADD ModifiedTime TIMESTAMP;
+ALTER TABLE itadicional ADD ModifiedTime TIMESTAMP;
+ALTER TABLE itagrupadicional ADD ModifiedTime TIMESTAMP;
+ALTER TABLE itemcategoria ADD ModifiedTime TIMESTAMP;
+ALTER TABLE itempedido ADD ModifiedTime TIMESTAMP;
+ALTER TABLE itemproduto ADD ModifiedTime TIMESTAMP;
+ALTER TABLE lote ADD ModifiedTime TIMESTAMP;
+ALTER TABLE mesa ADD ModifiedTime TIMESTAMP;
+ALTER TABLE movcaixa ADD ModifiedTime TIMESTAMP;
+ALTER TABLE pais ADD ModifiedTime TIMESTAMP;
+ALTER TABLE parametrossincronizacao ADD ModifiedTime TIMESTAMP;
+ALTER TABLE pedido ADD ModifiedTime TIMESTAMP;
+ALTER TABLE permusr ADD ModifiedTime TIMESTAMP;
+ALTER TABLE posestoque ADD ModifiedTime TIMESTAMP;
+ALTER TABLE produto ADD ModifiedTime TIMESTAMP;
+ALTER TABLE rotina ADD ModifiedTime TIMESTAMP;
+ALTER TABLE saida ADD ModifiedTime TIMESTAMP;
+ALTER TABLE unidade ADD ModifiedTime TIMESTAMP;
+ALTER TABLE unimedida ADD ModifiedTime TIMESTAMP;
+ALTER TABLE Pedido ADD id_web INTEGER NULL;
+ALTER TABLE ItemPedido ADD id_web INTEGER NULL;
+ALTER TABLE ItAdicional ADD id_web INTEGER NULL;
+ALTER TABLE AberFechCaixa ADD id_web INTEGER NULL;
+ALTER TABLE MovCaixa ADD id_web INTEGER NULL;
+ALTER TABLE funcionario ADD id_web INTEGER NULL;
+ALTER TABLE itadicional add VrVenda FLOAT(14, 2) NOT NULL DEFAULT 0;

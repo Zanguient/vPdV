@@ -162,8 +162,8 @@ begin
       Exit;
     end;
 
-    tbEmpresa.AddParametro('nmempresa', 'Empresa Padr„oç');
-    tbEmpresa.AddParametro('dtcadastro', '2015-08-22');
+    tbEmpresa.AddParametro('nmempresa', 'Empresa Padraoç');
+    tbEmpresa.AddParametro('dtcadastro', FDataPadrao);
     tbEmpresa.Insert;
 
     tbEmpresa.Select(['id']);
@@ -232,15 +232,15 @@ begin
     tbFunc.AddParametro('email', 'vmsis@vmsis.com.br');
     tbFunc.AddParametro('senha', 'masterVMSIS123v');
     tbFunc.AddParametro('confsenha', 'masterVMSIS123v');
-    tbFunc.AddParametro('endereco', 'RUA 1');
-    tbFunc.AddParametro('numero', '1');
-    tbFunc.AddParametro('complemento', 'SEM COMPLEMENTO');
-    tbFunc.AddParametro('cep', '31300000');
-    tbFunc.AddParametro('pais_id', FidPais);
-    tbFunc.AddParametro('estado_id', FidEstado);
-    tbFunc.AddParametro('cidade_id', FIdCidade);
-    tbFunc.AddParametro('bairro_id', FidBairro);
-    tbFunc.AddParametro('dtadmissao', FDataPadrao);
+//    tbFunc.AddParametro('endereco', 'RUA 1');
+//    tbFunc.AddParametro('numero', '1');
+//    tbFunc.AddParametro('complemento', 'SEM COMPLEMENTO');
+//    tbFunc.AddParametro('cep', '31300000');
+//    tbFunc.AddParametro('pais_id', FidPais);
+//    tbFunc.AddParametro('estado_id', FidEstado);
+//    tbFunc.AddParametro('cidade_id', FIdCidade);
+//    tbFunc.AddParametro('bairro_id', FidBairro);
+//    tbFunc.AddParametro('dtadmissao', FDataPadrao);
     tbFunc.AddParametro('pessoa', 'J');
     tbFunc.Insert;
 
@@ -331,10 +331,10 @@ var
 begin
    FDataPadrao:= Date;
    AddEmpresa;
-   AddPaises;
-   AddEstados;
-   AddCidade;
-   AddAbairro;
+//   AddPaises;
+//   AddEstados;
+//   AddCidade;
+//   AddAbairro;
    AddFuncionario;
    AddAlmoxarifado;
    AddUnidade;
