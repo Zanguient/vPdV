@@ -214,14 +214,13 @@ begin
 end;
 
 procedure TfrmAdicional.OnClickAdicionalPDV(Sender: TObject);
-  //function CalculaTotalItem: Double;
   procedure CalculaTotalItem;
   var
     inAuxSUMQTGRATUI: Double;
   begin
     inAuxSUMQTGRATUI := 0.0;
     cdsAuxAdicional.First;
-    if not cdsAuxAdicional.Locate('PRODUTO_ID', cdsAdicionalid.AsInteger, [loCaseInsensitive]) then
+    if not cdsAuxAdicional.Locate('PRODUTO_ID', cdsAddPedidoid.AsInteger, [loCaseInsensitive]) then
     begin
       adqAuxAdicional.Close;
       adqAuxAdicional.Parameters.ParamByName('P_CARDAPIO_ID').Value := inCARDAPIO_ID;
@@ -235,7 +234,7 @@ procedure TfrmAdicional.OnClickAdicionalPDV(Sender: TObject);
     else
       inAuxSUMQTGRATUI := 0;
 
-    if not cdsAuxAddPedido.Locate('ID', cdsAddPedidoID.AsInteger, [loCaseInsensitive]) then
+    if not cdsAuxAddPedido.Locate('ID', cdsAdicionalID.AsInteger, [loCaseInsensitive]) then
     begin
       cdsAuxAddPedido.Insert;
       cdsAuxAddPedidoIMG.AsInteger        := 0;
@@ -255,43 +254,13 @@ procedure TfrmAdicional.OnClickAdicionalPDV(Sender: TObject);
         cdsAuxAddPedido.Edit;
         cdsAuxAddPedidoQTGRATUI.AsInteger := cdsAuxAddPedidoQTGRATUI.AsInteger+1;
         cdsAuxAddPedido.Post;
-        //Result := 0.0;
-      end else
-      begin
-        //Result := cdsAdicionalVALOR.AsFloat;
       end;
     end else
     begin
       cdsAuxAddPedido.Edit;
       cdsAuxAddPedidoQTGRATUI.AsInteger := cdsAuxAddPedidoQTGRATUI.AsInteger+1;
       cdsAuxAddPedido.Post;
-      //Result := 0.0;
     end;
-    
-    {if not VarIsNull(cdsAuxAddPedidoSUMQTITEM.Value) then
-      if RoundTo(StrToFloat(cdsAuxAddPedidoSUMQTGRATUI.Value),0) >= cdsAuxAdicionalQTADICGRATIS.AsInteger then
-      begin
-        if (cdsAuxAdicionalQTADICGRATIS.AsInteger-inAuxSUMQTGRATUI) = 0 then
-          Result := cdsAdicionalVALOR.AsFloat
-        else
-          Result := cdsAdicionalVALOR.AsFloat*(cdsAddPedidoQTITEM.AsInteger-cdsAuxAddPedidoQTGRATUI.AsInteger);
-        Exit;
-      end;
-    if (cdsAuxAdicionalQTADICGRATIS.AsInteger > 0) and
-       (inAuxSUMQTGRATUI < cdsAuxAdicionalQTADICGRATIS.AsInteger) then
-    begin
-      cdsAuxAddPedido.Edit;
-      cdsAuxAddPedidoQTGRATUI.AsInteger := cdsAuxAddPedidoQTGRATUI.AsInteger+1;
-      cdsAuxAddPedido.Post;
-      Result := 0.0;
-    end else
-    begin
-      if ((cdsAuxAdicionalQTADICGRATIS.AsInteger-inAuxSUMQTGRATUI) = 0) and
-         (RoundTo(cdsAddPedidoVRTOTAITEM.AsFloat,0) = 0) then
-        Result := cdsAdicionalVALOR.AsFloat
-      else
-        Result := cdsAdicionalVALOR.AsFloat*(cdsAddPedidoQTITEM.AsInteger-cdsAuxAddPedidoQTGRATUI.AsInteger);
-    end;}
   end;
 var
   flValorCalculado: Double;
@@ -300,22 +269,20 @@ begin
   cdsAdicional.Locate('ID', (Sender as TcxButton).Tag, [loCaseInsensitive]);
   if cdsAddPedido.Locate('ID', cdsAdicionalID.AsInteger, [loCaseInsensitive]) then
   begin
-    CalculaTotalItem;
     cdsAddPedido.Edit;
-    cdsAddPedidoQTITEM.AsFloat     := cdsAddPedidoQTITEM.AsFloat+1.0;
     cdsAddPedidoVRUNITARIO.AsFloat := cdsAdicionalVALOR.AsFloat;
-//    cdsAddPedidoVRTOTAITEM.AsFloat := CalculaTotalItem;
+    CalculaTotalItem;
+    cdsAddPedidoQTITEM.AsFloat     := cdsAddPedidoQTITEM.AsFloat+1.0;
     cdsAddPedido.Post;
   end else
   begin
-    CalculaTotalItem;
     cdsAddPedido.Insert;
     cdsAddPedidoIMG.AsInteger        := 0;
     cdsAddPedidoid.AsInteger         := cdsAdicionalID.AsInteger;
     cdsAddPedidoVRUNITARIO.AsFloat   := cdsAdicionalVALOR.AsFloat;
     cdsAddPedidoITEMPEDIDO_ID.AsInteger := frmPDV_PDV.cdsITEMPEDIDOID.AsInteger;
+    CalculaTotalItem;
     cdsAddPedidoQTITEM.AsFloat       := 1.0;
-//    cdsAddPedidoVRTOTAITEM.AsFloat   := CalculaTotalItem;
     cdsAddPedidoNMPRODUTO.AsString   := cdsAdicionalNMPRODUTO.AsString;
     cdsAddPedidoIMG.AsInteger        := 0;
     cdsAddPedido.Post;
@@ -411,7 +378,7 @@ procedure TfrmAdicional.cdsAddPedidoQTITEMChange(Sender: TField);
 begin
   cdsAuxAddPedido.Locate('ID', cdsAddPedidoID.AsInteger, [loCaseInsensitive]);
   if cdsAddPedido.State in [dsEdit, dsInsert] then
-    cdsAddPedidoVRTOTAITEM.AsFloat := cdsAddPedidoVRUNITARIO.AsFloat*(cdsAddPedidoQTITEM.AsFloat-cdsAuxAddPedidoQTGRATUI.AsFloat);
+    cdsAddPedidoVRTOTAITEM.AsFloat := cdsAddPedidoVRUNITARIO.AsFloat*(cdsAddPedidoQTITEM.AsInteger-cdsAuxAddPedidoQTGRATUI.AsInteger);
 end;
 
 function TfrmAdicional.ConfereGratuidade: Boolean;
