@@ -77,6 +77,9 @@ type
     cdsAddPedidoSUMQTITEM: TAggregateField;
     cdsAddPedidoSUMVRTOTAITEM: TAggregateField;
     cdsAddPedidoSUMQTGRATUI: TAggregateField;
+    cdsAddPedidoITEM_ID: TIntegerField;
+    cdsAddPedidoVRDESCONTO: TFloatField;
+    dbgAdicionalPedidoColumn5: TcxGridDBColumn;
     procedure FormCreate(Sender: TObject);
     procedure btnCancelarClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -86,6 +89,7 @@ type
       ACellViewInfo: TcxGridTableDataCellViewInfo; AButton: TMouseButton;
       AShift: TShiftState; var AHandled: Boolean);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure cdsAddPedidoCalcFields(DataSet: TDataSet);
   private
     { Private declarations }
     FOk: Boolean;
@@ -132,7 +136,7 @@ begin
   while not cdsAddPedido.Eof do
   begin
     cdsAuxAdicional.First;
-    cdsAuxAdicional.Locate('PRODUTO_ID', cdsAddPedidoid.AsInteger, [loCaseInsensitive]);
+    cdsAuxAdicional.Locate('PRODUTO_ID', cdsAddPedidoITEM_ID.AsInteger, [loCaseInsensitive]);
     cdsAddPedido.Edit;
     cdsAddPedidoQTGRATUI.AsInteger  := 0;
     cdsAddPedidoVRADICIONAL.AsFloat := cdsAuxAdicionalVRAGRUPADIC.AsFloat;
@@ -197,21 +201,21 @@ procedure TfrmAdicional.OnClickAdicionalPDV(Sender: TObject);
   begin
     cdsAddPedido.First;
     cdsAuxAdicional.First;
-    if not cdsAuxAdicional.Locate('PRODUTO_ID', cdsAddPedidoid.AsInteger, [loCaseInsensitive]) then
+    if not cdsAuxAdicional.Locate('PRODUTO_ID', cdsAddPedidoITEM_ID.AsInteger, [loCaseInsensitive]) then
     begin
       adqAuxAdicional.Close;
       adqAuxAdicional.Parameters.ParamByName('P_CARDAPIO_ID').Value := inCARDAPIO_ID;
       adqAuxAdicional.Open;
       cdsAuxAdicional.Data := dspAuxAdicional.Data;
       adqAuxAdicional.Close;
-      cdsAuxAdicional.Locate('PRODUTO_ID', cdsAddPedidoid.AsInteger, [loCaseInsensitive]);
+      cdsAuxAdicional.Locate('PRODUTO_ID', cdsAddPedidoITEM_ID.AsInteger, [loCaseInsensitive]);
     end;
     inQtdeGrat := cdsAuxAdicionalQTADICGRATIS.AsInteger;
 
     while not cdsAddPedido.Eof do
     begin
       cdsAuxAdicional.First;
-      cdsAuxAdicional.Locate('PRODUTO_ID', cdsAddPedidoid.AsInteger, [loCaseInsensitive]);
+      cdsAuxAdicional.Locate('PRODUTO_ID', cdsAddPedidoITEM_ID.AsInteger, [loCaseInsensitive]);
       
       cdsAddPedido.Edit;
       if inQtdeGrat > 0 then
@@ -226,7 +230,7 @@ procedure TfrmAdicional.OnClickAdicionalPDV(Sender: TObject);
         cdsAddPedidoVRADICIONAL.AsFloat := cdsAuxAdicionalVRAGRUPADIC.AsFloat;
       end;
       cdsAddPedido.Post;
-      
+
       Dec(inQtdeGrat);
       cdsAddPedido.Next;
     end;
@@ -238,7 +242,7 @@ begin
 
   cdsAddPedido.Insert;
   cdsAddPedidoIMG.AsInteger        := 0;
-  cdsAddPedidoid.AsInteger         := cdsAdicionalID.AsInteger;
+  cdsAddPedidoITEM_ID.AsInteger    := cdsAdicionalID.AsInteger;
   cdsAddPedidoVRUNITARIO.AsFloat   := cdsAdicionalVALOR.AsFloat;
   cdsAddPedidoITEMPEDIDO_ID.AsInteger := frmPDV_PDV.cdsITEMPEDIDOID.AsInteger;
   cdsAddPedidoQTITEM.AsFloat       := 1.0;
@@ -333,6 +337,14 @@ begin
   FreeAndNil(cdsAddPedido);
   FreeAndNil(cdsAdicional);
   FreeAndNil(adqAdicional);
+end;
+
+procedure TfrmAdicional.cdsAddPedidoCalcFields(DataSet: TDataSet);
+begin 
+  with DataSet do
+  begin
+    FieldByName('VRDESCONTO').AsFloat := FieldByName('VRUNITARIO').AsFloat - FieldByName('VRTOTAITEM').AsFloat;
+  end;
 end;
 
 end.

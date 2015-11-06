@@ -1671,6 +1671,7 @@ object frmAdicional: TfrmAdicional
           Properties.DecimalPlaces = 3
           Properties.DisplayFormat = '0.000;-0.000'
           Properties.MaxLength = 13
+          Visible = False
           Width = 89
         end
         object dbgAdicionalPedidoColumn3: TcxGridDBColumn
@@ -1687,7 +1688,16 @@ object frmAdicional: TfrmAdicional
           PropertiesClassName = 'TcxCurrencyEditProperties'
           Properties.DisplayFormat = '0.00;-0.00'
           Properties.MaxLength = 13
+          Visible = False
           Width = 99
+        end
+        object dbgAdicionalPedidoColumn5: TcxGridDBColumn
+          Caption = 'Desconto'
+          DataBinding.FieldName = 'VRDESCONTO'
+          PropertiesClassName = 'TcxCurrencyEditProperties'
+          Properties.DisplayFormat = '0.00;-0.00'
+          Properties.MaxLength = 13
+          Width = 82
         end
         object cdbgExcluir: TcxGridDBColumn
           DataBinding.FieldName = 'IMG'
@@ -1900,6 +1910,14 @@ object frmAdicional: TfrmAdicional
       item
         Name = 'QTGRATUI'
         DataType = ftInteger
+      end
+      item
+        Name = 'ITEM_ID'
+        DataType = ftInteger
+      end
+      item
+        Name = 'VRDESCONTO'
+        DataType = ftFloat
       end>
     IndexDefs = <
       item
@@ -1911,16 +1929,17 @@ object frmAdicional: TfrmAdicional
     IndexName = 'cdsAddPedidoIndex1'
     Params = <>
     StoreDefs = True
+    OnCalcFields = cdsAddPedidoCalcFields
     Left = 559
     Top = 102
     Data = {
-      BF0000009619E0BD010000001800000009000000000003000000BF0002696404
+      CF0000009619E0BD01000000180000000A000000000003000000CF0002696404
       00010000000000094E4D50524F4455544F010049000000010005574944544802
       000200FA000651544954454D08000400000000000A5652554E49544152494F08
       000400000000000D4954454D50454449444F5F4944040001000000000003494D
       4708000100000000000A5652544F54414954454D08000400000000000B565241
       444943494F4E414C080004000000000008515447524154554904000100000000
-      000000}
+      00074954454D5F494404000100000000000000}
     object cdsAddPedidoid: TIntegerField
       FieldName = 'id'
     end
@@ -1948,6 +1967,13 @@ object frmAdicional: TfrmAdicional
     end
     object cdsAddPedidoQTGRATUI: TIntegerField
       FieldName = 'QTGRATUI'
+    end
+    object cdsAddPedidoITEM_ID: TIntegerField
+      FieldName = 'ITEM_ID'
+    end
+    object cdsAddPedidoVRDESCONTO: TFloatField
+      FieldKind = fkInternalCalc
+      FieldName = 'VRDESCONTO'
     end
     object cdsAddPedidoSUMVRTOTAL: TAggregateField
       FieldName = 'SUMVRTOTAL'

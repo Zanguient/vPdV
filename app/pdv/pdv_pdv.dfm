@@ -2447,6 +2447,7 @@ object frmPDV_PDV: TfrmPDV_PDV
           Properties.DecimalPlaces = 3
           Properties.DisplayFormat = '0.000;-0.000'
           Properties.MaxLength = 13
+          Visible = False
           Width = 89
         end
         object gdbAddPedidoColumn3: TcxGridDBColumn
@@ -2463,7 +2464,16 @@ object frmPDV_PDV: TfrmPDV_PDV
           PropertiesClassName = 'TcxCurrencyEditProperties'
           Properties.DisplayFormat = '0.00;-0.00'
           Properties.MaxLength = 13
+          Visible = False
           Width = 95
+        end
+        object gdbAddPedidoColumn5: TcxGridDBColumn
+          Caption = 'Desconto'
+          DataBinding.FieldName = 'VRDESCONTO'
+          PropertiesClassName = 'TcxCurrencyEditProperties'
+          Properties.DisplayFormat = '0.00;-0.00'
+          Properties.MaxLength = 13
+          Width = 99
         end
       end
       object dbgAdicionalDBBandedTableView1: TcxGridDBBandedTableView
@@ -2943,20 +2953,37 @@ object frmPDV_PDV: TfrmPDV_PDV
       item
         Name = 'VRADICIONAL'
         DataType = ftFloat
+      end
+      item
+        Name = 'ITEM_ID'
+        DataType = ftInteger
+      end
+      item
+        Name = 'VRDESCONTO'
+        DataType = ftFloat
       end>
-    IndexDefs = <>
+    IndexDefs = <
+      item
+        Name = 'DEFAULT_ORDER'
+      end
+      item
+        Name = 'CHANGEINDEX'
+      end>
+    IndexFieldNames = 'VRTOTAITEM'
     Params = <>
     StoreDefs = True
+    OnCalcFields = cdsAddPedidoCalcFields
     Left = 847
     Top = 222
     Data = {
-      BF0000009619E0BD010000001800000009000000000003000000BF0002696404
+      E50000009619E0BD01000000180000000A000000000003000000E50002696404
       00010000000000094E4D50524F4455544F010049000000010005574944544802
       000200FA000651544954454D08000400000000000A5652554E49544152494F08
       000400000000000D4954454D50454449444F5F4944040001000000000003494D
       4708000100000000000A5652544F54414954454D080004000000000008515447
       524154554904000100000000000B565241444943494F4E414C08000400000000
-      000000}
+      00074954454D5F4944040001000000000001000D44454641554C545F4F524445
+      520200820000000000}
     object cdsAddPedidoid: TIntegerField
       FieldName = 'id'
     end
@@ -2984,6 +3011,13 @@ object frmPDV_PDV: TfrmPDV_PDV
     end
     object cdsAddPedidoVRADICIONAL: TFloatField
       FieldName = 'VRADICIONAL'
+    end
+    object cdsAddPedidoITEM_ID: TIntegerField
+      FieldName = 'ITEM_ID'
+    end
+    object cdsAddPedidoVRDESCONTO: TFloatField
+      FieldKind = fkInternalCalc
+      FieldName = 'VRDESCONTO'
     end
     object cdsAddPedidoSUMVRTOTAL: TAggregateField
       FieldName = 'SUMVRTOTAL'
@@ -27851,16 +27885,16 @@ object frmPDV_PDV: TfrmPDV_PDV
         Name = 'P_PEDIDO_ID'
         Attributes = [paNullable]
         DataType = ftString
-        NumericScale = 8
+        NumericScale = 120
         Precision = 255
         Size = 255
         Value = Null
       end>
     SQL.Strings = (
       
-        'SELECT IA.ITEM_ID ID, P.NMPRODUTO, IA.QTITEM, IA.VALOR VRUNITARI' +
-        'O, IA.VRVENDA VRTOTAITEM, IA.ITEMPEDIDO_ID, 0 IMG,'
-      '       IA.ITEM_ID QTGRATUI, IA.VALOR VRADICIONAL'
+        'SELECT IA.ID, P.NMPRODUTO, IA.QTITEM, IA.VALOR VRUNITARIO, IA.VR' +
+        'VENDA VRTOTAITEM, IA.ITEMPEDIDO_ID, 0 IMG,'
+      '       IA.ITEM_ID QTGRATUI, IA.VALOR VRADICIONAL, IA.ITEM_ID'
       
         '  FROM ADICIONAIS A INNER JOIN ITADICIONAL IA ON A.ID = IA.ITEM_' +
         'ID'
@@ -27892,16 +27926,16 @@ object frmPDV_PDV: TfrmPDV_PDV
         Name = 'P_ITEMPEDIDO_ID'
         Attributes = [paNullable]
         DataType = ftString
-        NumericScale = 32
+        NumericScale = 208
         Precision = 255
         Size = 255
         Value = Null
       end
       item
-        Name = 'P_ITEM_ID'
+        Name = 'P_ID'
         Attributes = [paNullable]
         DataType = ftString
-        NumericScale = 32
+        NumericScale = 208
         Precision = 255
         Size = 255
         Value = Null
@@ -27909,7 +27943,7 @@ object frmPDV_PDV: TfrmPDV_PDV
     SQL.Strings = (
       'DELETE FROM ITADICIONAL'
       ' WHERE ITEMPEDIDO_ID = :P_ITEMPEDIDO_ID'
-      '   AND ITEM_ID = :P_ITEM_ID')
+      '   AND ID = :P_ID')
     Left = 872
     Top = 406
   end
@@ -27920,25 +27954,25 @@ object frmPDV_PDV: TfrmPDV_PDV
         Name = 'P_QTITEM'
         Attributes = [paNullable]
         DataType = ftFloat
-        NumericScale = 80
+        NumericScale = 48
         Precision = 255
         Size = 255
-        Value = 0.000000000000000000
+        Value = '0'
       end
       item
         Name = 'P_VALOR'
         Attributes = [paNullable]
         DataType = ftFloat
-        NumericScale = 80
+        NumericScale = 48
         Precision = 255
         Size = 255
-        Value = 0.000000000000000000
+        Value = '0'
       end
       item
         Name = 'P_VRVENDA'
         Attributes = [paNullable]
         DataType = ftFloat
-        NumericScale = 80
+        NumericScale = 48
         Precision = 255
         Size = 255
         Value = Null
@@ -27947,16 +27981,16 @@ object frmPDV_PDV: TfrmPDV_PDV
         Name = 'P_ITEMPEDIDO_ID'
         Attributes = [paNullable]
         DataType = ftString
-        NumericScale = 80
+        NumericScale = 48
         Precision = 255
         Size = 255
         Value = Null
       end
       item
-        Name = 'P_ITEM_ID'
+        Name = 'P_ID'
         Attributes = [paNullable]
         DataType = ftString
-        NumericScale = 80
+        NumericScale = 48
         Precision = 255
         Size = 255
         Value = Null
@@ -27967,7 +28001,7 @@ object frmPDV_PDV: TfrmPDV_PDV
       '       VALOR  = :P_VALOR,'
       '       VRVENDA= :P_VRVENDA'
       ' WHERE ITEMPEDIDO_ID = :P_ITEMPEDIDO_ID'
-      '   AND ITEM_ID = :P_ITEM_ID')
+      '   AND ID = :P_ID')
     Left = 872
     Top = 375
   end

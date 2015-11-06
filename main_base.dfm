@@ -162,6 +162,7 @@ object frmMainBase: TfrmMainBase
       Caption = 'Sa'#237'da'
       Hint = 'Sa'#237'da de estoque'
       SmallImageIndex = 8
+      Visible = False
       CustomStyles.Item = sty_menu_lat_header
       CustomStyles.ItemDisabled = sty_menu_lat
       CustomStyles.ItemHotTracked = sty_menu_lat_hottra

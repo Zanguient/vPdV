@@ -185,6 +185,9 @@ type
     edtNome: TcxLookupComboBox;
     cdsAddPedidoVRADICIONAL: TFloatField;
     cdsAddPedidoQTGRATUI: TIntegerField;
+    cdsAddPedidoITEM_ID: TIntegerField;
+    cdsAddPedidoVRDESCONTO: TFloatField;
+    gdbAddPedidoColumn5: TcxGridDBColumn;
     procedure FormShow(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     constructor PCreate(Form: TComponent; Parametros: TParametros); Overload;
@@ -201,6 +204,7 @@ type
       ACellViewInfo: TcxGridTableDataCellViewInfo; AButton: TMouseButton;
       AShift: TShiftState; var AHandled: Boolean);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure cdsAddPedidoCalcFields(DataSet: TDataSet);
   private
     { Private declarations }
     FParametros: TParametros;
@@ -600,11 +604,11 @@ begin
       begin
         adqDelAddPedido.Close;
         adqDelAddPedido.Parameters.ParamByName('P_ITEMPEDIDO_ID').Value := cdsAddPedidoITEMPEDIDO_ID.AsInteger;
-        adqDelAddPedido.Parameters.ParamByName('P_ITEM_ID').Value := cdsAddPedidoID.AsInteger;
+        adqDelAddPedido.Parameters.ParamByName('P_ID').Value := cdsAddPedidoID.AsInteger;
         adqDelAddPedido.ExecSQL;
       end;
       cdsAddPedido.Next;
-    end;                                      
+    end;
     frmPDV_PDV.cdsAddPedido.Filtered := True;
 
     //ItemPedido
@@ -660,7 +664,7 @@ begin
               adqInsAdicionalPedido.Parameters.ParamByName('P_ITEMPEDIDO_ID').Value := cdsAddPedidoITEMPEDIDO_ID.AsInteger
             else                                                                                      
               adqInsAdicionalPedido.Parameters.ParamByName('P_ITEMPEDIDO_ID').Value := inItemPedido_ID;
-            adqInsAdicionalPedido.Parameters.ParamByName('P_ITEM_ID').Value       := cdsAddPedidoID.AsInteger;
+            adqInsAdicionalPedido.Parameters.ParamByName('P_ITEM_ID').Value       := cdsAddPedidoITEM_ID.AsInteger;
             adqInsAdicionalPedido.Parameters.ParamByName('P_QTITEM').Value        := cdsAddPedidoQTITEM.AsFloat;
             adqInsAdicionalPedido.Parameters.ParamByName('P_VALOR').Value         := cdsAddPedidoVRUNITARIO.AsFloat;
             adqInsAdicionalPedido.Parameters.ParamByName('P_VRVENDA').Value       := cdsAddPedidoVRTOTAITEM.AsFloat;
@@ -669,7 +673,7 @@ begin
           begin
             adqUpdAdicionalPedido.Close;
             adqUpdAdicionalPedido.Parameters.ParamByName('P_ITEMPEDIDO_ID').Value := cdsAddPedidoITEMPEDIDO_ID.AsInteger;
-            adqUpdAdicionalPedido.Parameters.ParamByName('P_ITEM_ID').Value       := cdsAddPedidoID.AsInteger;
+            adqUpdAdicionalPedido.Parameters.ParamByName('P_ID').Value            := cdsAddPedidoID.AsInteger;
             adqUpdAdicionalPedido.Parameters.ParamByName('P_QTITEM').Value        := cdsAddPedidoQTITEM.AsFloat;
             adqUpdAdicionalPedido.Parameters.ParamByName('P_VALOR').Value         := cdsAddPedidoVRUNITARIO.AsFloat;
             adqUpdAdicionalPedido.Parameters.ParamByName('P_VRVENDA').Value       := cdsAddPedidoVRTOTAITEM.AsFloat;
@@ -727,9 +731,20 @@ procedure TfrmPDV_PDV.AtualizaValorPedido;
 begin
   if not VarIsNull(cdsAddPedidoSUMVRTOTAL.Value) then
   begin
+    //Isso pode dar erro
+    cdsItemCategoria.Filtered := False;
+
+    cdsItemCategoria.Locate('PRODUTO_ID', cdsItemPedidoPRODUTO_ID.AsInteger, [loCaseInsensitive]);
+
     cdsItemPedido.Edit;
-    cdsItemPedidoVRTOTAL.AsFloat := (cdsItemPedidoQTITEM.AsFloat * cdsItemPedidoVRVENDA.AsFloat) + StrToFloat(cdsAddPedidoSUMVRTOTAL.Value);
+    cdsItemPedidoVRVENDA.AsFloat := cdsItemCategoriaVRVENDA.AsFloat + cdsAddPedidoVRADICIONAL.AsFloat;
+    cdsItemPedidoVRTOTAL.AsFloat := (cdsItemPedidoQTITEM.AsFloat * cdsItemPedidoVRVENDA.AsFloat) +
+                                    (cdsItemPedidoQTITEM.AsFloat * StrToFloat(cdsAddPedidoSUMVRTOTAL.Value));
     boJaPostou := True;
+
+    //Volta o filtro do "Isso pode dar erro"
+    cdsItemCategoria.Filtered := True;
+    
     cdsItemPedido.Post;
   end;
 
@@ -838,6 +853,14 @@ end;
 procedure TfrmPDV_PDV.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
   Release;
+end;
+
+procedure TfrmPDV_PDV.cdsAddPedidoCalcFields(DataSet: TDataSet);
+begin
+  with DataSet do
+  begin
+    FieldByName('VRDESCONTO').AsFloat := FieldByName('VRUNITARIO').AsFloat - FieldByName('VRTOTAITEM').AsFloat;
+  end;
 end;
 
 end.
