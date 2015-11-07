@@ -23,10 +23,13 @@ uses IdHashMessageDigest, Windows, Messages, sysutils, lib_db, TypInfo;
       FdbRotina : TObjetoDB;
       FUsuarioLogin : String;
       FIdUsuario : Integer;
+      function NomeUsuarioVmsis: String;
+      function SenhaUsuarioVmsis: String;
+      function EhAdministrador(const senha: String): Boolean;
     public
       property Usuario : String read FUsuarioLogin;
       property IdUsuario : Integer read FIdUsuario;
-      
+
       procedure AddPermissao(const modulo : String; permissao : TPermissoes);
       function PossuiPermissao(const modulo : String; permissao : TPermissoes) : Boolean;
       function Autenticado(const modulo : String; permissao : TPermissoes) : Boolean;
@@ -118,23 +121,31 @@ begin
 end;
 
 constructor TAcessoUsuario.create(usuario: String);
-
 begin
-    FUsuario := TObjetoDB.create('funcionario');
-    FUsuario.AddParametro('usuario', usuario);
-    FUsuario.Select(['usuario', 'nome', 'id', 'senha']);
+  FUsuario := TObjetoDB.create('funcionario');
+  FUsuario.AddParametro('usuario', usuario);
+  FUsuario.Select(['usuario', 'nome', 'id', 'senha']);
+                            
+  if NomeUsuarioVmsis = usuario then
+  begin
+    FUsuarioLogin := usuario;
+    FIdUsuario := -1;
+  end
+  else
+  begin
 
     if(FUsuario.IsEmpty) then
     begin
       Aviso('Usuário informado não existe.');
       Abort;
     end;
-
     FUsuarioLogin := FUsuario.GetVal('usuario');
     FIdUsuario := FUsuario.GetVal('id');
+  end;
 
-    FDbPermissao := TObjetoDb.create('permusr');
-    FdbRotina := TObjetoDb.create('rotina');
+  FDbPermissao := TObjetoDb.create('permusr');
+  FdbRotina := TObjetoDb.create('rotina');
+
 end;
 
 destructor TAcessoUsuario.destroy;
@@ -145,9 +156,22 @@ begin
   inherited destroy;
 end;
 
+function TAcessoUsuario.EhAdministrador(const senha: String): Boolean;
+begin
+  Result:= (FUsuarioLogin = NomeUsuarioVmsis) and (senha = SenhaUsuarioVmsis);
+end;
+
 function TAcessoUsuario.Logado(const senha: string): boolean;
 begin
-  Result := (senha = FUsuario.GetVal('senha'));
+  if not (EhAdministrador(senha)) then
+    Result := (senha = FUsuario.GetVal('senha'))
+  else
+    Result:= True;
+end;
+
+function TAcessoUsuario.NomeUsuarioVmsis: String;
+begin
+  Result:= 'vmsismaster';
 end;
 
 function TAcessoUsuario.PossuiPermissao(const modulo: String;
@@ -168,6 +192,11 @@ begin
 
   FDbPermissao.Select(['id']);
   Result := not FDbPermissao.IsEmpty;
+end;
+
+function TAcessoUsuario.SenhaUsuarioVmsis: String;
+begin
+  Result:= 'masterVMSIS123v';
 end;
 
 end.

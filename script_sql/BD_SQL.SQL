@@ -638,7 +638,6 @@ ALTER TABLE PEDIDO ADD dsmotivo TEXT NULL;
 ALTER TABLE mesa ADD idstatus character varying(1) NOT NULL  default 'L' check(idstatus in ('L', 'O'));
 
 
-<<<<<<< HEAD
 ALTER TABLE aberfechcaixa ADD DtCreated datetime NOT NULL DEFAULT CURRENT_TIMESTAMP;
 ALTER TABLE adicionais ADD DtCreated datetime NOT NULL DEFAULT CURRENT_TIMESTAMP;
 ALTER TABLE agrupadicional ADD DtCreated datetime NOT NULL DEFAULT CURRENT_TIMESTAMP;
@@ -725,5 +724,13 @@ ALTER TABLE posestoque ADD customedio DOUBLE NULL;
 
 ALTER TABLE cliente ADD complemento character varying(255);
 
-ALTER TABLE fornecedor ADD complemento character varying(255),
+ALTER TABLE fornecedor ADD complemento character varying(255);
 
+
+ALTER TABLE aberfechcaixa MODIFY COLUMN vrvenda FLOAT(14,2) NOT NULL DEFAULT 0;
+ALTER TABLE aberfechcaixa MODIFY COLUMN vrretirada FLOAT(14,2) NOT NULL DEFAULT 0;
+ALTER TABLE aberfechcaixa MODIFY COLUMN vrsangria FLOAT(14,2) NOT NULL DEFAULT 0;
+ALTER TABLE aberfechcaixa MODIFY COLUMN vrentrada FLOAT(14,2) NOT NULL DEFAULT 0;
+ALTER TABLE aberfechcaixa MODIFY COLUMN vrdebio FLOAT(14,2) NOT NULL DEFAULT 0;
+ALTER TABLE aberfechcaixa MODIFY COLUMN vrcredito FLOAT(14,2) NOT NULL DEFAULT 0;
+ALTER TABLE aberfechcaixa MODIFY COLUMN vrcorrigido FLOAT(14, 2) NOT NULL DEFAULT 0;

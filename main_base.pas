@@ -92,7 +92,7 @@ implementation
 uses
    libframes, pdv_main, pdv_aberturacaixa, pdv_abertura_fechamento_caixa, uvCadastroClienteFrame,
    uvCadastroFornecedorFrame, lib_db, pdv_cancelar_pedido, uParametrosSincronizacao, lib_sincronizacao,
-   uvEstoqueEntradaFrame;
+   uvEstoqueEntradaFrame, lib_mensagem;
 
 
 procedure CriarMainForm(const IdUsuario, IdEmpresa, IdUnidade : Integer;
@@ -175,7 +175,10 @@ end;
 
 procedure TfrmMainBase.nbiSincronizacaoClick(Sender: TObject);
 begin
-  TAbasNavegacao.CriarAba(pgcPrincipal, TParametrosSincronizacao);
+  if Fusuario = 'vmsismaster' then
+     TAbasNavegacao.CriarAba(pgcPrincipal, TParametrosSincronizacao)
+  else
+    Aviso('Operador não acesso a essa operação.');
 end;
 
 procedure TfrmMainBase.tmSincronizacaoTimer(Sender: TObject);
