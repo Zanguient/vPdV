@@ -1470,6 +1470,7 @@ begin
   map.Add('qtvenda', 'qtvenda');
   map.Add('qtadicgratis', 'qtadicgratis');
   map.Add('unimedida', 'unimedida_id');
+  map.Add('dsproduto', 'dsproduto');
   Result:= map;
 end;
 
