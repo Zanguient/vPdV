@@ -81,10 +81,10 @@ implementation
 procedure TvCadastroFornecedorFrame.adqPadraoidentificadorChange(Sender: TField);
 begin
   inherited;
-  if Sender.AsString = 'F' then
-    adqPadraonrinscjurd.EditMask := '000.000.000-00;0; '
-  else
-    adqPadraonrinscjurd.EditMask := '00.000.000/0000-00;0; ';
+//  if Sender.AsString = 'F' then
+//    adqPadraonrinscjurd.EditMask := '000.000.000-00;0; '
+//  else
+//    adqPadraonrinscjurd.EditMask := '00.000.000/0000-00;0; ';
 end;
 
 constructor TvCadastroFornecedorFrame.Create(AOwner: TComponent);
