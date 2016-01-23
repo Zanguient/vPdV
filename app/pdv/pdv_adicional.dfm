@@ -1922,8 +1922,8 @@ object frmAdicional: TfrmAdicional
     IndexDefs = <
       item
         Name = 'cdsAddPedidoIndex1'
-        DescFields = 'VRADICIONAL'
-        Fields = 'VRADICIONAL'
+        DescFields = 'VRUNITARIO'
+        Fields = 'VRUNITARIO'
         Options = [ixDescending]
       end>
     IndexName = 'cdsAddPedidoIndex1'

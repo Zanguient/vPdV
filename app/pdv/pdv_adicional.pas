@@ -100,6 +100,11 @@ type
     function GetBlz: Boolean;
   end;
 
+TProcesso = record
+  vrUnit : Double;
+  vQdte  : Integer;
+end;
+
 var
   frmAdicional: TfrmAdicional;
   inCARDAPIO_ID: Integer;
@@ -197,61 +202,208 @@ end;
 procedure TfrmAdicional.OnClickAdicionalPDV(Sender: TObject);
   procedure CalculaTotalItem;
   var
-    inQtdeGrat: Integer;
+    inQtdeGrat, inQtdeGratOrig, inQtdeItemVal, inQtdeItem, i, inAlterada: Integer;
+    vrTempAnt: Double;
+    boGo, boOk: Boolean;
+    ArObj: array of TProcesso;
+    label NextLoop;
   begin
     cdsAddPedido.First;
     cdsAuxAdicional.First;
+
+    //Verifica se o cds auxiliar já foi preenchido para o item do pedido
     if not cdsAuxAdicional.Locate('PRODUTO_ID', cdsAddPedidoITEM_ID.AsInteger, [loCaseInsensitive]) then
     begin
+      //Preenche o cds auxiliar com as informações do item do pedido que foi escolhido
       adqAuxAdicional.Close;
       adqAuxAdicional.Parameters.ParamByName('P_CARDAPIO_ID').Value := inCARDAPIO_ID;
       adqAuxAdicional.Open;
       cdsAuxAdicional.Data := dspAuxAdicional.Data;
       adqAuxAdicional.Close;
+      //Posiciona no item escolhido (segurança para caso tenha perdido a posição)
       cdsAuxAdicional.Locate('PRODUTO_ID', cdsAddPedidoITEM_ID.AsInteger, [loCaseInsensitive]);
     end;
-    inQtdeGrat := cdsAuxAdicionalQTADICGRATIS.AsInteger;
 
+    //Quantidade de itens com valor diferente
+    inQtdeItemVal := 0;
+    //Qauntidade de itens por valor
+    inQtdeItem    := 0;
+    //valor unitario temporario, destinado a armazenar o valor anterior
+    vrTempAnt     := 0;
+    inAlterada    := 0;
+
+    //ArvObj é um array de uma struct, estou setando ela para o número de adicionais existentes para o item
+    SetLength(ArObj, cdsAddPedido.RecordCount);
+    //Realizo um loop nos adicionais já escolhidos para o item do pedido
+    while not cdsAddPedido.Eof do
+    begin
+      //verifica se o valor unitario é diferente do valor anterior e se não é o primeiro registro
+      if (inQtdeItem > 0) and (vrTempAnt <> cdsAddPedidoVRUNITARIO.AsFloat) then
+        //Incrementa o registro (ou seja, se for adicional de valor diferente)
+        Inc(inQtdeItemVal)
+      else
+        //incrementa o numero de itens
+        Inc(inQtdeItem);
+
+      //Grava na struct as informações de valor unitario e quantas vezes esse valor se repete
+      ArObj[inQtdeItemVal].vrUnit := cdsAddPedidoVRUNITARIO.AsFloat;
+      ArObj[inQtdeItemVal].vQdte  := inQtdeItem;
+
+      //Salvo o valor unitario em uma variavel temporaria
+      vrTempAnt := cdsAddPedidoVRUNITARIO.AsFloat;
+
+      //Passa para o proximo registro
+      cdsAddPedido.Next;
+    end;
+
+    //Armazena a quantidade gratuita (essa variavel vai ser decremntada)
+    inQtdeGrat := cdsAuxAdicionalQTADICGRATIS.AsInteger;
+    //Salva em uma variavel a quantidade gratuita (essa nao)
+    inQtdeGratOrig := inQtdeGrat;
+
+    for i := 0 to inQtdeItemVal do
+    begin
+      if (ArObj[i].vQdte >= inQtdeGratOrig) and (not boOk) then
+      begin
+        ArObj[i].vQdte := 0;
+        inAlterada := i;
+        boOk := True;
+      end;
+    end;
+
+    cdsAddPedido.First;
     while not cdsAddPedido.Eof do
     begin
       cdsAuxAdicional.First;
+      //Garante que o registro posicionado será o item do pedido clicado
       cdsAuxAdicional.Locate('PRODUTO_ID', cdsAddPedidoITEM_ID.AsInteger, [loCaseInsensitive]);
-      
+
+      {
+        Situações:
+
+        Observação:
+            Deve ser cobrado dois tipos de valores, o normal e o nao normal.
+            Normal: Valor normal
+            Não normal: Valor com acrescimo de adicionais extras
+
+            O ClientDataSet é ordenado pelo valor em ordem descrecente
+
+            Onde tiver A) e B) deve ser feito:
+
+            A)
+              cdsAddPedidoQTGRATUI.AsInteger := 1;
+              cdsAddPedidoVRTOTAITEM.AsFloat := 0.0;
+              cdsAddPedidoVRADICIONAL.AsFloat := cdsAuxAdicionalVRAGRUPADIC.AsFloat;
+            B)
+              cdsAddPedidoQTGRATUI.AsInteger := 0;
+              cdsAddPedidoVRTOTAITEM.AsFloat := cdsAddPedidoQTITEM.AsFloat * cdsAddPedidoVRUNITARIO.AsFloat;
+              cdsAddPedidoVRADICIONAL.AsFloat := cdsAuxAdicionalVRAGRUPADIC.AsFloat;
+
+        Primeira situação: Quantidade de itens solicitados igual a gratuita, todos do mesmo grupo
+           1.1:
+               Dois itens gratuitos, cliente escolhe dois adicionais do mesmo grupo (mesmo valor)
+                  Deve ser cobrado o valor normal
+                     - A) Zerar o valor dos dois adicionais
+                     - B) Fazer nada com os outros porque nao tem outros
+        Segunda  situação: Quantidade solicitada menor que a gratuita, todos do mesmo grupo
+           2.1:
+               Dois itens gratuitos, cliente escolhe um adicional
+                  Deve ser cobrado o valor normal
+                     - A) Zerar o valor do adicional
+                     - B) Fazer nada com os outros porque nao tem outros
+        Terceira situação: Quantidade de itens solicitados maior que a gratuita, todos do mesmo grupo
+           3.1:
+               Dois itens gratuitos, cliente escolhe 3 adicionais do mesmo grupo (mesmo valor)
+                  Deve ser cobradoo valor normal + o número de adicionais adicionais, que no caso foi um.
+                     - A) Zerar o valor de dois adicionais
+                     - B) Manter o valor dos demais
+        Quarta   situação: Quantidade de itens solicitados igual a gratuita, mas de grupos diferentes
+           4.1:
+               Dois itens gratuitos, cliente escolhe um adicional de um grupo outro de outro
+                  Deve ser cobrado o valor normal do adicional mais caro
+                     - A) Zerar o valor dos dois
+                     - B) Fazer nada com os outros porque nao tem outros
+        Quinta   situação: Quantidade de itens solicitados menor que a gratuita, mas de grupos diferentes
+           5.1:
+               Quatro itens gratuitos, cliente escolhe um adicional de um grupo e outro de outro
+                  Deve ser cobrado o valor normal do adicional mais caro
+                     - A) Zerar o valor de todos adicionais
+                     - B) Fazer nada com os outros porque nao tem outros
+        Sexta    situação: Quantidade de itens solicitados maior que a gratuita, mas de grupos diferentes
+           6.1:
+               Dois itens gratuitos, cliente escolhe 5 adicionais, sendo um de cada grupo
+                  Deve ser cobrado o valor normal do adicional mais caro
+                     - A) Zerar o valor dos dois mais caros
+                     - B) Manter o valor dos demais
+           6.2:
+               Dois itens gratuitos, cliente escolhe 5 adicionais, sendo o mais caro de um grupo,
+                dois do segundo mais caro de outro grupo e o restante de outro grupo mais barato.
+                  Deve ser cobrado o valor normal do segundo grupo mais caro, pois vai considerar os 2 do mesmo
+                   grupo ao inves do primeiro.
+                     - A) Zerar o segundo e o terceiro adicional do CDS
+                     - B) Manter o valor dos demais
+           6.3:
+               Dois itens gratuitos, cliente escolhe 6 adicionais, sendo o mais caro de um grupo,
+                dois do segundo mais caro de outro grupo e o restante de outro grupo mais barato.
+                  Deve ser cobrado o valor normal do segundo grupo mais caro, pois vai considerar os 2 do mesmo
+                   grupo ao inves do primeiro. E vai considerar os dois adicionais do grupo do meio por serem mais
+                   caros que os 3 do ultimo grupo. (Considerando ordenação cds)
+                     - A) Zerar o segundo e o terceiro adicional do CDS
+                     - B) Manter o valor dos demais
+
+      }
       cdsAddPedido.Edit;
-      if inQtdeGrat > 0 then
+
+      if (inQtdeGrat > 0) and
+         (((ArObj[inAlterada].vrUnit = cdsAddPedidoVRUNITARIO.AsFloat) and (ArObj[inAlterada].vQdte = 0))
+          or (not boOk)) then
       begin
+        //A
         cdsAddPedidoQTGRATUI.AsInteger := 1;
         cdsAddPedidoVRTOTAITEM.AsFloat := 0.0;
         cdsAddPedidoVRADICIONAL.AsFloat := cdsAuxAdicionalVRAGRUPADIC.AsFloat;
+                                
+        //Decrementa quantidade de itens gratuitos restantes
+        Dec(inQtdeGrat);
       end else
-      begin                                                                                           
+      begin
+        //B
         cdsAddPedidoQTGRATUI.AsInteger := 0;
         cdsAddPedidoVRTOTAITEM.AsFloat := cdsAddPedidoQTITEM.AsFloat * cdsAddPedidoVRUNITARIO.AsFloat;
         cdsAddPedidoVRADICIONAL.AsFloat := cdsAuxAdicionalVRAGRUPADIC.AsFloat;
       end;
       cdsAddPedido.Post;
 
-      Dec(inQtdeGrat);
+      //Passa para o proximo registro
       cdsAddPedido.Next;
     end;
   end;
-var
-  flValorCalculado: Double;
 begin
-  cdsAdicional.Locate('ID', (Sender as TcxButton).Tag, [loCaseInsensitive]);
+  {
+  cdsAddPedido :> cds responsavel por armazenar os adicionais do pedido
+  cdsAdicional :> cds responsavel por armazenar os adicionais existentes
+  cdsITEMPEDIDO :> cds responsavel por armazenar os itens do pedido
+  }
 
+  //Pega o ID (os IDs salvo na Tag do botão) do adicional clicado e posiciona no adicional correspondnte
+  cdsAdicional.Locate('ID', (Sender as TcxButton).Tag, [loCaseInsensitive]);  
+
+  //Insere o adicional selecionado nos adicionais do produto
   cdsAddPedido.Insert;
   cdsAddPedidoIMG.AsInteger        := 0;
   cdsAddPedidoITEM_ID.AsInteger    := cdsAdicionalID.AsInteger;
   cdsAddPedidoVRUNITARIO.AsFloat   := cdsAdicionalVALOR.AsFloat;
+  //Grava identificador do produto a que pertence o adicional
   cdsAddPedidoITEMPEDIDO_ID.AsInteger := frmPDV_PDV.cdsITEMPEDIDOID.AsInteger;
   cdsAddPedidoQTITEM.AsFloat       := 1.0;
   cdsAddPedidoNMPRODUTO.AsString   := cdsAdicionalNMPRODUTO.AsString;
+  //Grava imagem sempre 0, já que no momento não vai precisar
   cdsAddPedidoIMG.AsInteger        := 0;
   cdsAddPedidoVRADICIONAL.AsFloat  := 0.0;
   cdsAddPedidoQTGRATUI.AsFloat     := 0;
   cdsAddPedido.Post;
 
+  //Chama a função que recalcula os adicionais, (verificando qual gratuito ou nao)
   CalculaTotalItem;
 end;
 
