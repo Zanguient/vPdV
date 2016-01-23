@@ -579,17 +579,17 @@ begin
       adqInsPedido.Parameters.ParamByName('P_IDTIPOPEDIDO').Value := Copy(FParametros.Caption,1,1);
       case AnsiIndexStr(UpperCase(Copy(FParametros.Caption,1,1)), ['M','D','B']) of
         1,2: begin
-              if edtTelefone.EditValue <> '' then
-              begin
-                adqInsPedido.Parameters.ParamByName('P_NMCLIENTE').Value  := edtTelefone.Properties.ListColumns[1].Field.Value;
-                adqInsPedido.Parameters.ParamByName('P_CLIENTE_ID').Value  := edtTelefone.Properties.ListColumns[2].Field.Value;
-              end
-              else
-              begin
-                adqInsPedido.Parameters.ParamByName('P_NMCLIENTE').Value  := edtTelefone.Properties.ListColumns[0].Field.Value;
-                adqInsPedido.Parameters.ParamByName('P_CLIENTE_ID').Value  := edtTelefone.Properties.ListColumns[2].Field.Value;
-              end;
-             end;
+            if edtTelefone.EditValue <> '' then
+            begin
+              adqInsPedido.Parameters.ParamByName('P_NMCLIENTE').Value  := edtTelefone.Properties.ListColumns[1].Field.Value;
+              adqInsPedido.Parameters.ParamByName('P_CLIENTE_ID').Value  := edtTelefone.Properties.ListColumns[2].Field.Value;
+            end
+            else
+            begin
+              adqInsPedido.Parameters.ParamByName('P_NMCLIENTE').Value  := edtTelefone.Properties.ListColumns[0].Field.Value;
+              adqInsPedido.Parameters.ParamByName('P_CLIENTE_ID').Value  := edtTelefone.Properties.ListColumns[2].Field.Value;
+            end;
+            end;
         0:   begin
                adqInsPedido.Parameters.ParamByName('P_MESA_ID').Value   := FParametros.Tag;
              end;
