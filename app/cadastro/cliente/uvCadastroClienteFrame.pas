@@ -21,7 +21,7 @@ uses
   cxNavigator, cxDBNavigator, cxGridLevel, cxGridCustomView,
   cxGridCustomTableView, cxGridTableView, cxGridDBTableView, cxGrid,
   cxInplaceContainer, ExtCtrls, cxPC, cxImageComboBox, cxCurrencyEdit,
-  cxMaskEdit, cxCalendar, cxDBLookupComboBox;
+  cxMaskEdit, cxCalendar, cxDBLookupComboBox, cxTextEdit;
 
 type
   TvCadastroCliente = class(TvPadraoCadastro)
@@ -67,13 +67,13 @@ type
     adqBairrocidade_id: TIntegerField;
     adqBairroid_web: TIntegerField;
     dtsBairro: TDataSource;
-    procedure adqPadraoidentificadorChange(Sender: TField);
     procedure adqPadraoNewRecord(DataSet: TDataSet);
+    procedure adqPadraoidentificadorChange(Sender: TField);
   private
     { Private declarations }
   public
     { Public declarations }
-    constructor Create(AOwner: TComponent); override;    
+    constructor Create(AOwner: TComponent); override;
   end;
 
 var
@@ -82,15 +82,6 @@ var
 implementation
 
 {$R *.dfm}
-
-procedure TvCadastroCliente.adqPadraoidentificadorChange(Sender: TField);
-begin
-  inherited;
-  if Sender.AsString = 'F' then
-    adqPadraonrinscjurd.EditMask := '000.000.000-00;0; '
-  else
-    adqPadraonrinscjurd.EditMask := '00.000.000/0000-00;0; ';
-end;
 
 procedure TvCadastroCliente.adqPadraoNewRecord(DataSet: TDataSet);
 begin
@@ -104,6 +95,15 @@ begin
   inherited;
   adqBairro.Close;
   adqBairro.Open;
+end;
+
+procedure TvCadastroCliente.adqPadraoidentificadorChange(Sender: TField);
+begin
+  inherited;
+//  if (adqPadraoidentificador.AsString = 'F') then
+//    TcxMaskEditProperties(cxvGrid1nrinscjurd.Properties.EditProperties).EditMask := '000.000.000-00;0; '
+//  else if (adqPadraoidentificador.AsString = 'J') then
+//    TcxMaskEditProperties(cxvGrid1nrinscjurd.Properties.EditProperties).EditMask := '00.000.000/0000-00;0; ';
 end;
 
 end.

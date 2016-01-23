@@ -2,6 +2,7 @@ inherited vCadastroCliente: TvCadastroCliente
   Width = 564
   inherited pgcPadrao: TcxPageControl
     Width = 564
+    ActivePage = tabCadastro
     ClientRectRight = 560
     inherited tabVisao: TcxTabSheet
       inherited panClient: TPanel
@@ -38,6 +39,7 @@ inherited vCadastroCliente: TvCadastroCliente
           end
           object nrinscjurd: TcxEditorRow
             Properties.Caption = 'CPF/CNPJ'
+            Properties.EditPropertiesClassName = 'TcxMaskEditProperties'
             Properties.DataBinding.ValueType = 'String'
             Properties.Value = Null
             ID = 3
@@ -117,12 +119,12 @@ inherited vCadastroCliente: TvCadastroCliente
             Properties.EditPropertiesClassName = 'TcxImageComboBoxProperties'
             Properties.EditProperties.Items = <
               item
-                Description = 'Física'
+                Description = 'F'#237'sica'
                 ImageIndex = 0
                 Value = 'F'
               end
               item
-                Description = 'Jurídica'
+                Description = 'Jur'#237'dica'
                 Value = 'J'
               end>
             Properties.DataBinding.FieldName = 'identificador'
@@ -132,6 +134,8 @@ inherited vCadastroCliente: TvCadastroCliente
             Version = 1
           end
           object cxvGrid1nrinscjurd: TcxDBEditorRow
+            Properties.EditPropertiesClassName = 'TcxTextEditProperties'
+            Properties.EditProperties.MaxLength = 14
             Properties.DataBinding.FieldName = 'nrinscjurd'
             ID = 2
             ParentID = -1
@@ -154,7 +158,7 @@ inherited vCadastroCliente: TvCadastroCliente
           end
           object catEndereco: TcxCategoryRow
             Options.Focusing = False
-            Properties.Caption = 'Endereço'
+            Properties.Caption = 'Endere'#231'o'
             ID = 5
             ParentID = -1
             Index = 5
@@ -233,7 +237,7 @@ inherited vCadastroCliente: TvCadastroCliente
               Left = 236
             end
             inherited lblGridCaption: TcxLabel
-              Caption = 'Endereço'
+              Caption = 'Endere'#231'o'
               Style.IsFontAssigned = True
             end
           end
@@ -263,7 +267,7 @@ inherited vCadastroCliente: TvCadastroCliente
       'select * from cliente'
       'where 1=1')
     object adqPadraoid: TAutoIncField
-      DisplayLabel = 'Código'
+      DisplayLabel = 'C'#243'digo'
       FieldName = 'id'
       ReadOnly = True
     end
@@ -275,7 +279,6 @@ inherited vCadastroCliente: TvCadastroCliente
     object adqPadraonrinscjurd: TWideStringField
       DisplayLabel = 'CPF/CNPJ'
       FieldName = 'nrinscjurd'
-      EditMask = '000.000.000-00;0; '
     end
     object adqPadraotelfixo: TWideStringField
       DisplayLabel = 'Telefone'
@@ -301,7 +304,7 @@ inherited vCadastroCliente: TvCadastroCliente
       Size = 200
     end
     object adqPadraocdnumero: TWideStringField
-      DisplayLabel = 'Número'
+      DisplayLabel = 'N'#250'mero'
       FieldName = 'cdnumero'
       Size = 30
     end

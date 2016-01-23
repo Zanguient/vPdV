@@ -337,7 +337,7 @@ object vPadraoCadastro: TvPadraoCadastro
           Left = 97
           Top = 1
           Width = 81
-          Height = 27
+          Height = 13
           Align = alLeft
           Caption = '[Nome do Frame]'
           Visible = False
