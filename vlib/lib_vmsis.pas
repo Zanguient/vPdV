@@ -108,7 +108,7 @@ var
   flReturn: Double;
 begin                 
   flReturn := 0.0;
-  stBaud := '9600';
+  stBaud := '3000'; //9600
   stValor := StringOfChar(' ', 5);
   stPorta := 'COM11';
 

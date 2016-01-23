@@ -519,14 +519,14 @@ begin
     if stFormaEscolhida = 'DI' then
       Acesso_Perifericos.AbreGaveta;
 
-{    adqInsMovCaixa.Close;
-    adqInsMovCaixa.Parameters.ParamByName('ID_CAIXA').Value := '';
-    adqInsMovCaixa.Parameters.ParamByName('DTMOVI').Value := '';
-    adqInsMovCaixa.Parameters.ParamByName('VRMOVI').Value := '';
-    adqInsMovCaixa.Parameters.ParamByName('TPMOVI').Value := '';
-    adqInsMovCaixa.Parameters.ParamByName('FORMPGTO').Value := stFormaEscolhida;
+    adqInsMovCaixa.Close;
+    adqInsMovCaixa.Parameters.ParamByName('ID_CAIXA').Value := 1;
+    adqInsMovCaixa.Parameters.ParamByName('DTMOVI').Value := Now;
+    adqInsMovCaixa.Parameters.ParamByName('VRMOVI').Value := StrToFloat(edtTotal.Text);
+    adqInsMovCaixa.Parameters.ParamByName('TPMOVI').Value    := 'V';
+    adqInsMovCaixa.Parameters.ParamByName('FORMPGTO').Value  := stFormaEscolhida;
     adqInsMovCaixa.Parameters.ParamByName('ID_PEDIDO').Value := adqItemPedido.FieldByName('PEDIDO_ID').Value;
-    adqInsMovCaixa.ExecSQL;}
+    adqInsMovCaixa.ExecSQL;
 
     adqUpdPedido.Close;
     adqUpdPedido.Parameters.ParamByName('P_ID').Value := adqItemPedido.FieldByName('PEDIDO_ID').Value;
