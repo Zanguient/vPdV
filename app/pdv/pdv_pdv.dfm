@@ -27957,7 +27957,7 @@ object frmPDV_PDV: TfrmPDV_PDV
         NumericScale = 48
         Precision = 255
         Size = 255
-        Value = '0'
+        Value = 0.000000000000000000
       end
       item
         Name = 'P_VALOR'
@@ -27966,7 +27966,7 @@ object frmPDV_PDV: TfrmPDV_PDV
         NumericScale = 48
         Precision = 255
         Size = 255
-        Value = '0'
+        Value = 0.000000000000000000
       end
       item
         Name = 'P_VRVENDA'
@@ -28294,5 +28294,72 @@ object frmPDV_PDV: TfrmPDV_PDV
     DataSet = adqCliente
     Left = 783
     Top = 41
+  end
+  object adqInsMovCaixa: TADOQuery
+    Connection = dmConexao.adoConexaoBd
+    Parameters = <
+      item
+        Name = 'ID_CAIXA'
+        Attributes = [paNullable]
+        DataType = ftInteger
+        NumericScale = 152
+        Precision = 255
+        Size = 255
+        Value = Null
+      end
+      item
+        Name = 'DTMOVI'
+        Attributes = [paNullable]
+        DataType = ftDateTime
+        NumericScale = 152
+        Precision = 255
+        Size = 255
+        Value = Null
+      end
+      item
+        Name = 'VRMOVI'
+        Attributes = [paNullable]
+        DataType = ftFloat
+        NumericScale = 152
+        Precision = 255
+        Size = 255
+        Value = Null
+      end
+      item
+        Name = 'TPMOVI'
+        Attributes = [paNullable]
+        DataType = ftString
+        NumericScale = 152
+        Precision = 255
+        Size = 255
+        Value = Null
+      end
+      item
+        Name = 'FORMPGTO'
+        Attributes = [paNullable]
+        DataType = ftString
+        NumericScale = 152
+        Precision = 255
+        Size = 255
+        Value = Null
+      end
+      item
+        Name = 'ID_PEDIDO'
+        Attributes = [paNullable]
+        DataType = ftInteger
+        NumericScale = 152
+        Precision = 255
+        Size = 255
+        Value = Null
+      end>
+    SQL.Strings = (
+      
+        'INSERT INTO MOVCAIXA (ID_CAIXA, DTMOVI, VRMOVI, TPMOVI, FORMPGTO' +
+        ', ID_PEDIDO)'
+      
+        '  VALUES (:ID_CAIXA, :DTMOVI, :VRMOVI, :TPMOVI, :FORMPGTO, :ID_P' +
+        'EDIDO)')
+    Left = 776
+    Top = 344
   end
 end

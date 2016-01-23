@@ -188,6 +188,7 @@ type
     cdsAddPedidoITEM_ID: TIntegerField;
     cdsAddPedidoVRDESCONTO: TFloatField;
     gdbAddPedidoColumn5: TcxGridDBColumn;
+    adqInsMovCaixa: TADOQuery;
     procedure FormShow(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     constructor PCreate(Form: TComponent; Parametros: TParametros); Overload;
@@ -227,7 +228,8 @@ implementation
 
 uses
   lib_mensagem, lib_interface, pdv_adicional, uDmConexao, lib_vmsis, lib_acesso,
-  main_base, pdv_confirma_qtde_peso, math, pdv_main, lib_modelo_impressao, StrUtils;
+  main_base, pdv_confirma_qtde_peso, math, pdv_main, lib_modelo_impressao, StrUtils,
+  pdv_forma_pagamento;
 
 procedure TfrmPDV_PDV.FormShow(Sender: TObject);
 var
@@ -490,15 +492,20 @@ procedure TfrmPDV_PDV.btnFinalizarPedidoClick(Sender: TObject);
 var
   Acesso_Perifericos: TAcesso_Perifericos;
   Impressao_Nao_Fiscal: TImpressao_Nao_Fiscal;
+  stFormaEscolhida: String;
 begin
   inherited;
+  stFormaEscolhida := '';
   Acesso_Perifericos := TAcesso_Perifericos.Create;
   Impressao_Nao_Fiscal := TImpressao_Nao_Fiscal.Create;
   stStatusPedido := 'F';
   try
     btnGravarClick(btnGravar);
-    
+
     AtualizacdsPedido;
+
+    stFormaEscolhida := Escolhe_Forma_Pagamento;
+
     if not Impressao_Nao_Fiscal.Verif_Impressora then
     begin
       if not Confirma(DESEJA_CONTINUAR_PEDIDO) then
@@ -508,8 +515,18 @@ begin
       cdsAddPedido.Filtered := False;
       Impressao_Nao_Fiscal.Layout_Finaliza_Pedido(cdsPedidoImpressao, cdsItemPedido, cdsAddPedido);
     end;
-    
-    Acesso_Perifericos.AbreGaveta;
+
+    if stFormaEscolhida = 'DI' then
+      Acesso_Perifericos.AbreGaveta;
+
+{    adqInsMovCaixa.Close;
+    adqInsMovCaixa.Parameters.ParamByName('ID_CAIXA').Value := '';
+    adqInsMovCaixa.Parameters.ParamByName('DTMOVI').Value := '';
+    adqInsMovCaixa.Parameters.ParamByName('VRMOVI').Value := '';
+    adqInsMovCaixa.Parameters.ParamByName('TPMOVI').Value := '';
+    adqInsMovCaixa.Parameters.ParamByName('FORMPGTO').Value := stFormaEscolhida;
+    adqInsMovCaixa.Parameters.ParamByName('ID_PEDIDO').Value := adqItemPedido.FieldByName('PEDIDO_ID').Value;
+    adqInsMovCaixa.ExecSQL;}
 
     adqUpdPedido.Close;
     adqUpdPedido.Parameters.ParamByName('P_ID').Value := adqItemPedido.FieldByName('PEDIDO_ID').Value;
