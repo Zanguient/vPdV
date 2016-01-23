@@ -746,7 +746,7 @@ begin
     Exit;
   end;
 
-{  Result:= Upload(Empresa, Unidade, Almoxarifado);
+  Result:= Upload(Empresa, Unidade, Almoxarifado);
 
   if Result <> EmptyStr then
   begin
@@ -754,7 +754,7 @@ begin
     Exit;
   end;
 
-  GravarDataSincronizacao(DataInicio, saSucesso, EmptyStr);}
+  GravarDataSincronizacao(DataInicio, saSucesso, EmptyStr);
 
 
 end;
@@ -819,23 +819,23 @@ begin
       'Entrada', mapItemProduto);
     upload.SendData;
 
-    FreeAndNil(upload);
+{    FreeAndNil(upload);
     map:= mapaCampos.MapaPosEstoque;
     upload:= TUpload.create('Posestoque', 'estoque.posestoque.models', map, 'id_desktop');
-    upload.SendData;
+    upload.SendData;}
 
     FreeAndNil(upload);
     map:= mapaCampos.MapaPedido;
     upload:= TUpload.create('Pedido', 'pedido.frentecaixa.models', map, 'id_desktop');
 
     mapItemPedido:= mapaCampos.MapaItempedido;
-    upload.AddModelFilho('ItemPedido', 'pedido.frentecaixa.models', 'id',
+    upload.AddModelFilho('ItemPedido', 'pedido.frentecaixa.models', 'id_desktop',
       'ItemPedido', 'Pedido', mapItemPedido);
 
     mapItAdicional:= mapaCampos.MapaItAdicional;
-    upload.AddModelFilho('ItAdicional', 'pedido.frentecaixa.models', 'id',
-      'ItAdicional', 'ItemPedido', mapItAdicional);
-
+    upload.AddModelFilho('ItAdicional', 'pedido.frentecaixa.models', 'id_desktop',
+       'ItAdicional', 'ItemPedido', mapItAdicional);
+         
     upload.SendData;
 
     FreeAndNil(upload);
@@ -862,6 +862,11 @@ begin
       FreeAndNil(mapItemProduto);
     if Assigned(mapaCampos) then
       FreeAndNil(mapaCampos);
+    if Assigned(mapItemPedido) then
+      FreeAndNil(mapItemPedido);
+    if Assigned(mapItAdicional) then
+      FreeAndNil(mapItAdicional);
+
   end;
 end;
 
@@ -1002,7 +1007,7 @@ begin
       end;
 
       //campo para mapear os ids do web com o do desktop
-      json:= json + ',"desktop_id":' + '"' + VarToStr(dbGetValores.GetVal('id')) + '"';
+      json:= json + ',"id_desktop":' + '"' + VarToStr(dbGetValores.GetVal('id')) + '"';
 
       FilterCds(cdsPaiTemp, 'ModelPai = ' + QuotedStr(Model));
 
@@ -1055,7 +1060,6 @@ end;
 
 procedure TUpload.SendData;
 var
-  url_param : string;
   http : TIdHTTP;
   error: string;
   param: TStringList;
@@ -1099,7 +1103,10 @@ function TSincronizacaoBase.VariantValueToStr(const value: Variant): String;
 begin
   case VarType(value) of
     varDate: Result:= FormatDateTime('yyyy-mm-dd', value);
-    varDouble, varCurrency: Result:= StringReplace(VarToStr(value), ',', '.', [rfReplaceAll]);
+    varDouble, varCurrency :
+    begin
+       Result:= StringReplace(FormatFloat('#,##0.00' , value), ',', '.', [rfReplaceAll]);
+    end
   else                       
     Result:= VarToStr(value);
   end
@@ -1548,6 +1555,7 @@ begin
   map.Add('dtcadastro', 'dtcadastro');
   map.Add('pedido', 'pedido_id', NOME_CHAVE_PADRAO_FK);
   map.Add('cardapio', 'cardapio_id');
+  AddEmpresaUpload(map);
   AddAlmoxarifadoUpload(map);
   map.Add('lote', 'lote_id');
   map.Add('qtitem', 'qtitem');

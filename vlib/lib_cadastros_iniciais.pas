@@ -291,7 +291,8 @@ begin
     tbParametrosSincronizacao.Select(['id']);
     if tbParametrosSincronizacao.IsEmpty then
     begin
-      tbParametrosSincronizacao.AddParametro('IpSincronizacao', 'http://177.153.20.166');
+      //http://177.153.20.166
+      tbParametrosSincronizacao.AddParametro('IpSincronizacao', 'http://127.0.0.1:8000');
       tbParametrosSincronizacao.Insert;
     end;
   finally
@@ -335,19 +336,19 @@ begin
 //   AddEstados;
 //   AddCidade;
 //   AddAbairro;
-   AddFuncionario;
+//   AddFuncionario;
    AddAlmoxarifado;
    AddUnidade;
    AddCaixa;
    AddParametrosSincronizacao;
    TAcesso.AddRotinas;
 
-   UsrAce := TAcessoUsuario.create(Fusuario);
+{   UsrAce := TAcessoUsuario.create(Fusuario);
    try
      UsrAce.AddPermissao('gaveta', TpmProcessar);
    finally
      FreeAndNil(UsrAce);
-   end
+   end}
 
 end;
 
