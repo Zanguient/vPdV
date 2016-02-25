@@ -1660,9 +1660,9 @@ object frmAdicional: TfrmAdicional
         Styles.Selection = frmPDV_PDV.styGridSelection
         Styles.Header = frmPDV_PDV.styGridHeader
         object dbgAdicionalPedidoColumn1: TcxGridDBColumn
-          Caption = 'Adicional'
+          Caption = 'Adicional/Recipiente'
           DataBinding.FieldName = 'NMPRODUTO'
-          Width = 264
+          Width = 251
         end
         object dbgAdicionalPedidoColumn2: TcxGridDBColumn
           Caption = 'Quantidade'
@@ -1671,8 +1671,7 @@ object frmAdicional: TfrmAdicional
           Properties.DecimalPlaces = 3
           Properties.DisplayFormat = '0.000;-0.000'
           Properties.MaxLength = 13
-          Visible = False
-          Width = 89
+          Width = 74
         end
         object dbgAdicionalPedidoColumn3: TcxGridDBColumn
           Caption = 'Valor Unit'#225'rio'
@@ -1793,6 +1792,11 @@ object frmAdicional: TfrmAdicional
         Name = 'IDTIPOMED'
         DataType = ftString
         Size = 1
+      end
+      item
+        Name = 'ADICIONAL'
+        DataType = ftString
+        Size = 1
       end>
     IndexDefs = <>
     Params = <>
@@ -1800,13 +1804,13 @@ object frmAdicional: TfrmAdicional
     Left = 592
     Top = 64
     Data = {
-      BE0000009619E0BD010000001800000006000000000003000000BE0002494404
+      DC0000009619E0BD010000001800000007000000000003000000DC0002494404
       0001000200010007535542545950450200490008004175746F696E6300055641
       4C4F5208000400000000000A5155414E5449444144450800040000000000094E
       4D50524F4455544F010049000000010005574944544802000200C80008494D47
       494E44455804000100000000000949445449504F4D4544010049000000010005
-      574944544802000200010001000C4155544F494E4356414C5545040001000100
-      0000}
+      57494454480200020001000941444943494F4E414C0100490000000100055749
+      44544802000200010001000C4155544F494E4356414C55450400010001000000}
     object cdsAdicionalID: TAutoIncField
       FieldName = 'ID'
       ReadOnly = True
@@ -1828,6 +1832,10 @@ object frmAdicional: TfrmAdicional
       FieldName = 'IDTIPOMED'
       Size = 1
     end
+    object cdsAdicionalADICIONAL: TStringField
+      FieldName = 'ADICIONAL'
+      Size = 1
+    end
   end
   object dtsAdicional: TDataSource
     DataSet = cdsAdicional
@@ -1846,7 +1854,7 @@ object frmAdicional: TfrmAdicional
         Name = 'P_AGRUPADICIONAL'
         Attributes = [paNullable]
         DataType = ftString
-        NumericScale = 248
+        NumericScale = 104
         Precision = 255
         Size = 255
         Value = Null
@@ -1854,7 +1862,7 @@ object frmAdicional: TfrmAdicional
     SQL.Strings = (
       
         'SELECT A.ID, A.VALOR, A.QUANTIDADE, P.NMPRODUTO, P.IMGINDEX, U.I' +
-        'DTIPOMED'
+        'DTIPOMED, '#39'S'#39' ADICIONAL'
       '  FROM ADICIONAIS A INNER JOIN PRODUTO P ON P.ID = A.ITEM_ID'
       
         '                    INNER JOIN UNIMEDIDA U ON P.UNIMEDIDA_ID = U' +
@@ -2094,5 +2102,26 @@ object frmAdicional: TfrmAdicional
     DataSet = adqAuxAdicional
     Left = 591
     Top = 144
+  end
+  object adqComposicao: TADOQuery
+    Connection = dmConexao.adoConexaoBd
+    Parameters = <>
+    SQL.Strings = (
+      
+        'SELECT CP.PRODCOMP_ID ID, (CP.QTCOMP-CP.QTCOMP) VALOR, CP.QTCOMP' +
+        ' QUANTIDADE, P.NMPRODUTO, P.IMGINDEX, U.IDTIPOMED, '#39'N'#39' ADICIONAL'
+      
+        '  FROM COMPOSICAOPROD CP INNER JOIN PRODUTO P ON P.ID = CP.PRODC' +
+        'OMP_ID'
+      
+        '                         INNER JOIN UNIMEDIDA U ON U.ID = CP.UNI' +
+        'MEDIDA_ID')
+    Left = 560
+    Top = 24
+  end
+  object dspComposicao: TDataSetProvider
+    DataSet = adqComposicao
+    Left = 528
+    Top = 24
   end
 end

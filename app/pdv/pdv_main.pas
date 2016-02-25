@@ -34,7 +34,6 @@ type
     btnGaveta: TcxButton;
     btnDelivery: TcxButton;
     btnBalcao: TcxButton;
-    cxButton1: TcxButton;
     sbxOpcoesPDV: TScrollBox;
     cdsMesa: TClientDataSet;
     dtsMesa: TDataSource;
@@ -57,16 +56,19 @@ type
     cdsMesadsobsmesa: TStringField;
     cdsMesastatus: TStringField;
     cdsMesavalor: TFloatField;
+    btnSangria: TcxButton;
+    btnFecharCaixa: TcxButton;
     procedure btnGavetaClick(Sender: TObject);
     procedure btnDeliveryClick(Sender: TObject);
     procedure btnBalcaoClick(Sender: TObject);
-    procedure cxButton1Click(Sender: TObject);
+    procedure btnFecharCaixaClick(Sender: TObject);
     procedure gcpStatusGetDisplayText(Sender: TcxCustomGridTableItem;
       ARecord: TcxCustomGridRecord; var AText: String);
     procedure pmiLiberarClick(Sender: TObject);
     procedure pmiOcupadaClick(Sender: TObject);
     procedure sbxOpcoesPDVResize(Sender: TObject);
     procedure FrameResize(Sender: TObject);
+    procedure btnSangriaClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -84,7 +86,8 @@ implementation
 
 uses
   lib_interface, lib_mensagem, pdv_pdv, pdv_adicional, uDmConexao, lib_vmsis,
-  lib_acesso, main_base, pdv_abertura_fechamento_caixa, StrUtils;
+  lib_acesso, main_base, pdv_abertura_fechamento_caixa, StrUtils,
+  pdv_sangria;
 
 procedure TfrmPDVMain.btnGavetaClick(Sender: TObject);
 var
@@ -166,7 +169,7 @@ begin
   end;
 end;
 
-procedure TfrmPDVMain.cxButton1Click(Sender: TObject);
+procedure TfrmPDVMain.btnFecharCaixaClick(Sender: TObject);
 begin
   inherited;
   if CaixaFechado then
@@ -261,7 +264,7 @@ begin
   adqAuxUpdMesa.Parameters.ParamByName('IDSTATUS').Value := 'O';
   adqAuxUpdMesa.Parameters.ParamByName('ID').Value := pumMesaO.PopupComponent.Tag;
   adqAuxUpdMesa.ExecSQL;
-  
+
   RefreshMesa;
 end;
 
@@ -279,8 +282,19 @@ end;
 
 procedure TfrmPDVMain.FrameResize(Sender: TObject);
 begin
-  inherited;  
+  inherited;
   RefreshMesa;
+end;
+
+procedure TfrmPDVMain.btnSangriaClick(Sender: TObject);
+begin
+  inherited;
+  frmsangria := Tfrmsangria.Create(Self);
+  try
+    frmsangria.ShowModal;
+  finally
+    FreeAndNil(frmsangria);
+  end;                     
 end;
 
 end.

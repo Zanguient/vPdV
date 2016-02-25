@@ -80,6 +80,9 @@ type
     cdsAddPedidoITEM_ID: TIntegerField;
     cdsAddPedidoVRDESCONTO: TFloatField;
     dbgAdicionalPedidoColumn5: TcxGridDBColumn;
+    adqComposicao: TADOQuery;
+    dspComposicao: TDataSetProvider;
+    cdsAdicionalADICIONAL: TStringField;
     procedure FormCreate(Sender: TObject);
     procedure btnCancelarClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -179,6 +182,8 @@ begin
   if scbAgrupAdicional.ControlCount = 0 then
   begin
     frmPDV_PDV.cdsAgrupAdicional.First;
+    Interface_.CriaButtonScrollBox(scbAgrupAdicional, 'Composição/Recipiente',
+      OnClickAgrupAdicionalPDV, 150, 150, 0, frmPDV_PDV.cilItensPDV, 47);
     while not frmPDV_PDV.cdsAgrupAdicional.Eof do
     begin
       Interface_.CriaButtonScrollBox(scbAgrupAdicional, frmPDV_PDV.cdsAgrupAdicional.FieldByName('NMAGRUPADIC').AsString,
@@ -237,20 +242,24 @@ procedure TfrmAdicional.OnClickAdicionalPDV(Sender: TObject);
     //Realizo um loop nos adicionais já escolhidos para o item do pedido
     while not cdsAddPedido.Eof do
     begin
-      //verifica se o valor unitario é diferente do valor anterior e se não é o primeiro registro
-      if (inQtdeItem > 0) and (vrTempAnt <> cdsAddPedidoVRUNITARIO.AsFloat) then
-        //Incrementa o registro (ou seja, se for adicional de valor diferente)
-        Inc(inQtdeItemVal)
-      else
-        //incrementa o numero de itens
-        Inc(inQtdeItem);
+      //Verifica se é adicional ou composição
+      if cdsAddPedidoVRUNITARIO.AsFloat > 0 then
+      begin
+        //verifica se o valor unitario é diferente do valor anterior e se não é o primeiro registro
+        if (inQtdeItem > 0) and (vrTempAnt <> cdsAddPedidoVRUNITARIO.AsFloat) then
+          //Incrementa o registro (ou seja, se for adicional de valor diferente)
+          Inc(inQtdeItemVal)
+        else
+          //incrementa o numero de itens
+          Inc(inQtdeItem);
 
-      //Grava na struct as informações de valor unitario e quantas vezes esse valor se repete
-      ArObj[inQtdeItemVal].vrUnit := cdsAddPedidoVRUNITARIO.AsFloat;
-      ArObj[inQtdeItemVal].vQdte  := inQtdeItem;
+        //Grava na struct as informações de valor unitario e quantas vezes esse valor se repete
+        ArObj[inQtdeItemVal].vrUnit := cdsAddPedidoVRUNITARIO.AsFloat;
+        ArObj[inQtdeItemVal].vQdte  := inQtdeItem;
 
-      //Salvo o valor unitario em uma variavel temporaria
-      vrTempAnt := cdsAddPedidoVRUNITARIO.AsFloat;
+        //Salvo o valor unitario em uma variavel temporaria
+        vrTempAnt := cdsAddPedidoVRUNITARIO.AsFloat;
+      end;
 
       //Passa para o proximo registro
       cdsAddPedido.Next;
@@ -354,26 +363,32 @@ procedure TfrmAdicional.OnClickAdicionalPDV(Sender: TObject);
       }
       cdsAddPedido.Edit;
 
-      if (inQtdeGrat > 0) and
-         (((ArObj[inAlterada].vrUnit = cdsAddPedidoVRUNITARIO.AsFloat) and (ArObj[inAlterada].vQdte = 0))
-          or (not boOk)) then
+      if cdsAddPedidoVRUNITARIO.AsFloat > 0 then
       begin
-        //A
-        cdsAddPedidoQTGRATUI.AsInteger := 1;
-        cdsAddPedidoVRTOTAITEM.AsFloat := 0.0;
-        cdsAddPedidoVRADICIONAL.AsFloat := cdsAuxAdicionalVRAGRUPADIC.AsFloat;
-                                
-        //Decrementa quantidade de itens gratuitos restantes
-        Dec(inQtdeGrat);
-      end else
-      begin
-        //B
-        cdsAddPedidoQTGRATUI.AsInteger := 0;
-        cdsAddPedidoVRTOTAITEM.AsFloat := cdsAddPedidoQTITEM.AsFloat * cdsAddPedidoVRUNITARIO.AsFloat;
-        cdsAddPedidoVRADICIONAL.AsFloat := cdsAuxAdicionalVRAGRUPADIC.AsFloat;
-      end;
-      cdsAddPedido.Post;
+        if (inQtdeGrat > 0) and
+           (((ArObj[inAlterada].vrUnit = cdsAddPedidoVRUNITARIO.AsFloat) and (ArObj[inAlterada].vQdte = 0))
+            or (not boOk)) then
+        begin
+          //A
+          cdsAddPedidoQTGRATUI.AsInteger := 1;
+          cdsAddPedidoVRTOTAITEM.AsFloat := 0.0;
+          cdsAddPedidoVRADICIONAL.AsFloat := cdsAuxAdicionalVRAGRUPADIC.AsFloat;
 
+          //Decrementa quantidade de itens gratuitos restantes
+          Dec(inQtdeGrat);
+        end else
+        begin
+          //B
+          cdsAddPedidoQTGRATUI.AsInteger := 0;
+          cdsAddPedidoVRTOTAITEM.AsFloat := cdsAddPedidoQTITEM.AsFloat * cdsAddPedidoVRUNITARIO.AsFloat;
+          cdsAddPedidoVRADICIONAL.AsFloat := cdsAuxAdicionalVRAGRUPADIC.AsFloat;
+        end;
+      end else
+        cdsAddPedidoVRADICIONAL.AsFloat := cdsAuxAdicionalVRAGRUPADIC.AsFloat;
+      
+      if cdsAddPedido.State in [dsInsert, dsEdit] then
+        cdsAddPedido.Post;
+        
       //Passa para o proximo registro
       cdsAddPedido.Next;
     end;
@@ -386,16 +401,22 @@ begin
   }
 
   //Pega o ID (os IDs salvo na Tag do botão) do adicional clicado e posiciona no adicional correspondnte
-  cdsAdicional.Locate('ID', (Sender as TcxButton).Tag, [loCaseInsensitive]);  
+  cdsAdicional.Locate('ID', (Sender as TcxButton).Tag, [loCaseInsensitive]);
 
   //Insere o adicional selecionado nos adicionais do produto
   cdsAddPedido.Insert;
   cdsAddPedidoIMG.AsInteger        := 0;
-  cdsAddPedidoITEM_ID.AsInteger    := cdsAdicionalID.AsInteger;
+  if cdsAdicional.FieldByName('ADICIONAL').AsString = 'S' then
+    cdsAddPedidoITEM_ID.AsInteger  := cdsAdicionalID.AsInteger
+  else
+    cdsAddPedidoITEM_ID.AsInteger  := cdsAdicionalID.AsInteger;
   cdsAddPedidoVRUNITARIO.AsFloat   := cdsAdicionalVALOR.AsFloat;
   //Grava identificador do produto a que pertence o adicional
   cdsAddPedidoITEMPEDIDO_ID.AsInteger := frmPDV_PDV.cdsITEMPEDIDOID.AsInteger;
-  cdsAddPedidoQTITEM.AsFloat       := 1.0;
+  if cdsAdicional.FieldByName('ADICIONAL').AsString = 'S' then
+    cdsAddPedidoQTITEM.AsFloat     := 1.0
+  else
+    cdsAddPedidoQTITEM.AsFloat     := cdsAdicional.FieldByName('QUANTIDADE').AsFloat;
   cdsAddPedidoNMPRODUTO.AsString   := cdsAdicionalNMPRODUTO.AsString;
   //Grava imagem sempre 0, já que no momento não vai precisar
   cdsAddPedidoIMG.AsInteger        := 0;
@@ -445,12 +466,22 @@ begin
     end;
   end;
 
-  adqAdicional.Close;
-  adqAdicional.Parameters.ParamByName('P_AGRUPADICIONAL').Value := (Sender as TcxButton).Tag;
-  adqAdicional.Open;
+  if (Sender as TcxButton).Tag = 0 then
+  begin
+    adqComposicao.Close;
+    adqComposicao.Open;
 
-  cdsAdicional.Data := dspAdicional.Data;
-  adqAdicional.Close;
+    cdsAdicional.Data := dspComposicao.Data;
+    adqComposicao.Close;
+  end else
+  begin
+    adqAdicional.Close;
+    adqAdicional.Parameters.ParamByName('P_AGRUPADICIONAL').Value := (Sender as TcxButton).Tag;
+    adqAdicional.Open;     
+
+    cdsAdicional.Data := dspAdicional.Data;
+    adqAdicional.Close;
+  end;
 
   if scbAdicional.ControlCount = 0 then
   begin

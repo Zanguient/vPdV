@@ -189,6 +189,9 @@ type
     cdsAddPedidoVRDESCONTO: TFloatField;
     gdbAddPedidoColumn5: TcxGridDBColumn;
     adqInsMovCaixa: TADOQuery;
+    adqComposicao: TADOQuery;
+    dspComposicao: TDataSetProvider;
+    adqAuxAdicional: TADOQuery;
     procedure FormShow(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     constructor PCreate(Form: TComponent; Parametros: TParametros); Overload;
@@ -213,7 +216,7 @@ type
     { Public declarations }
     procedure OnClickCategoriaPDV(Sender: TObject);
     procedure OnClickProdutosPDV(Sender: TObject);
-    procedure AtualizaValorPedido;
+    procedure AtualizaValorPedido(boSemADD: Boolean = False);
     procedure AtualizacdsPedido;
   end;
 
@@ -433,7 +436,7 @@ begin
     try
       frmAdicional.Tag := (Sender as TcxButton).Tag;
       frmAdicional.ShowModal;
-      AtualizaValorPedido;
+      AtualizaValorPedido(frmAdicional.GetBlz);
       if frmAdicional.GetBlz then
       begin
         if ((cdsAddPedido.RecordCount > 0) and (cdsItemPedido.State in [dsEdit])) then
@@ -491,30 +494,16 @@ end;
 procedure TfrmPDV_PDV.btnFinalizarPedidoClick(Sender: TObject);
 var
   Acesso_Perifericos: TAcesso_Perifericos;
-  Impressao_Nao_Fiscal: TImpressao_Nao_Fiscal;
   stFormaEscolhida: String;
 begin
   inherited;
   stFormaEscolhida := '';
   Acesso_Perifericos := TAcesso_Perifericos.Create;
-  Impressao_Nao_Fiscal := TImpressao_Nao_Fiscal.Create;
   stStatusPedido := 'F';
   try
     btnGravarClick(btnGravar);
 
-    AtualizacdsPedido;
-
     stFormaEscolhida := Escolhe_Forma_Pagamento;
-
-    if not Impressao_Nao_Fiscal.Verif_Impressora then
-    begin
-      if not Confirma(DESEJA_CONTINUAR_PEDIDO) then
-        Exit;
-    end else
-    begin
-      cdsAddPedido.Filtered := False;
-      Impressao_Nao_Fiscal.Layout_Finaliza_Pedido(cdsPedidoImpressao, cdsItemPedido, cdsAddPedido);
-    end;
 
     if stFormaEscolhida = 'DI' then
       Acesso_Perifericos.AbreGaveta;
@@ -525,11 +514,11 @@ begin
     adqInsMovCaixa.Parameters.ParamByName('VRMOVI').Value := StrToFloat(edtTotal.Text);
     adqInsMovCaixa.Parameters.ParamByName('TPMOVI').Value    := 'V';
     adqInsMovCaixa.Parameters.ParamByName('FORMPGTO').Value  := stFormaEscolhida;
-    adqInsMovCaixa.Parameters.ParamByName('ID_PEDIDO').Value := adqItemPedido.FieldByName('PEDIDO_ID').Value;
+    adqInsMovCaixa.Parameters.ParamByName('ID_PEDIDO').Value := cdsItemPedido.FieldByName('PEDIDO_ID').Value;
     adqInsMovCaixa.ExecSQL;
 
     adqUpdPedido.Close;
-    adqUpdPedido.Parameters.ParamByName('P_ID').Value := adqItemPedido.FieldByName('PEDIDO_ID').Value;
+    adqUpdPedido.Parameters.ParamByName('P_ID').Value := cdsItemPedido.FieldByName('PEDIDO_ID').Value;
     adqUpdPedido.Parameters.ParamByName('P_VRPEDIDO').Value := StrToFloat(edtTotal.Text);
     adqUpdPedido.Parameters.ParamByName('P_IDSTATUSPED').Value := 'F';
     adqUpdPedido.ExecSQL;
@@ -537,7 +526,6 @@ begin
     btnCancelarClick(btnCancelar);
   finally
     FreeAndNil(Acesso_Perifericos);
-    FreeAndNil(Impressao_Nao_Fiscal);
   end;
 end;
 
@@ -560,180 +548,218 @@ end;
 procedure TfrmPDV_PDV.btnGravarClick(Sender: TObject);
 var
   inPedido_ID, inItemPedido_ID: Integer;
+  Impressao_Nao_Fiscal: TImpressao_Nao_Fiscal;
 begin
+  Impressao_Nao_Fiscal := TImpressao_Nao_Fiscal.Create;
   try
-    cdsItemPedido.DisableControls;
-    cdsAddPedido.DisableControls;    
+    try
+      cdsItemPedido.DisableControls;
+      cdsAddPedido.DisableControls;
 
-    adqAuxUpdMesa.Close;
-    if stStatusPedido = 'F' then
-      adqAuxUpdMesa.Parameters.ParamByName('IDSTATUS').Value := 'L'
-    else
-      adqAuxUpdMesa.Parameters.ParamByName('IDSTATUS').Value := 'O';
-    adqAuxUpdMesa.Parameters.ParamByName('ID').Value := FParametros.Tag;
-    adqAuxUpdMesa.ExecSQL;
-    
-    if adqItemPedido.IsEmpty then
-    begin
-      adqInsPedido.Close;
-      adqInsPedido.Parameters.ParamByName('P_IDTIPOPEDIDO').Value := Copy(FParametros.Caption,1,1);
-      case AnsiIndexStr(UpperCase(Copy(FParametros.Caption,1,1)), ['M','D','B']) of
-        1,2: begin
-            if edtTelefone.EditValue <> '' then
-            begin
-              adqInsPedido.Parameters.ParamByName('P_NMCLIENTE').Value  := edtTelefone.Properties.ListColumns[1].Field.Value;
-              adqInsPedido.Parameters.ParamByName('P_CLIENTE_ID').Value  := edtTelefone.Properties.ListColumns[2].Field.Value;
-            end
-            else
-            begin
-              adqInsPedido.Parameters.ParamByName('P_NMCLIENTE').Value  := edtTelefone.Properties.ListColumns[0].Field.Value;
-              adqInsPedido.Parameters.ParamByName('P_CLIENTE_ID').Value  := edtTelefone.Properties.ListColumns[2].Field.Value;
-            end;
-            end;
-        0:   begin
-               adqInsPedido.Parameters.ParamByName('P_MESA_ID').Value   := FParametros.Tag;
-             end;
-      end;
-      adqInsPedido.Parameters.ParamByName('P_VRPEDIDO').Value     := StrToFloat(edtTotal.Text);
-      adqInsPedido.Parameters.ParamByName('P_IDSTATUSPED').Value  := stStatusPedido;
-      adqInsPedido.ExecSQL;
+      adqAuxUpdMesa.Close;
+      if stStatusPedido = 'F' then
+        adqAuxUpdMesa.Parameters.ParamByName('IDSTATUS').Value := 'L'
+      else
+        adqAuxUpdMesa.Parameters.ParamByName('IDSTATUS').Value := 'O';
+      adqAuxUpdMesa.Parameters.ParamByName('ID').Value := FParametros.Tag;
+      adqAuxUpdMesa.ExecSQL;
 
-      adqConsID.Close;
-      adqConsID.Open;
-      inPedido_ID := adqConsID.FieldByName('ID').AsInteger;
-    end else
-    begin
-      inPedido_ID := adqItemPedido.FieldByName('PEDIDO_ID').Value;
-
-      adqUpdPedido.Close;
-      adqUpdPedido.Parameters.ParamByName('P_ID').Value := inPedido_ID;
-      adqUpdPedido.Parameters.ParamByName('P_VRPEDIDO').Value := StrToFloat(edtTotal.Text);
-      adqUpdPedido.Parameters.ParamByName('P_IDSTATUSPED').Value := 'A';
-      adqUpdPedido.ExecSQL;      
-    end;
-
-    //Exclusao adicionais zerados
-    frmPDV_PDV.cdsAddPedido.Filtered := False;
-    cdsAddPedido.First;
-    while not cdsAddPedido.Eof do
-    begin
-      if cdsAddPedidoQTITEM.Value = 0.0 then
+      if adqItemPedido.IsEmpty then
       begin
-        adqDelAddPedido.Close;
-        adqDelAddPedido.Parameters.ParamByName('P_ITEMPEDIDO_ID').Value := cdsAddPedidoITEMPEDIDO_ID.AsInteger;
-        adqDelAddPedido.Parameters.ParamByName('P_ID').Value := cdsAddPedidoID.AsInteger;
-        adqDelAddPedido.ExecSQL;
-      end;
-      cdsAddPedido.Next;
-    end;
-    frmPDV_PDV.cdsAddPedido.Filtered := True;
+        adqInsPedido.Close;
+        adqInsPedido.Parameters.ParamByName('P_IDTIPOPEDIDO').Value := Copy(FParametros.Caption,1,1);
+        case AnsiIndexStr(UpperCase(Copy(FParametros.Caption,1,1)), ['M','D','B']) of
+          1,2: begin
+              if edtTelefone.Text <> '' then
+              begin
+                adqInsPedido.Parameters.ParamByName('P_NMCLIENTE').Value  := edtTelefone.Properties.ListColumns[1].Field.Value;
+                adqInsPedido.Parameters.ParamByName('P_CLIENTE_ID').Value  := edtTelefone.Properties.ListColumns[2].Field.Value;
+              end
+              else
+              begin
+                adqInsPedido.Parameters.ParamByName('P_NMCLIENTE').Value  := edtTelefone.Properties.ListColumns[0].Field.Value;
+                adqInsPedido.Parameters.ParamByName('P_CLIENTE_ID').Value  := edtTelefone.Properties.ListColumns[2].Field.Value;
+              end;
+              end;
+          0:   begin
+                 adqInsPedido.Parameters.ParamByName('P_MESA_ID').Value   := FParametros.Tag;
+               end;
+        end;
+        adqInsPedido.Parameters.ParamByName('P_VRPEDIDO').Value     := StrToFloat(edtTotal.Text);
+        adqInsPedido.Parameters.ParamByName('P_IDSTATUSPED').Value  := stStatusPedido;
+        adqInsPedido.ExecSQL;
 
-    //ItemPedido
-    cdsItemPedido.Filtered := False;
-    cdsItemPedido.First;
-    while not cdsItemPedido.Eof do
-    begin
-      if cdsItemPedidoQTITEM.Value = 0.0 then
-      begin
-        adqDelItemPedido.Close;
-        adqDelItemPedido.Parameters.ParamByName('ID').Value := cdsItemPedido.FieldByName('ID').AsInteger;
-        adqDelItemPedido.Parameters.ParamByName('PEDIDO_ID').Value := inPedido_ID;
-        adqDelItemPedido.ExecSQL;
+        adqConsID.Close;
+        adqConsID.Open;
+        inPedido_ID := adqConsID.FieldByName('ID').AsInteger;
       end else
       begin
-        inItemPedido_ID := 0;
-        if not adqItemPedido.Locate('ID', cdsItemPedidoID.Value, [loCaseInsensitive]) then begin
-          adqInsItemPedido.Close;
-          adqInsItemPedido.Parameters.ParamByName('P_PEDIDO_ID').Value   := inPedido_ID;
-          adqInsItemPedido.Parameters.ParamByName('P_CARDAPIO_ID').Value := cdsItemPedidoCARDAPIO_ID.AsInteger;
-    //      adqInsItemPedido.Parameters.ParamByName('P_LOTE_ID').Value     := cdsItemPedidoLOTE_ID.Value;
-          adqInsItemPedido.Parameters.ParamByName('P_QTITEM').Value      := cdsItemPedidoQTITEM.AsFloat;
-          adqInsItemPedido.Parameters.ParamByName('P_VRVENDA').Value     := cdsItemPedidoVRVENDA.AsFloat;
-          adqInsItemPedido.Parameters.ParamByName('P_VRTOTAL').Value     := cdsItemPedidoVRTOTAL.AsFloat;
-          adqInsItemPedido.Parameters.ParamByName('P_PRODUTO_ID').Value  := cdsItemPedidoPRODUTO_ID.AsInteger;
-          adqInsItemPedido.Parameters.ParamByName('P_IDADICIONAL').Value := cdsItemPedidoIDADICIONAL.AsInteger;
-          adqInsItemPedido.ExecSQL;
+        inPedido_ID := adqItemPedido.FieldByName('PEDIDO_ID').Value;
 
-          adqConsItemPedidoID.Close;
-          adqConsItemPedidoID.Open;                       
-          inItemPedido_ID := adqConsItemPedidoID.FieldByName('ID').AsInteger;
+        adqUpdPedido.Close;
+        adqUpdPedido.Parameters.ParamByName('P_ID').Value := inPedido_ID;
+        adqUpdPedido.Parameters.ParamByName('P_VRPEDIDO').Value := StrToFloat(edtTotal.Text);
+        adqUpdPedido.Parameters.ParamByName('P_IDSTATUSPED').Value := 'A';
+        adqUpdPedido.ExecSQL;
+      end;
+
+      //Exclusao adicionais zerados
+      frmPDV_PDV.cdsAddPedido.Filtered := False;
+      cdsAddPedido.First;
+      while not cdsAddPedido.Eof do
+      begin
+        if cdsAddPedidoQTITEM.Value = 0.0 then
+        begin
+          adqDelAddPedido.Close;
+          adqDelAddPedido.Parameters.ParamByName('P_ITEMPEDIDO_ID').Value := cdsAddPedidoITEMPEDIDO_ID.AsInteger;
+          adqDelAddPedido.Parameters.ParamByName('P_ID').Value := cdsAddPedidoID.AsInteger;
+          adqDelAddPedido.ExecSQL;
+        end;
+        cdsAddPedido.Next;
+      end;
+      frmPDV_PDV.cdsAddPedido.Filtered := True;
+
+      //ItemPedido
+      cdsItemPedido.Filtered := False;
+      cdsItemPedido.First;
+      while not cdsItemPedido.Eof do
+      begin
+        if cdsItemPedidoQTITEM.Value = 0.0 then
+        begin
+          adqDelItemPedido.Close;
+          adqDelItemPedido.Parameters.ParamByName('ID').Value := cdsItemPedido.FieldByName('ID').AsInteger;
+          adqDelItemPedido.Parameters.ParamByName('PEDIDO_ID').Value := inPedido_ID;
+          adqDelItemPedido.ExecSQL;
         end else
         begin
-          adqUpdItemPedido.Close;
-          adqUpdItemPedido.Parameters.ParamByName('ID').Value  := cdsItemPedidoID.Value;
-          adqUpdItemPedido.Parameters.ParamByName('P_CARDAPIO_ID').Value := cdsItemPedidoCARDAPIO_ID.AsInteger;
-    //      adqUpdItemPedido.Parameters.ParamByName('P_LOTE_ID').Value     := cdsItemPedidoLOTE_ID.AsInteger;
-          adqUpdItemPedido.Parameters.ParamByName('P_QTITEM').Value      := cdsItemPedidoQTITEM.AsFloat;
-          adqUpdItemPedido.Parameters.ParamByName('P_VRVENDA').Value     := cdsItemPedidoVRVENDA.AsFloat;
-          adqUpdItemPedido.Parameters.ParamByName('P_VRTOTAL').Value     := cdsItemPedidoVRTOTAL.AsFloat;
-          adqUpdItemPedido.Parameters.ParamByName('P_IDADICIONAL').Value := cdsItemPedidoIDADICIONAL.AsInteger;
-          adqUpdItemPedido.ExecSQL;
-        end;
-        
-        //Adicional
-        cdsAddPedido.First;
-        while not cdsAddPedido.Eof do
-        begin
-          if not adqAdicional.Locate('ID;ITEMPEDIDO_ID', VarArrayOf([cdsAddPedidoID.Value,cdsAddPedidoITEMPEDIDO_ID.Value]), [loCaseInsensitive]) then
-          begin
-            adqInsAdicionalPedido.Close;
-            if inItemPedido_ID = 0 then
-              adqInsAdicionalPedido.Parameters.ParamByName('P_ITEMPEDIDO_ID').Value := cdsAddPedidoITEMPEDIDO_ID.AsInteger
-            else                                                                                      
-              adqInsAdicionalPedido.Parameters.ParamByName('P_ITEMPEDIDO_ID').Value := inItemPedido_ID;
-            adqInsAdicionalPedido.Parameters.ParamByName('P_ITEM_ID').Value       := cdsAddPedidoITEM_ID.AsInteger;
-            adqInsAdicionalPedido.Parameters.ParamByName('P_QTITEM').Value        := cdsAddPedidoQTITEM.AsFloat;
-            adqInsAdicionalPedido.Parameters.ParamByName('P_VALOR').Value         := cdsAddPedidoVRUNITARIO.AsFloat;
-            adqInsAdicionalPedido.Parameters.ParamByName('P_VRVENDA').Value       := cdsAddPedidoVRTOTAITEM.AsFloat;
-            adqInsAdicionalPedido.ExecSQL;
+          inItemPedido_ID := 0;
+          if not adqItemPedido.Locate('ID', cdsItemPedidoID.Value, [loCaseInsensitive]) then begin
+            adqInsItemPedido.Close;
+            adqInsItemPedido.Parameters.ParamByName('P_PEDIDO_ID').Value   := inPedido_ID;
+            adqInsItemPedido.Parameters.ParamByName('P_CARDAPIO_ID').Value := cdsItemPedidoCARDAPIO_ID.AsInteger;
+      //      adqInsItemPedido.Parameters.ParamByName('P_LOTE_ID').Value     := cdsItemPedidoLOTE_ID.Value;
+            adqInsItemPedido.Parameters.ParamByName('P_QTITEM').Value      := cdsItemPedidoQTITEM.AsFloat;
+            adqInsItemPedido.Parameters.ParamByName('P_VRVENDA').Value     := cdsItemPedidoVRVENDA.AsFloat;
+            adqInsItemPedido.Parameters.ParamByName('P_VRTOTAL').Value     := cdsItemPedidoVRTOTAL.AsFloat;
+            adqInsItemPedido.Parameters.ParamByName('P_PRODUTO_ID').Value  := cdsItemPedidoPRODUTO_ID.AsInteger;
+            adqInsItemPedido.Parameters.ParamByName('P_IDADICIONAL').Value := cdsItemPedidoIDADICIONAL.AsInteger;
+            adqInsItemPedido.ExecSQL;
+
+            adqConsItemPedidoID.Close;
+            adqConsItemPedidoID.Open;
+            inItemPedido_ID := adqConsItemPedidoID.FieldByName('ID').AsInteger;
           end else
           begin
-            adqUpdAdicionalPedido.Close;
-            adqUpdAdicionalPedido.Parameters.ParamByName('P_ITEMPEDIDO_ID').Value := cdsAddPedidoITEMPEDIDO_ID.AsInteger;
-            adqUpdAdicionalPedido.Parameters.ParamByName('P_ID').Value            := cdsAddPedidoID.AsInteger;
-            adqUpdAdicionalPedido.Parameters.ParamByName('P_QTITEM').Value        := cdsAddPedidoQTITEM.AsFloat;
-            adqUpdAdicionalPedido.Parameters.ParamByName('P_VALOR').Value         := cdsAddPedidoVRUNITARIO.AsFloat;
-            adqUpdAdicionalPedido.Parameters.ParamByName('P_VRVENDA').Value       := cdsAddPedidoVRTOTAITEM.AsFloat;
-            adqUpdAdicionalPedido.ExecSQL;
+            adqUpdItemPedido.Close;
+            adqUpdItemPedido.Parameters.ParamByName('ID').Value  := cdsItemPedidoID.Value;
+            adqUpdItemPedido.Parameters.ParamByName('P_CARDAPIO_ID').Value := cdsItemPedidoCARDAPIO_ID.AsInteger;
+      //      adqUpdItemPedido.Parameters.ParamByName('P_LOTE_ID').Value     := cdsItemPedidoLOTE_ID.AsInteger;
+            adqUpdItemPedido.Parameters.ParamByName('P_QTITEM').Value      := cdsItemPedidoQTITEM.AsFloat;
+            adqUpdItemPedido.Parameters.ParamByName('P_VRVENDA').Value     := cdsItemPedidoVRVENDA.AsFloat;
+            adqUpdItemPedido.Parameters.ParamByName('P_VRTOTAL').Value     := cdsItemPedidoVRTOTAL.AsFloat;
+            adqUpdItemPedido.Parameters.ParamByName('P_IDADICIONAL').Value := cdsItemPedidoIDADICIONAL.AsInteger;
+            adqUpdItemPedido.ExecSQL;
           end;
 
-          cdsAddPedido.Next;
+          //Adicional
+          cdsAddPedido.First;
+          while not cdsAddPedido.Eof do
+          begin
+            if not adqAdicional.Locate('ID;ITEMPEDIDO_ID', VarArrayOf([cdsAddPedidoID.Value,cdsAddPedidoITEMPEDIDO_ID.Value]), [loCaseInsensitive]) then
+            begin
+              adqInsAdicionalPedido.Close;
+              if inItemPedido_ID = 0 then
+                adqInsAdicionalPedido.Parameters.ParamByName('P_ITEMPEDIDO_ID').Value := cdsAddPedidoITEMPEDIDO_ID.AsInteger
+              else
+                adqInsAdicionalPedido.Parameters.ParamByName('P_ITEMPEDIDO_ID').Value := inItemPedido_ID;
+              adqInsAdicionalPedido.Parameters.ParamByName('P_ITEM_ID').Value       := cdsAddPedidoITEM_ID.AsInteger;
+              adqInsAdicionalPedido.Parameters.ParamByName('P_QTITEM').Value        := cdsAddPedidoQTITEM.AsFloat;
+              adqInsAdicionalPedido.Parameters.ParamByName('P_VALOR').Value         := cdsAddPedidoVRUNITARIO.AsFloat;
+              adqInsAdicionalPedido.Parameters.ParamByName('P_VRVENDA').Value       := cdsAddPedidoVRTOTAITEM.AsFloat;
+              adqInsAdicionalPedido.ExecSQL;
+            end else
+            begin
+              adqUpdAdicionalPedido.Close;
+              adqUpdAdicionalPedido.Parameters.ParamByName('P_ITEMPEDIDO_ID').Value := cdsAddPedidoITEMPEDIDO_ID.AsInteger;
+              adqUpdAdicionalPedido.Parameters.ParamByName('P_ID').Value            := cdsAddPedidoID.AsInteger;
+              adqUpdAdicionalPedido.Parameters.ParamByName('P_QTITEM').Value        := cdsAddPedidoQTITEM.AsFloat;
+              adqUpdAdicionalPedido.Parameters.ParamByName('P_VALOR').Value         := cdsAddPedidoVRUNITARIO.AsFloat;
+              adqUpdAdicionalPedido.Parameters.ParamByName('P_VRVENDA').Value       := cdsAddPedidoVRTOTAITEM.AsFloat;
+              adqUpdAdicionalPedido.ExecSQL;
+            end;
+
+            cdsAddPedido.Next;
+          end;
+        end;
+
+        cdsItemPedido.Next;
+      end;
+      cdsItemPedido.Filtered := True;
+
+      adqAdicional.Close;
+      adqAdicional.Parameters.ParamByName('P_PEDIDO_ID').Value := cdsItemPedidoPedido_ID.AsInteger;
+      adqAdicional.Open;
+      cdsAddPedido.Data := dspAdicional.Data;
+
+      AtualizacdsPedido;
+
+      adqAuxUpdMesa.Close;
+      if stStatusPedido = 'F' then
+        adqAuxUpdMesa.Parameters.ParamByName('IDSTATUS').Value := 'L'
+      else
+        adqAuxUpdMesa.Parameters.ParamByName('IDSTATUS').Value := 'O';
+      adqAuxUpdMesa.Parameters.ParamByName('ID').Value := FParametros.Tag;
+      adqAuxUpdMesa.ExecSQL;
+
+      if stStatusPedido = 'F' then
+      begin
+        if not Impressao_Nao_Fiscal.Verif_Impressora then
+        begin
+          if not Confirma(DESEJA_CONTINUAR_PEDIDO) then
+            Exit;
+        end else
+        begin
+          cdsAddPedido.Filtered := False;
+          Impressao_Nao_Fiscal.Layout_Finaliza_Pedido(cdsPedidoImpressao, cdsItemPedido, cdsAddPedido, 'F');
+        end;
+      end else
+      begin
+        if not Impressao_Nao_Fiscal.Verif_Impressora then
+          Aviso(PEDIDO_NAO_COZINHA)
+        else
+        begin
+          cdsAddPedido.Filtered := False;
+          Impressao_Nao_Fiscal.Layout_Finaliza_Pedido(cdsPedidoImpressao, cdsItemPedido, cdsAddPedido, 'G');
         end;
       end;
 
-      cdsItemPedido.Next;
+      if stStatusPedido = 'F' then
+      begin
+        adqItemPedidoF.Close;
+        adqItemPedidoF.Parameters.ParamByName('P_PEDIDO_ID').Value := inPedido_ID;
+        adqItemPedidoF.Open;
+        cdsItemPedido.Data := dspItemPedidoF.Data;
+      end else
+      begin
+        adqItemPedido.Close;
+        adqItemPedido.Parameters.ParamByName('P_MESA_ID').Value := FParametros.Tag;
+        adqItemPedido.Open;
+        cdsItemPedido.Data := dspItemPedido.Data;
+      end;
+
+      cdsItemPedido.First;
+
+      cdsItemPedido.EnableControls;
+      cdsAddPedido.EnableControls;
+
+      boOk := True;
+    except
+      cdsItemPedido.EnableControls;
+      cdsAddPedido.EnableControls;
+      Raise;
     end;
-    cdsItemPedido.Filtered := True;
-
-    if stStatusPedido = 'F' then
-    begin
-      adqItemPedidoF.Close;
-      adqItemPedidoF.Parameters.ParamByName('P_PEDIDO_ID').Value := inPedido_ID;
-      adqItemPedidoF.Open;
-      cdsItemPedido.Data := dspItemPedidoF.Data;
-    end else
-    begin
-      adqItemPedido.Close;
-      adqItemPedido.Parameters.ParamByName('P_MESA_ID').Value := FParametros.Tag;
-      adqItemPedido.Open;
-      cdsItemPedido.Data := dspItemPedido.Data;
-    end;
-
-    adqAdicional.Close;
-    adqAdicional.Parameters.ParamByName('P_PEDIDO_ID').Value := cdsItemPedidoPedido_ID.AsInteger;
-    adqAdicional.Open;
-    cdsAddPedido.Data := dspAdicional.Data;
-
-    cdsItemPedido.First;
-
-    cdsItemPedido.EnableControls;
-    cdsAddPedido.EnableControls;
-
-    boOk := True;
-  except
-    cdsItemPedido.EnableControls;
-    cdsAddPedido.EnableControls;
-    Raise;
+  finally
+    FreeAndNil(Impressao_Nao_Fiscal);
   end;
 end;
 
@@ -744,7 +770,7 @@ begin
   boJaPostou := False;
 end;
 
-procedure TfrmPDV_PDV.AtualizaValorPedido;
+procedure TfrmPDV_PDV.AtualizaValorPedido(boSemADD: Boolean = False);
 begin
   if not VarIsNull(cdsAddPedidoSUMVRTOTAL.Value) then
   begin
@@ -752,7 +778,13 @@ begin
     cdsItemCategoria.Filtered := False;
 
     cdsItemCategoria.Locate('PRODUTO_ID', cdsItemPedidoPRODUTO_ID.AsInteger, [loCaseInsensitive]);
-
+    cdsAddPedido.First;
+    while ((cdsAddPedido.FieldByName('VRUNITARIO').AsFloat = 0) or (not cdsAddPedido.Eof)) do
+      cdsAddPedido.Next;
+{    repeat
+      cdsAddPedido.Next;
+    until ((cdsAddPedido.FieldByName('VRUNITARIO').AsFloat > 0) and (not cdsAddPedido.Eof)) or (not cdsAddPedido.Eof);
+}
     cdsItemPedido.Edit;
     cdsItemPedidoVRVENDA.AsFloat := cdsItemCategoriaVRVENDA.AsFloat + cdsAddPedidoVRADICIONAL.AsFloat;
     cdsItemPedidoVRTOTAL.AsFloat := (cdsItemPedidoQTITEM.AsFloat * cdsItemPedidoVRVENDA.AsFloat) +
@@ -761,8 +793,20 @@ begin
 
     //Volta o filtro do "Isso pode dar erro"
     cdsItemCategoria.Filtered := True;
-    
+
     cdsItemPedido.Post;
+  end else
+  if boSemADD then
+  begin
+    cdsItemCategoria.Locate('PRODUTO_ID', cdsItemPedidoPRODUTO_ID.AsInteger, [loCaseInsensitive]);
+    
+    adqAuxAdicional.Close;
+    adqAuxAdicional.Parameters.ParamByName('P_CARDAPIO_ID').Value := cdsItemPedidoCARDAPIO_ID.AsInteger;
+    adqAuxAdicional.Open;
+
+    cdsItemPedido.Edit;
+    cdsItemPedidoVRVENDA.AsFloat := cdsItemCategoriaVRVENDA.AsFloat + adqAuxAdicional.FieldByName('VRAGRUPADIC').AsFloat;
+    cdsItemPedidoVRTOTAL.AsFloat := (cdsItemPedidoQTITEM.AsFloat * cdsItemPedidoVRVENDA.AsFloat);
   end;
 
   if VarIsNull(cdsItemPedidoSUMVRTOTAL.Value) then
@@ -795,7 +839,7 @@ begin
 
       try
         frmAdicional.ShowModal;
-        AtualizaValorPedido;
+        AtualizaValorPedido(frmAdicional.GetBlz);
       finally
         FreeAndNil(frmAdicional);
       end;
