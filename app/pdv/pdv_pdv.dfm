@@ -1664,7 +1664,7 @@ object frmPDV_PDV: TfrmPDV_PDV
       Top = 0
       Width = 200
       Height = 89
-      Hint = 'Cancelar altera'#231#245'es'
+      Hint = 'Cancelar alterações'
       Caption = 'Voltar'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
@@ -2451,7 +2451,7 @@ object frmPDV_PDV: TfrmPDV_PDV
           Width = 89
         end
         object gdbAddPedidoColumn3: TcxGridDBColumn
-          Caption = 'Valor Unit'#225'rio'
+          Caption = 'Valor Unitário'
           DataBinding.FieldName = 'VRUNITARIO'
           PropertiesClassName = 'TcxCurrencyEditProperties'
           Properties.DisplayFormat = '0.00;-0.00'
@@ -2560,7 +2560,7 @@ object frmPDV_PDV: TfrmPDV_PDV
           Width = 90
         end
         object gdbVrUnitario: TcxGridDBColumn
-          Caption = 'Valor Unit'#225'rio'
+          Caption = 'Valor Unitário'
           DataBinding.FieldName = 'VRVENDA'
           PropertiesClassName = 'TcxCurrencyEditProperties'
           Properties.DisplayFormat = '0.00;-0.00'
@@ -3061,7 +3061,7 @@ object frmPDV_PDV: TfrmPDV_PDV
     SQL.Strings = (
       'SELECT id, nmcategoria, imgindex'
       '  FROM CATEGORIA'
-      ' WHERE IDCATEGORIATIV = '#39'A'#39)
+      ' WHERE IDCATEGORIATIV = ''A''')
     Left = 728
     Top = 128
   end
@@ -3070,7 +3070,7 @@ object frmPDV_PDV: TfrmPDV_PDV
     Parameters = <>
     SQL.Strings = (
       
-        'SELECT P.ID PRODUTO_ID, IC.ID, P.NMPRODUTO, P.POSARVORE, P.UNIME' +
+        'SELECT P.ID PRODUTO_ID, IC.ID, IC.DSPRODUTO AS NMPRODUTO, P.POSARVORE, P.UNIME' +
         'DIDA_ID, P.CDBARRA,'
       
         '       P.IDPRODVENDA, P.IDADICIONAL, P.IMGINDEX, IC.CATEGORIA_ID' +
@@ -3112,7 +3112,7 @@ object frmPDV_PDV: TfrmPDV_PDV
       
         '                        INNER JOIN PRODUTO           P ON P.ID  ' +
         '= IC.PRODUTO_ID'
-      ' WHERE AA.IDAGRUPATIV = '#39'A'#39)
+      ' WHERE AA.IDAGRUPATIV = ''A''')
     Left = 728
     Top = 256
   end
@@ -3136,7 +3136,7 @@ object frmPDV_PDV: TfrmPDV_PDV
       
         '                        INNER JOIN AGRUPADICIONAL   AA ON AA.ID ' +
         '= IA.AGRUPADICIONAL_ID'
-      ' WHERE AA.IDAGRUPATIV = '#39'A'#39
+      ' WHERE AA.IDAGRUPATIV = ''A'''
       '   AND IA.CARDAPIO_ID = :P_PRODUTO'
       '')
     Left = 648
@@ -28269,7 +28269,7 @@ object frmPDV_PDV: TfrmPDV_PDV
         '  FROM PEDIDO PED LEFT JOIN ITEMPEDIDO IP ON PED.ID = IP.PEDIDO_' +
         'ID'
       #9#9#9#9#9'        LEFT JOIN PRODUTO P ON IP.PRODUTO_ID = P.ID'
-      ' WHERE PED.IDSTATUSPED = '#39'A'#39
+      ' WHERE PED.IDSTATUSPED = ''A'''
       '   AND PED.MESA_ID = :P_MESA_ID')
     Left = 728
     Top = 192
