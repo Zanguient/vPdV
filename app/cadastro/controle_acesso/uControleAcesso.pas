@@ -32,9 +32,10 @@ type
     chkEditar: TCheckBox;
     chkInserir: TCheckBox;
     cdsFuncionariousuario: TStringField;
+    cbtnSalvar: TcxButton;
     procedure cdsRotinaAfterScroll(DataSet: TDataSet);
     procedure cdsFuncionarioAfterScroll(DataSet: TDataSet);
-
+    procedure cbtnSalvarClick(Sender: TObject);
   private
     { Private declarations }
     procedure CarregarFuncionarios;
@@ -52,7 +53,7 @@ var
 
 implementation
 
-uses lib_db, lib_acesso;
+uses lib_db, lib_acesso, lib_mensagem;
 
 {$R *.dfm}
 
@@ -61,13 +62,27 @@ uses lib_db, lib_acesso;
 procedure TframeControleAcesso.AtualizarPermissoes(const usuario: string; const modulo: String);
 var
   acesso: TAcessoUsuario;
-begin
-  acesso:= TAcessoUsuario.create(usuario);
-  try
-    //
-  finally
-    FreeAndNil(acesso);
+  procedure InserirExcluirPermissao(tipo: TPermissoes; Permitir: Boolean);
+  var
+    acesso: TAcessoUsuario;
+  begin
+    acesso:= TAcessoUsuario.create(usuario);
+    try
+      if Permitir then
+        acesso.AddPermissao(modulo, tipo)
+      else
+        acesso.RemoverPermissao(modulo, tipo);
+    finally
+      FreeAndNil(acesso);
+    end;
   end;
+begin
+   InserirExcluirPermissao(TpmProcessar, chkProcessar.Checked);
+   InserirExcluirPermissao(TpmVisualizar, chkVisualizar.Checked);
+   InserirExcluirPermissao(TpmExcluir, chkExcluir.Checked);
+   InserirExcluirPermissao(TpmEditar, chkEditar.Checked);
+   InserirExcluirPermissao(TpmInserir, chkInserir.Checked);
+   Aviso('Dados salvos com sucesso!');
 end;
 
 procedure TframeControleAcesso.CarregarFuncionarios;
@@ -132,6 +147,12 @@ procedure TframeControleAcesso.cdsFuncionarioAfterScroll(
 begin
   inherited;
   CarregarPermissoes(cdsFuncionariousuario.AsString, cdsRotinamodulo.AsString);
+end;
+
+procedure TframeControleAcesso.cbtnSalvarClick(Sender: TObject);
+begin
+  inherited;
+  AtualizarPermissoes(cdsFuncionariousuario.AsString, cdsRotinamodulo.AsString);
 end;
 
 end.

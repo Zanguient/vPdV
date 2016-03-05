@@ -145,6 +145,15 @@ inherited frameControleAcesso: TframeControleAcesso
         ParentColor = False
         TabOrder = 4
       end
+      object cbtnSalvar: TcxButton
+        Left = 5
+        Top = 112
+        Width = 75
+        Height = 25
+        Caption = 'Salvar'
+        TabOrder = 5
+        OnClick = cbtnSalvarClick
+      end
     end
   end
   object cdsFuncionario: TClientDataSet

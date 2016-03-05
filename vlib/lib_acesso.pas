@@ -2,7 +2,7 @@ unit lib_acesso;
 
 interface
 
-uses IdHashMessageDigest, Windows, Messages, sysutils, lib_db, TypInfo;
+uses IdHashMessageDigest, Windows, Messages, sysutils, lib_db, TypInfo, lib_mensagem;
 
   type
     TPermissoes = (TpmExcluir, TpmInserir, TpmEditar, TpmVisualizar, TpmProcessar);
@@ -27,22 +27,34 @@ uses IdHashMessageDigest, Windows, Messages, sysutils, lib_db, TypInfo;
       function NomeUsuarioVmsis: String;
       function SenhaUsuarioVmsis: String;
       function EhAdministrador(const senha: String): Boolean;
-      procedure AdicionarOuRemoverPermissao(const modulo : String; permissao : TPermissoes; AdicionarRemover: TTipoOperacao);      
+      procedure AdicionarOuRemoverPermissao(const modulo : String; permissao : TPermissoes; AdicionarRemover: TTipoOperacao);
     public
       property Usuario : String read FUsuarioLogin;
       property IdUsuario : Integer read FIdUsuario;
       procedure AddPermissao(const modulo : String; permissao : TPermissoes);
       procedure RemoverPermissao(const modulo : String; permissao : TPermissoes);      
       function PossuiPermissao(const modulo : String; permissao : TPermissoes) : Boolean;
+      procedure BloquearUsuarioSemPermissao(const modulo : String; permissao : TPermissoes);
       function Autenticado(const modulo : String; permissao : TPermissoes) : Boolean;
       function Logado(const senha : string) : boolean;
       constructor create(usuario : String);
       destructor destroy; override;
     end;
 
+const
+   MODULO_GAVETA = 'gaveta';
+   MODULO_SINCRONIZAR = 'sincronizar';
+   MODULO_CONTROLE_ACESSO = 'controle_acesso';
+   MODULO_VENDA = 'venda';
+   MODULO_ESTOQUE_ENTRADA = 'estoque_entrada';
+   MODULO_ESTOQUE_SAIDA = 'estoque_saida';
+   MODULO_CLIENTE = 'cliente';
+   MODULO_FORNECEDOR = 'fornecedor';
+   
 implementation
 
-uses IdHash, autenticacao, lib_mensagem;
+uses IdHash, autenticacao;
+
 
 { Tcriptografia }
 
@@ -87,10 +99,14 @@ end;
 
 class procedure TAcesso.AddRotinas;
 begin
-  AddRotina('gaveta', 'Abrir gaveta', False);
-  AddRotina('sincronizar', 'Configurar sincronizaçao', True);
-  AddRotina('controle_acesso', 'Controle de acessos', True);
-  AddRotina('venda', 'Vendas - PDV', True);
+  AddRotina(MODULO_GAVETA, 'Abrir gaveta', False);
+  AddRotina(MODULO_SINCRONIZAR, 'Configurar sincronizaçao', True);
+  AddRotina(MODULO_CONTROLE_ACESSO, 'Controle de acessos', True);
+  AddRotina(MODULO_VENDA, 'Vendas - PDV', True);
+  AddRotina(MODULO_ESTOQUE_ENTRADA, 'Estoque - Entrada', True);
+  AddRotina(MODULO_ESTOQUE_SAIDA, 'Estoque - Saida', True);
+  AddRotina(MODULO_CLIENTE, 'Cliente', True);
+  AddRotina(MODULO_FORNECEDOR, 'Fornecedor', True);
 end;
 
 { TAcessoUsuario }
@@ -98,32 +114,13 @@ end;
 procedure TAcessoUsuario.AddPermissao(const modulo: String;
   permissao: TPermissoes);
 begin
-{  FdbRotina.RemoverTodosParametros;
-  FdbRotina.AddParametro('modulo', modulo);
-  FdbRotina.Select(['id']);
-
-  if FdbRotina.IsEmpty then
-    raise Exception.Create('O módulo especificado não existe.' + ' Modulo : ' + modulo);
-
-  FDbPermissao.RemoverTodosParametros;
-  FDbPermissao.AddParametro('descricao', GetEnumName(TypeInfo(TPermissoes), Integer(permissao)));
-
-  FDbPermissao.Select(['id']);
-
-  if not FDbPermissao.IsEmpty then
-    Exit;
-
-  FDbPermissao.AddParametro('funcionario_id', FUsuario.GetVal('id'));
-  FDbPermissao.AddParametro('id_rotina', FdbRotina.GetVal('id'));
-  FDbPermissao.Insert;
-  }
   AdicionarOuRemoverPermissao(modulo, permissao, TopAdicionar);
 end;
 
 procedure TAcessoUsuario.AdicionarOuRemoverPermissao(const modulo: String;
   permissao: TPermissoes; AdicionarRemover: TTipoOperacao);
 begin
-FdbRotina.RemoverTodosParametros;
+  FdbRotina.RemoverTodosParametros;
   FdbRotina.AddParametro('modulo', modulo);
   FdbRotina.Select(['id']);
 
@@ -132,14 +129,15 @@ FdbRotina.RemoverTodosParametros;
 
   FDbPermissao.RemoverTodosParametros;
   FDbPermissao.AddParametro('descricao', GetEnumName(TypeInfo(TPermissoes), Integer(permissao)));
-
+  FDbPermissao.AddParametro('id_rotina', FdbRotina.GetVal('id'));
+  FDbPermissao.AddParametro('funcionario_id', FUsuario.GetVal('id'));
+  
   FDbPermissao.Select(['id']);
 
-  if not FDbPermissao.IsEmpty then
+  if (not FDbPermissao.IsEmpty) and (AdicionarRemover = TopAdicionar) then
     Exit;
 
-  FDbPermissao.AddParametro('funcionario_id', FUsuario.GetVal('id'));
-  FDbPermissao.AddParametro('id_rotina', FdbRotina.GetVal('id'));
+
   if AdicionarRemover = TopAdicionar then
      FDbPermissao.Insert
   else if AdicionarRemover = TopExcluir then
@@ -150,6 +148,16 @@ function TAcessoUsuario.Autenticado(const modulo: String;
   permissao: TPermissoes): Boolean;
 begin
   Result := UsuarioAutenticado(modulo, permissao);
+end;
+
+procedure TAcessoUsuario.BloquearUsuarioSemPermissao(const modulo: String;
+  permissao: TPermissoes);
+begin
+   if not PossuiPermissao(modulo, permissao) then
+   begin
+     Aviso(USUARIO_SEM_PERMISSAO);
+     Abort;
+   end;
 end;
 
 constructor TAcessoUsuario.create(usuario: String);
@@ -209,6 +217,12 @@ end;
 function TAcessoUsuario.PossuiPermissao(const modulo: String;
   permissao: TPermissoes): Boolean;
 begin
+  if EhAdministrador(SenhaUsuarioVmsis) then
+  begin
+    Result:= True;
+    Exit;
+  end;
+
   FdbRotina.RemoverTodosParametros;
   FdbRotina.AddParametro('modulo', modulo);
   FdbRotina.Select(['id']);

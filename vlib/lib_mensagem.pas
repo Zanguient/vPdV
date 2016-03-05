@@ -21,6 +21,7 @@ CONST
    OPCAO_N_IDENTIFICADA = 'Opção não identificada.';
    EXISTENCIA_CAIXA_ABERTO = 'O caixa não foi fechado. Feche antes de prosseguir.';
    FALHA_ABRIR_CAIXA = 'Ocorreu uma falha ao abrir o caixa.';
+   USUARIO_SEM_PERMISSAO = 'Operador não poussi acesso a essa operação.';
 
    { Gaveta / Impressora não fiscal }
    GAVETA_ACIONADA = 'A gaveta foi aberta.';

@@ -16,7 +16,7 @@ uses
   dxSkinSummer2008, dxSkinsDefaultPainters, dxSkinValentine,
   dxSkinXmas2008Blue, dxSkinsdxNavBar2Painter, dxNavBarCollns, cxClasses,
   dxNavBarBase, dxNavBar, dxSkinscxPCPainter, cxPC, ImgList, dxSkinsForm,
-  dxNavBarStyles, ExtCtrls;
+  dxNavBarStyles, ExtCtrls, lib_acesso;
 
 type
   TfrmMainBase = class(TForm)
@@ -43,6 +43,7 @@ type
     nbgConfiguracoes: TdxNavBarGroup;
     nbiSincronizacao: TdxNavBarItem;
     tmSincronizacao: TTimer;
+    nbiContrroleAcesso: TdxNavBarItem;
     procedure nbgSairClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure nbgPDVClick(Sender: TObject);
@@ -51,9 +52,12 @@ type
     procedure nbiCancelarPedidoClick(Sender: TObject);
     procedure nbiSincronizacaoClick(Sender: TObject);
     procedure tmSincronizacaoTimer(Sender: TObject);
+    procedure nbiEntradaClick(Sender: TObject);
+    procedure nbiContrroleAcessoClick(Sender: TObject);
   private
     { Private declarations }
 //    procedure InvocadordeBpl(stClasse: String);
+    FAcessoUsuario: TAcessoUsuario; 
     FidEmpresa : Integer;
     FidPais : Integer;
     FidEstado : Integer;
@@ -90,7 +94,8 @@ implementation
 
 uses
    libframes, pdv_main, pdv_aberturacaixa, pdv_abertura_fechamento_caixa, uvCadastroClienteFrame,
-   uvCadastroFornecedorFrame, lib_db, pdv_cancelar_pedido, uParametrosSincronizacao, lib_sincronizacao;
+   uvCadastroFornecedorFrame, lib_db, pdv_cancelar_pedido, uParametrosSincronizacao, lib_sincronizacao,
+   uvEstoqueEntradaFrame, lib_mensagem, uControleAcesso;
 
 
 procedure CriarMainForm(const IdUsuario, IdEmpresa, IdUnidade : Integer;
@@ -103,95 +108,102 @@ begin
   frmMainBase.FNomeEmpresa := NomeEmpresa;
   frmMainBase.FNomeUnidade := NomeUnidade;
   frmMainBase.Fusuario := NomeUsuario;
+  frmMainBase.FAcessoUsuario:= TAcessoUsuario.create(NomeUsuario);
 end;
 
 procedure TfrmMainBase.nbgSairClick(Sender: TObject);
 begin
-   Close;
+  Close;
 end;
 
 procedure TfrmMainBase.FormCreate(Sender: TObject);
 var
-   region: hrgn;
-   db : TObjetoDB;
-   dbSincronizacao: TObjetoDB;
+  region: hrgn;
+  db : TObjetoDB;
+  dbSincronizacao: TObjetoDB;
 begin
-   Height := Screen.WorkAreaHeight-20;
-   Width  := Screen.WorkAreaWidth-20;
-   Position := poScreenCenter;
+  //Altera o tamanho do formulário para o tamanho da tela
+  Height := Screen.Height;
+  Width  := Screen.Width;
 
-   DoubleBuffered := True;
-   region := CreateRoundRectRgn(0, 0, width, height, 15, 15);
-   SetWindowRgn(handle, region, true);
+  DoubleBuffered := True;
+  region := CreateRoundRectRgn(0, 0, width, height, 15, 15);
+  SetWindowRgn(handle, region, true);
 
-   db := TObjetoDB.create('empresa');
-   try
-     //dados da empresa
-     db.AddSqlAdicional(' LIMIT 1 ');
-     db.Select(['ID', 'NMEMPRESA']);
-     FIdEmpresa := db.GetVal('ID');
-     FNomeEmpresa := db.GetVal('NMEMPRESA')
-   finally
-     FreeAndNil(db);
-   end;
+  db := TObjetoDB.create('empresa');
+  try
+    //dados da empresa
+    db.AddSqlAdicional(' LIMIT 1 ');
+    db.Select(['ID', 'NMEMPRESA']);
+    FIdEmpresa := db.GetVal('ID');
+    FNomeEmpresa := db.GetVal('NMEMPRESA')
+  finally
+    FreeAndNil(db);
+  end;
 
-   dbSincronizacao:= TObjetoDB.create('ParametrosSincronizacao');
-   try
-     dbSincronizacao.Select(['IntervaloHora', 'IntervaloMinuto']);
-     try
-       tmSincronizacao.Interval:= ((dbSincronizacao.GetVal('IntervaloHora') * 3600) +
-         (dbSincronizacao.GetVal('IntervaloMinuto') * 60)) * 1000;
-       tmSincronizacao.Enabled:= True;
-     except
-       tmSincronizacao.Enabled:= False;
-     end
-   finally
-     FreeAndNil(dbSincronizacao);
-   end;
+  dbSincronizacao:= TObjetoDB.create('ParametrosSincronizacao');
+  try
+    dbSincronizacao.Select(['IntervaloHora', 'IntervaloMinuto']);
+    try
+      tmSincronizacao.Interval:= ((dbSincronizacao.GetVal('IntervaloHora') * 3600) +
+        (dbSincronizacao.GetVal('IntervaloMinuto') * 60)) * 1000;
+      tmSincronizacao.Enabled:= True;
+    except
+      tmSincronizacao.Enabled:= False;
+    end
+  finally
+    FreeAndNil(dbSincronizacao);
+  end;
+
 
 end;
 
-//procedure TfrmMainBase.Invocadordebpl(stClasse: String);
-//var
-//   Classe: TPersistentClass;
-//begin
-//   Classe := GetClass(stClasse);
-//   if Classe <> nil then
-//   begin
-//      with TComponentClass(Classe).Create(Application) as TFrame do
-//         Visible := True;
-//   end;
-//end;
-
 procedure TfrmMainBase.nbgPDVClick(Sender: TObject);
 begin
+  FAcessoUsuario.BloquearUsuarioSemPermissao(MODULO_VENDA, TpmVisualizar);
   if CaixaAberto then
     TAbasNavegacao.CriarAba(pgcPrincipal, TfrmPDVMain);
 end;
 
 procedure TfrmMainBase.nbiClienteClick(Sender: TObject);
 begin
+  FAcessoUsuario.BloquearUsuarioSemPermissao(MODULO_CLIENTE, TpmVisualizar);
   TAbasNavegacao.CriarAba(pgcPrincipal, TvCadastroCliente);
 end;
 
 procedure TfrmMainBase.nbiFornecedorClick(Sender: TObject);
 begin
+  FAcessoUsuario.BloquearUsuarioSemPermissao(MODULO_FORNECEDOR, TpmVisualizar);
   TAbasNavegacao.CriarAba(pgcPrincipal, TvCadastroFornecedorFrame);
 end;
 
 procedure TfrmMainBase.nbiCancelarPedidoClick(Sender: TObject);
 begin
+  FAcessoUsuario.BloquearUsuarioSemPermissao(MODULO_VENDA, TpmExcluir);
   TAbasNavegacao.CriarAba(pgcPrincipal, TvCancelaPedido);
 end;
 
 procedure TfrmMainBase.nbiSincronizacaoClick(Sender: TObject);
 begin
-  TAbasNavegacao.CriarAba(pgcPrincipal, TParametrosSincronizacao);
+   FAcessoUsuario.BloquearUsuarioSemPermissao(MODULO_SINCRONIZAR, TpmVisualizar);
+   TAbasNavegacao.CriarAba(pgcPrincipal, TParametrosSincronizacao)
 end;
 
 procedure TfrmMainBase.tmSincronizacaoTimer(Sender: TObject);
 begin
   TSincronizarTabelas.Sincronizar(True);
+end;
+
+procedure TfrmMainBase.nbiEntradaClick(Sender: TObject);
+begin
+  FAcessoUsuario.BloquearUsuarioSemPermissao(MODULO_ESTOQUE_ENTRADA, TpmVisualizar);
+  TAbasNavegacao.CriarAba(pgcPrincipal, TvEstoqueEntradaFrame);
+end;
+
+procedure TfrmMainBase.nbiContrroleAcessoClick(Sender: TObject);
+begin
+  FAcessoUsuario.BloquearUsuarioSemPermissao(MODULO_CONTROLE_ACESSO, TpmVisualizar);
+  TAbasNavegacao.CriarAba(pgcPrincipal, TframeControleAcesso);
 end;
 
 end.

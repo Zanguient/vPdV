@@ -16,7 +16,7 @@ uses
   dxSkinSummer2008, dxSkinsDefaultPainters, dxSkinValentine,
   dxSkinXmas2008Blue, dxSkinsdxNavBar2Painter, dxNavBarCollns, cxClasses,
   dxNavBarBase, dxNavBar, dxSkinscxPCPainter, cxPC, ImgList, dxSkinsForm,
-  dxNavBarStyles, ExtCtrls;
+  dxNavBarStyles, ExtCtrls, lib_acesso;
 
 type
   TfrmMainBase = class(TForm)
@@ -57,6 +57,7 @@ type
   private
     { Private declarations }
 //    procedure InvocadordeBpl(stClasse: String);
+    FAcessoUsuario: TAcessoUsuario; 
     FidEmpresa : Integer;
     FidPais : Integer;
     FidEstado : Integer;
@@ -107,6 +108,7 @@ begin
   frmMainBase.FNomeEmpresa := NomeEmpresa;
   frmMainBase.FNomeUnidade := NomeUnidade;
   frmMainBase.Fusuario := NomeUsuario;
+  frmMainBase.FAcessoUsuario:= TAcessoUsuario.create(NomeUsuario);
 end;
 
 procedure TfrmMainBase.nbgSairClick(Sender: TObject);
@@ -152,35 +154,39 @@ begin
   finally
     FreeAndNil(dbSincronizacao);
   end;
+
+
 end;
 
 procedure TfrmMainBase.nbgPDVClick(Sender: TObject);
 begin
+  FAcessoUsuario.BloquearUsuarioSemPermissao(MODULO_VENDA, TpmVisualizar);
   if CaixaAberto then
     TAbasNavegacao.CriarAba(pgcPrincipal, TfrmPDVMain);
 end;
 
 procedure TfrmMainBase.nbiClienteClick(Sender: TObject);
 begin
+  FAcessoUsuario.BloquearUsuarioSemPermissao(MODULO_CLIENTE, TpmVisualizar);
   TAbasNavegacao.CriarAba(pgcPrincipal, TvCadastroCliente);
 end;
 
 procedure TfrmMainBase.nbiFornecedorClick(Sender: TObject);
 begin
+  FAcessoUsuario.BloquearUsuarioSemPermissao(MODULO_FORNECEDOR, TpmVisualizar);
   TAbasNavegacao.CriarAba(pgcPrincipal, TvCadastroFornecedorFrame);
 end;
 
 procedure TfrmMainBase.nbiCancelarPedidoClick(Sender: TObject);
 begin
+  FAcessoUsuario.BloquearUsuarioSemPermissao(MODULO_VENDA, TpmExcluir);
   TAbasNavegacao.CriarAba(pgcPrincipal, TvCancelaPedido);
 end;
 
 procedure TfrmMainBase.nbiSincronizacaoClick(Sender: TObject);
 begin
-  if Fusuario = 'vmsismaster' then
-     TAbasNavegacao.CriarAba(pgcPrincipal, TParametrosSincronizacao)
-  else
-    Aviso('Operador não acesso a essa operação.');
+   FAcessoUsuario.BloquearUsuarioSemPermissao(MODULO_SINCRONIZAR, TpmVisualizar);
+   TAbasNavegacao.CriarAba(pgcPrincipal, TParametrosSincronizacao)
 end;
 
 procedure TfrmMainBase.tmSincronizacaoTimer(Sender: TObject);
@@ -190,11 +196,13 @@ end;
 
 procedure TfrmMainBase.nbiEntradaClick(Sender: TObject);
 begin
+  FAcessoUsuario.BloquearUsuarioSemPermissao(MODULO_ESTOQUE_ENTRADA, TpmVisualizar);
   TAbasNavegacao.CriarAba(pgcPrincipal, TvEstoqueEntradaFrame);
 end;
 
 procedure TfrmMainBase.nbiContrroleAcessoClick(Sender: TObject);
 begin
+  FAcessoUsuario.BloquearUsuarioSemPermissao(MODULO_CONTROLE_ACESSO, TpmVisualizar);
   TAbasNavegacao.CriarAba(pgcPrincipal, TframeControleAcesso);
 end;
 
