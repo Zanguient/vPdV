@@ -15,7 +15,8 @@ uses
   dxSkinPumpkin, dxSkinSeven, dxSkinSharp, dxSkinSilver, dxSkinSpringTime,
   dxSkinStardust, dxSkinSummer2008, dxSkinsDefaultPainters,
   dxSkinValentine, dxSkinXmas2008Blue, cxLabel, cxTextEdit, DB, Provider,
-  ADODB, cxCurrencyEdit;
+  ADODB, cxCurrencyEdit, cxMaskEdit, cxButtonEdit, ExtCtrls,
+  cxDropDownEdit, cxLookupEdit, cxDBLookupEdit, cxDBLookupComboBox;
 
 type
   TfrmFormaPagamento = class(TForm)
@@ -32,24 +33,38 @@ type
     adqPadraoFUNCICONFABERTURA: TIntegerField;
     adqPadraoSTATUS: TStringField;
     lblFormaPagamento: TcxLabel;
-    btnCredito: TcxButton;
-    btnDebito: TcxButton;
+    btnCartao: TcxButton;
     btnDinheiro: TcxButton;
+    panEscolheCartao: TPanel;
+    dtsBandeira: TDataSource;
+    adqBandeira: TADOQuery;
+    adqBandeiraid: TAutoIncField;
+    adqBandeiranmbandeira: TWideStringField;
+    cxButton1: TcxButton;
+    panBandeira: TPanel;
+    cxLabel1: TcxLabel;
+    edtBandeira: TcxLookupComboBox;
+    panCartao: TPanel;
+    btnDebito: TcxButton;
+    btnCredito: TcxButton;
     procedure FormShow(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure btnDinheiroClick(Sender: TObject);
-    procedure btnDebitoClick(Sender: TObject);
     procedure btnCreditoClick(Sender: TObject);
+    procedure btnDebitoClick(Sender: TObject);
+    procedure btnCartaoClick(Sender: TObject);
   private
     { Private declarations }
+    procedure validaBandeira();
   public
     { Public declarations }
-  end;                     
-  function Escolhe_Forma_Pagamento: String;
+  end;
+  function Escolhe_Forma_Pagamento: TStringList;
 
 var
   frmFormaPagamento: TfrmFormaPagamento;
   stForma: String;
+  stBandeira: string;
 
 implementation
 
@@ -60,12 +75,16 @@ uses
 
 { TfrmFormaPagamento }
 
-function Escolhe_Forma_Pagamento: String;
+function Escolhe_Forma_Pagamento: TStringList;
 begin
   frmFormaPagamento := TfrmFormaPagamento.Create(Nil);
   frmFormaPagamento.ShowModal;
 
-  Result := stForma;
+  Result := TStringList.Create;
+  Result.Add(stForma);
+  if stForma <> 'DI' then
+    Result.Add(stBandeira);
+
 end;
 
 procedure TfrmFormaPagamento.FormShow(Sender: TObject);
@@ -73,11 +92,18 @@ var
   iComp: Integer;
 begin
   stForma := '';
+  stBandeira := '';
 
   for iComp := 0 to pred(scbMenu.ControlCount) do
   begin
     scbMenu.Controls[iComp].Width := Trunc(scbMenu.Width/(scbMenu.ControlCount));
   end;
+
+  panEscolheCartao.Visible := False;
+  Height := 159;
+
+  adqBandeira.Close;
+  adqBandeira.Open;
 end;
 
 procedure TfrmFormaPagamento.FormClose(Sender: TObject;
@@ -92,16 +118,34 @@ begin
   Close;
 end;
 
-procedure TfrmFormaPagamento.btnDebitoClick(Sender: TObject);
-begin
-  stForma := 'DE';
-  Close;
-end;
-
 procedure TfrmFormaPagamento.btnCreditoClick(Sender: TObject);
 begin
   stForma := 'CR';
+  validaBandeira();
   Close;
+end;
+
+procedure TfrmFormaPagamento.btnDebitoClick(Sender: TObject);
+begin
+  stForma := 'DE';
+  validaBandeira();
+  Close;
+end;
+
+procedure TfrmFormaPagamento.btnCartaoClick(Sender: TObject);
+begin
+  panEscolheCartao.Visible := visible;
+  Height := 289;
+end;
+
+procedure TfrmFormaPagamento.validaBandeira;
+begin
+  if (edtBandeira.EditText = '') then
+  begin
+    ShowMessage('Bandeira do Cartão deve ser selecionada.');
+    Abort;
+  end;
+  stBandeira := IntToStr(edtBandeira.EditValue);
 end;
 
 end.

@@ -494,19 +494,26 @@ end;
 procedure TfrmPDV_PDV.btnFinalizarPedidoClick(Sender: TObject);
 var
   Acesso_Perifericos: TAcesso_Perifericos;
+  stlResult: TStringList;
   stFormaEscolhida: String;
+  inBandeira: Integer;
 begin
   inherited;
+  stlResult := TStringList.Create;
   stFormaEscolhida := '';
+  inBandeira := 0;
   Acesso_Perifericos := TAcesso_Perifericos.Create;
   stStatusPedido := 'F';
   try
     btnGravarClick(btnGravar);
 
-    stFormaEscolhida := Escolhe_Forma_Pagamento;
+    stlResult := Escolhe_Forma_Pagamento;
+    stFormaEscolhida := stlResult[0];
 
     if stFormaEscolhida = 'DI' then
-      Acesso_Perifericos.AbreGaveta;
+      Acesso_Perifericos.AbreGaveta
+    else
+      inBandeira := StrToInt(stlResult[1]);
 
     adqInsMovCaixa.Close;
     adqInsMovCaixa.Parameters.ParamByName('ID_CAIXA').Value := 1;
@@ -514,6 +521,8 @@ begin
     adqInsMovCaixa.Parameters.ParamByName('VRMOVI').Value := StrToFloat(edtTotal.Text);
     adqInsMovCaixa.Parameters.ParamByName('TPMOVI').Value    := 'V';
     adqInsMovCaixa.Parameters.ParamByName('FORMPGTO').Value  := stFormaEscolhida;
+    if stFormaEscolhida <> 'DI' then
+      adqInsMovCaixa.Parameters.ParamByName('cartao_bandeira_id').Value := inBandeira;
     adqInsMovCaixa.Parameters.ParamByName('ID_PEDIDO').Value := cdsItemPedido.FieldByName('PEDIDO_ID').Value;
     adqInsMovCaixa.ExecSQL;
 

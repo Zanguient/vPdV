@@ -1664,7 +1664,7 @@ object frmPDV_PDV: TfrmPDV_PDV
       Top = 0
       Width = 200
       Height = 89
-      Hint = 'Cancelar alterações'
+      Hint = 'Cancelar altera'#231#245'es'
       Caption = 'Voltar'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
@@ -2382,10 +2382,10 @@ object frmPDV_PDV: TfrmPDV_PDV
           Properties.KeyFieldNames = 'id'
           Properties.ListColumns = <
             item
-              FieldName = 'telfixo'
+              FieldName = 'nmcliente'
             end
             item
-              FieldName = 'nmcliente'
+              FieldName = 'telfixo'
             end
             item
               FieldName = 'id'
@@ -2451,7 +2451,7 @@ object frmPDV_PDV: TfrmPDV_PDV
           Width = 89
         end
         object gdbAddPedidoColumn3: TcxGridDBColumn
-          Caption = 'Valor Unitário'
+          Caption = 'Valor Unit'#225'rio'
           DataBinding.FieldName = 'VRUNITARIO'
           PropertiesClassName = 'TcxCurrencyEditProperties'
           Properties.DisplayFormat = '0.00;-0.00'
@@ -2560,7 +2560,7 @@ object frmPDV_PDV: TfrmPDV_PDV
           Width = 90
         end
         object gdbVrUnitario: TcxGridDBColumn
-          Caption = 'Valor Unitário'
+          Caption = 'Valor Unit'#225'rio'
           DataBinding.FieldName = 'VRVENDA'
           PropertiesClassName = 'TcxCurrencyEditProperties'
           Properties.DisplayFormat = '0.00;-0.00'
@@ -3061,7 +3061,7 @@ object frmPDV_PDV: TfrmPDV_PDV
     SQL.Strings = (
       'SELECT id, nmcategoria, imgindex'
       '  FROM CATEGORIA'
-      ' WHERE IDCATEGORIATIV = ''A''')
+      ' WHERE IDCATEGORIATIV = '#39'A'#39)
     Left = 728
     Top = 128
   end
@@ -3070,8 +3070,8 @@ object frmPDV_PDV: TfrmPDV_PDV
     Parameters = <>
     SQL.Strings = (
       
-        'SELECT P.ID PRODUTO_ID, IC.ID, IC.DSPRODUTO AS NMPRODUTO, P.POSARVORE, P.UNIME' +
-        'DIDA_ID, P.CDBARRA,'
+        'SELECT P.ID PRODUTO_ID, IC.ID, IC.DSPRODUTO AS NMPRODUTO, P.POSA' +
+        'RVORE, P.UNIMEDIDA_ID, P.CDBARRA,'
       
         '       P.IDPRODVENDA, P.IDADICIONAL, P.IMGINDEX, IC.CATEGORIA_ID' +
         ','
@@ -3112,7 +3112,7 @@ object frmPDV_PDV: TfrmPDV_PDV
       
         '                        INNER JOIN PRODUTO           P ON P.ID  ' +
         '= IC.PRODUTO_ID'
-      ' WHERE AA.IDAGRUPATIV = ''A''')
+      ' WHERE AA.IDAGRUPATIV = '#39'A'#39)
     Left = 728
     Top = 256
   end
@@ -3136,7 +3136,7 @@ object frmPDV_PDV: TfrmPDV_PDV
       
         '                        INNER JOIN AGRUPADICIONAL   AA ON AA.ID ' +
         '= IA.AGRUPADICIONAL_ID'
-      ' WHERE AA.IDAGRUPATIV = ''A'''
+      ' WHERE AA.IDAGRUPATIV = '#39'A'#39
       '   AND IA.CARDAPIO_ID = :P_PRODUTO'
       '')
     Left = 648
@@ -28269,7 +28269,7 @@ object frmPDV_PDV: TfrmPDV_PDV
         '  FROM PEDIDO PED LEFT JOIN ITEMPEDIDO IP ON PED.ID = IP.PEDIDO_' +
         'ID'
       #9#9#9#9#9'        LEFT JOIN PRODUTO P ON IP.PRODUTO_ID = P.ID'
-      ' WHERE PED.IDSTATUSPED = ''A'''
+      ' WHERE PED.IDSTATUSPED = '#39'A'#39
       '   AND PED.MESA_ID = :P_MESA_ID')
     Left = 728
     Top = 192
@@ -28814,8 +28814,8 @@ object frmPDV_PDV: TfrmPDV_PDV
       item
         Name = 'ID_CAIXA'
         Attributes = [paNullable]
-        DataType = ftInteger
-        NumericScale = 152
+        DataType = ftString
+        NumericScale = 2
         Precision = 255
         Size = 255
         Value = Null
@@ -28823,8 +28823,8 @@ object frmPDV_PDV: TfrmPDV_PDV
       item
         Name = 'DTMOVI'
         Attributes = [paNullable]
-        DataType = ftDateTime
-        NumericScale = 152
+        DataType = ftString
+        NumericScale = 2
         Precision = 255
         Size = 255
         Value = Null
@@ -28832,8 +28832,8 @@ object frmPDV_PDV: TfrmPDV_PDV
       item
         Name = 'VRMOVI'
         Attributes = [paNullable]
-        DataType = ftFloat
-        NumericScale = 152
+        DataType = ftString
+        NumericScale = 2
         Precision = 255
         Size = 255
         Value = Null
@@ -28842,7 +28842,7 @@ object frmPDV_PDV: TfrmPDV_PDV
         Name = 'TPMOVI'
         Attributes = [paNullable]
         DataType = ftString
-        NumericScale = 152
+        NumericScale = 2
         Precision = 255
         Size = 255
         Value = Null
@@ -28851,7 +28851,7 @@ object frmPDV_PDV: TfrmPDV_PDV
         Name = 'FORMPGTO'
         Attributes = [paNullable]
         DataType = ftString
-        NumericScale = 152
+        NumericScale = 2
         Precision = 255
         Size = 255
         Value = Null
@@ -28859,8 +28859,17 @@ object frmPDV_PDV: TfrmPDV_PDV
       item
         Name = 'ID_PEDIDO'
         Attributes = [paNullable]
+        DataType = ftString
+        NumericScale = 2
+        Precision = 255
+        Size = 255
+        Value = Null
+      end
+      item
+        Name = 'CARTAO_BANDEIRA_ID'
+        Attributes = [paNullable]
         DataType = ftInteger
-        NumericScale = 152
+        NumericScale = 2
         Precision = 255
         Size = 255
         Value = Null
@@ -28868,10 +28877,10 @@ object frmPDV_PDV: TfrmPDV_PDV
     SQL.Strings = (
       
         'INSERT INTO MOVCAIXA (ID_CAIXA, DTMOVI, VRMOVI, TPMOVI, FORMPGTO' +
-        ', ID_PEDIDO)'
+        ', ID_PEDIDO, CARTAO_BANDEIRA_ID)'
       
         '  VALUES (:ID_CAIXA, :DTMOVI, :VRMOVI, :TPMOVI, :FORMPGTO, :ID_P' +
-        'EDIDO)')
+        'EDIDO, :CARTAO_BANDEIRA_ID)')
     Left = 776
     Top = 344
   end

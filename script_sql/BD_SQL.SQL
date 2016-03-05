@@ -739,4 +739,18 @@ ALTER TABLE itadicional DROP FOREIGN KEY item_id_refs_id_a74b663d;
 
 ALTER TABLE ComposicaoProd ADD categoria_id INTEGER NOT NULL;
 ALTER TABLE ComposicaoProd ADD CONSTRAINT FK_ComposicaoProd_ItemCategoriaItemCategoria FOREIGN KEY(categoria_id)
-   REFERENCES ItemCategoria(id) 
+   REFERENCES ItemCategoria(id);
+
+CREATE TABLE cartao_bandeira(
+  id integer NOT NULL AUTO_INCREMENT,
+  nmbandeira character varying(100) NOT NULL,
+  qtdias_cred integer NOT NULL,
+  qtdias_deb integer NOT NULL,
+  idativo character varying(1) NOT NULL DEFAULT 'A',
+  CONSTRAINT cartao_bandeira_pkey PRIMARY KEY (id)
+);
+
+ALTER TABLE movcaixa ADD cartao_bandeira_id integer NULL;
+
+ALTER TABLE movcaixa ADD CONSTRAINT fk_movcaixa_cartaobandeira FOREIGN KEY(cartao_bandeira_id)
+  REFERENCES cartao_bandeira(id);
