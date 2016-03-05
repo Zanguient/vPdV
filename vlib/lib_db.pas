@@ -44,6 +44,7 @@ uses Windows, Messages, SysUtils, Variants, Classes, ADODB, uDmConexao, DBClient
       function GetSQLWhere : string;
       function GetSQlInsert : string;
       function GetSQLUpdate : string;
+      function GetSQLDelete : string;
       procedure SetParams;
       procedure SetNewValueParamUp;
     public
@@ -62,6 +63,7 @@ uses Windows, Messages, SysUtils, Variants, Classes, ADODB, uDmConexao, DBClient
       procedure Select(fields : array of string);
       procedure Insert;
       procedure Update;
+      procedure Delete;
       procedure ChangeValue(const field : String; newvalue : Variant);
       procedure SaveChanges;
       procedure Next;
@@ -75,6 +77,7 @@ uses Windows, Messages, SysUtils, Variants, Classes, ADODB, uDmConexao, DBClient
       function Eof : Boolean;
       function Find(Field : String; Value : Variant) : Boolean;
       function GetVal(const field : String): variant;
+      function GetData: OleVariant;
       constructor create(const NomeTabela : String);
       destructor destroy; override;
     end;
@@ -101,6 +104,7 @@ begin
   Fdsp := TDataSetProvider.Create(nil);
   Fdsp.DataSet := Fquery;
 
+
   FSqlAdicional := TStringList.Create;
   FParametros := TListaMapaValor.create;
   FParametrosNewValue := TListaMapaValor.create;
@@ -110,6 +114,7 @@ end;
 
 destructor TObjetoDB.destroy;
 begin
+  Fquery.Close;
   FreeAndNil(Fquery);
   FreeAndNil(FParametros);
   FreeAndNil(fdsp);
@@ -341,7 +346,7 @@ end;
 
 procedure TObjetoDB.Update;
 begin
-  if {((FParametros.Count = 0) and (FSqlAdicional.Count = 0)) or} (FParametrosNewValue.Count = 0) then
+  if (FParametrosNewValue.Count = 0) then
      raise Exception.Create('Não será possível inserir, pois nenhum parametro foi fornecido');
 
   Fquery.close;
@@ -411,6 +416,25 @@ end;
 function TObjetoDB.ParamCount: Integer;
 begin
   Result:= FParametros.Count + Length(FNomesParamAdic)
+end;
+
+function TObjetoDB.GetData: OleVariant;
+begin
+  Result:= Fdsp.Data;
+end;
+
+function TObjetoDB.GetSQLDelete: string;
+begin
+  Result:= Format('DELETE FROM %s %s ', [FTabela, GetSQLWhere]);  
+end;
+
+procedure TObjetoDB.Delete;
+begin
+  Fquery.Close;
+  Fquery.SQL.Text:= GetSQLDelete;
+  SetParams;
+  Fquery.ExecSQL;
+  FParametros.Clear;
 end;
 
 { TMapaValor }

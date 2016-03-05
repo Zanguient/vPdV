@@ -736,3 +736,7 @@ ALTER TABLE aberfechcaixa MODIFY COLUMN vrcredito FLOAT(14,2) NOT NULL DEFAULT 0
 ALTER TABLE aberfechcaixa MODIFY COLUMN vrcorrigido FLOAT(14, 2) NOT NULL DEFAULT 0;
 ALTER TABLE itemcategoria ADD dsproduto VARCHAR(100) NOT NULL;
 ALTER TABLE itadicional DROP FOREIGN KEY item_id_refs_id_a74b663d;
+
+ALTER TABLE ComposicaoProd ADD categoria_id INTEGER NOT NULL;
+ALTER TABLE ComposicaoProd ADD CONSTRAINT FK_ComposicaoProd_ItemCategoriaItemCategoria FOREIGN KEY(categoria_id)
+   REFERENCES ItemCategoria(id) 

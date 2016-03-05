@@ -1455,6 +1455,7 @@ begin
   map.Add('produto', 'produto_id');
   map.Add('prodcomp', 'prodcomp_id');
   map.Add('qtcomp', 'qtcomp');
+  map.Add('categoria', 'categoria_id');
   map.Add('unimedida', 'unimedida_id');
   Result:= map;
 end;

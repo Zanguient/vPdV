@@ -119,6 +119,9 @@ object frmMainBase: TfrmMainBase
       CustomStyles.HeaderPressed = nbMain_BaseStyleItem3
       Links = <
         item
+          Item = nbiContrroleAcesso
+        end
+        item
           Item = nbiSincronizacao
         end>
     end
@@ -193,6 +196,10 @@ object frmMainBase: TfrmMainBase
       Hint = 'Configurar sincroniza'#231#227'o'
       SmallImageIndex = 10
       OnClick = nbiSincronizacaoClick
+    end
+    object nbiContrroleAcesso: TdxNavBarItem
+      Caption = 'Controle de acessos'
+      OnClick = nbiContrroleAcessoClick
     end
     object sty_menu_lat: TdxNavBarStyleItem
       Style.BackColor = 15202808

@@ -32,7 +32,8 @@ uses
   uParametrosSincronizacao in 'app\cadastro\sincronizacao\uParametrosSincronizacao.pas' {ParametrosSincronizacao: TFrame},
   uvEstoqueEntradaFrame in 'app\estoque\entrada\uvEstoqueEntradaFrame.pas' {vEstoqueEntradaFrame: TFrame},
   pdv_forma_pagamento in 'app\pdv\pdv_forma_pagamento.pas' {frmFormaPagamento},
-  pdv_sangria in 'app\pdv\pdv_sangria.pas' {frmsangria};
+  pdv_sangria in 'app\pdv\pdv_sangria.pas' {frmsangria},
+  uControleAcesso in 'app\cadastro\controle_acesso\uControleAcesso.pas' {frameControleAcesso: TFrame};
 
 {$R *.res}
 

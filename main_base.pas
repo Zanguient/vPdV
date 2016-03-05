@@ -43,6 +43,7 @@ type
     nbgConfiguracoes: TdxNavBarGroup;
     nbiSincronizacao: TdxNavBarItem;
     tmSincronizacao: TTimer;
+    nbiContrroleAcesso: TdxNavBarItem;
     procedure nbgSairClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure nbgPDVClick(Sender: TObject);
@@ -52,6 +53,7 @@ type
     procedure nbiSincronizacaoClick(Sender: TObject);
     procedure tmSincronizacaoTimer(Sender: TObject);
     procedure nbiEntradaClick(Sender: TObject);
+    procedure nbiContrroleAcessoClick(Sender: TObject);
   private
     { Private declarations }
 //    procedure InvocadordeBpl(stClasse: String);
@@ -92,7 +94,7 @@ implementation
 uses
    libframes, pdv_main, pdv_aberturacaixa, pdv_abertura_fechamento_caixa, uvCadastroClienteFrame,
    uvCadastroFornecedorFrame, lib_db, pdv_cancelar_pedido, uParametrosSincronizacao, lib_sincronizacao,
-   uvEstoqueEntradaFrame, lib_mensagem;
+   uvEstoqueEntradaFrame, lib_mensagem, uControleAcesso;
 
 
 procedure CriarMainForm(const IdUsuario, IdEmpresa, IdUnidade : Integer;
@@ -189,6 +191,11 @@ end;
 procedure TfrmMainBase.nbiEntradaClick(Sender: TObject);
 begin
   TAbasNavegacao.CriarAba(pgcPrincipal, TvEstoqueEntradaFrame);
+end;
+
+procedure TfrmMainBase.nbiContrroleAcessoClick(Sender: TObject);
+begin
+  TAbasNavegacao.CriarAba(pgcPrincipal, TframeControleAcesso);
 end;
 
 end.

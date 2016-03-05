@@ -23,6 +23,8 @@ interface
         FNomeLabelPadrao : String;
         FClassFrame : TParamFrame;
         FPageControl : TcxPageControl;
+        function AbaJaCriada(var TabIndex: Integer): Boolean;
+        function GetTituloAba(Frame: TFrame): String;
         function CriarAba(onwner : TcxPageControl) : TcxTabSheet;
      public
         property NomeLabelPadrao : String read FNomeLabelPadrao;
@@ -40,6 +42,35 @@ implementation
 
 { TAbas }
 
+function TAbas.AbaJaCriada(var TabIndex: Integer): Boolean;
+var
+   titulo: string;
+   frame: TFrame;
+   lbl: TComponent;
+   i: Integer;
+begin
+  Result:= False;
+  TabIndex:= -1;
+  frame := FClassFrame.create(nil);
+  try
+    titulo:= GetTituloAba(frame);
+    for i:= 0 to FPageControl.ComponentCount - 1 do
+    begin
+      if FPageControl.Components[i].ClassType = TcxTabSheet then
+      begin
+        if (FPageControl.Components[i] as TcxTabSheet).Caption = titulo then
+        begin
+          Result:= True;
+          TabIndex:= (FPageControl.Components[i] as TcxTabSheet).TabIndex;
+          Break;
+        end;
+      end;
+    end;
+  finally
+    FreeAndNil(frame);
+  end;
+end;
+
 constructor TAbas.Create(PageControl : TcxPageControl; Frame: TParamFrame);
 begin
    inherited create;
@@ -53,19 +84,21 @@ var
    tab : TcxTabSheet;
    frame : TFrame;
    labelCaption : TComponent;
+   titulo: String;
+   tabIndex: Integer;
 begin
-  tab := CriarAba(FPageControl);
-  frame := FClassFrame.create(tab);
-  frame.Parent := tab;
-  frame.Align := alClient;
-  labelCaption := frame.FindComponent(FNomeLabelPadrao);
-  if(labelCaption <> nil) then
+  if not AbaJaCriada(tabIndex) then
   begin
-    if labelCaption.ClassName = 'TLabel' then
-      tab.Caption := (labelCaption as Tlabel).Caption;
+    tab := CriarAba(FPageControl);
+    frame := FClassFrame.create(tab);
+    frame.Parent := tab;
+    frame.Align := alClient;
+    titulo := GetTituloAba(Frame);
+    tab.Caption:= titulo;
   end
   else
-     tab.Caption := FNomeLabelPadrao;
+    FPageControl.ActivePageIndex:= tabIndex;
+
 end;
 
 function TAbas.CriarAba(onwner: TcxPageControl): TcxTabSheet;
@@ -83,6 +116,19 @@ begin
     tab.PageControl := onwner;
     onwner.ActivePage := tab;
     Result := tab;
+  end;
+end;
+
+function TAbas.GetTituloAba(Frame: TFrame): String;
+var
+   labelCaption: TComponent;
+begin
+  Result:= FNomeLabelPadrao;
+  labelCaption := frame.FindComponent(FNomeLabelPadrao);
+  if(labelCaption <> nil) then
+  begin
+    if labelCaption.ClassName = 'TLabel' then
+      Result := (labelCaption as Tlabel).Caption;
   end;
 end;
 
