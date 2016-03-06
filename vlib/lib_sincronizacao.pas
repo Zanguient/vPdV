@@ -107,6 +107,7 @@ type
     function MapaAberfechcaixa: TListaMapaValor;
     function MapaMovCaixa: TListaMapaValor;
     function MapaFuncionario: TListaMapaValor;
+    function MapaCartaoBandeira: TListaMapaValor; 
     constructor create(const TipoSincroniacao: TTipoSincronizacao;
       const Empresa, Unidade, Almoxarifado: Integer);
   end;
@@ -515,7 +516,7 @@ begin
 
     //produto
     map := mapaCampos.MapaProduto;
-    sinc := TSincronizacao.create('produto', 'cadastro.produto.models', map, 'nmproduto', 'produto');
+    sinc := TSincronizacao.create('produto', 'cadastro.produto.models', map, 'pk', 'produto');
     sinc.FiltroDownload:= format('{"empresa":"%d"}', [Empresa]);
     sinc.GetWebData;
     FreeAndNil(sinc);
@@ -624,6 +625,13 @@ begin
     map := mapaCampos.MapaAdicionais;
     sinc := TSincronizacao.create('Adicionais', 'pedido.cadastro_pedido.agrupadicional.models',
       map, 'pk', 'Adicionais');
+    sinc.GetWebData;
+    FreeAndNil(sinc);
+    FreeAndNil(map);
+
+    //cartao_bandeira
+    map:= mapaCampos.MapaCartaoBandeira;
+    sinc := TSincronizacao.create('Cartao_Bandeira', 'financeiro.cartao_bandeira.models', map, 'pk', 'Cartao_Bandeira');
     sinc.GetWebData;
     FreeAndNil(sinc);
     FreeAndNil(map);
@@ -1631,6 +1639,19 @@ begin
   map.Add('confsenha', 'confsenha');
   Result:= map;
 
+end;
+
+function TMapeamento.MapaCartaoBandeira: TListaMapaValor;
+var
+  map: TListaMapaValor;
+begin
+  map:= TListaMapaValor.create;
+  map.Add('nmbandeira', 'nmbandeira');
+  map.Add('qtdias_cred', 'qtdias_cred');
+  map.Add('qtdias_deb', 'qtdias_deb');
+  map.Add('idativo', 'idativo');
+  Result:= map;
+  
 end;
 
 end.
