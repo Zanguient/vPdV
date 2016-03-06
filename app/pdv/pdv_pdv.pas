@@ -722,7 +722,7 @@ begin
 
       if stStatusPedido = 'F' then
       begin
-        if not Impressao_Nao_Fiscal.Verif_Impressora then
+{        if not Impressao_Nao_Fiscal.Verif_Impressora then
         begin
           if not Confirma(DESEJA_CONTINUAR_PEDIDO) then
             Exit;
@@ -730,16 +730,16 @@ begin
         begin
           cdsAddPedido.Filtered := False;
           Impressao_Nao_Fiscal.Layout_Finaliza_Pedido(cdsPedidoImpressao, cdsItemPedido, cdsAddPedido, 'F');
-        end;
+        end;}
       end else
       begin
-        if not Impressao_Nao_Fiscal.Verif_Impressora then
+{        if not Impressao_Nao_Fiscal.Verif_Impressora then
           Aviso(PEDIDO_NAO_COZINHA)
         else
         begin
           cdsAddPedido.Filtered := False;
           Impressao_Nao_Fiscal.Layout_Finaliza_Pedido(cdsPedidoImpressao, cdsItemPedido, cdsAddPedido, 'G');
-        end;
+        end;}
       end;
 
       if stStatusPedido = 'F' then
@@ -783,32 +783,21 @@ procedure TfrmPDV_PDV.AtualizaValorPedido(boSemADD: Boolean = False);
 begin
   if not VarIsNull(cdsAddPedidoSUMVRTOTAL.Value) then
   begin
-    //Isso pode dar erro
-    cdsItemCategoria.Filtered := False;
-
     cdsItemCategoria.Locate('PRODUTO_ID', cdsItemPedidoPRODUTO_ID.AsInteger, [loCaseInsensitive]);
     cdsAddPedido.First;
     while ((cdsAddPedido.FieldByName('VRUNITARIO').AsFloat = 0) or (not cdsAddPedido.Eof)) do
       cdsAddPedido.Next;
-{    repeat
-      cdsAddPedido.Next;
-    until ((cdsAddPedido.FieldByName('VRUNITARIO').AsFloat > 0) and (not cdsAddPedido.Eof)) or (not cdsAddPedido.Eof);
-}
+
     cdsItemPedido.Edit;
     cdsItemPedidoVRVENDA.AsFloat := cdsItemCategoriaVRVENDA.AsFloat + cdsAddPedidoVRADICIONAL.AsFloat;
     cdsItemPedidoVRTOTAL.AsFloat := (cdsItemPedidoQTITEM.AsFloat * cdsItemPedidoVRVENDA.AsFloat) +
                                     (cdsItemPedidoQTITEM.AsFloat * StrToFloat(cdsAddPedidoSUMVRTOTAL.Value));
     boJaPostou := True;
 
-    //Volta o filtro do "Isso pode dar erro"
-    cdsItemCategoria.Filtered := True;
-
     cdsItemPedido.Post;
   end else
   if boSemADD then
   begin
-    cdsItemCategoria.Locate('PRODUTO_ID', cdsItemPedidoPRODUTO_ID.AsInteger, [loCaseInsensitive]);
-    
     adqAuxAdicional.Close;
     adqAuxAdicional.Parameters.ParamByName('P_CARDAPIO_ID').Value := cdsItemPedidoCARDAPIO_ID.AsInteger;
     adqAuxAdicional.Open;
