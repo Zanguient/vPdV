@@ -199,7 +199,12 @@ begin
     if FIgnoreParams.IndexOf(key) = -1 then
     begin
       case VarType(FParametros.GetValue(contador)) of
-         varDate: Fquery.Parameters.ParamByName(key).ParameterObject.Type_:= adDBTimeStamp ;
+         varDate: Fquery.Parameters.ParamByName(key).ParameterObject.Type_:= adDBTimeStamp;
+         varCurrency: Fquery.Parameters.ParamByName(Key).DataType := ftCurrency;
+         varDouble: Fquery.Parameters.ParamByName(key).DataType:= ftFloat;
+         varInteger: Fquery.Parameters.ParamByName(key).DataType:= ftInteger;
+         varSmallint: Fquery.Parameters.ParamByName(key).DataType:= ftSmallint;
+         varString: Fquery.Parameters.parambyname(key).DataType:= ftString;
       end;
       Fquery.Parameters.ParamByName(key).Value := FParametros.GetValue(contador);
     end

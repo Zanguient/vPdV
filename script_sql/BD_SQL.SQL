@@ -754,3 +754,7 @@ ALTER TABLE movcaixa ADD cartao_bandeira_id integer NULL;
 
 ALTER TABLE movcaixa ADD CONSTRAINT fk_movcaixa_cartaobandeira FOREIGN KEY(cartao_bandeira_id)
   REFERENCES cartao_bandeira(id);
+
+ALTER TABLE cartao_bandeira ADD id_web INTEGER NULL;
+ALTER TABLE cartao_bandeira ADD DtCreated datetime NOT NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE cartao_bandeira ADD ModifiedTime TIMESTAMP;

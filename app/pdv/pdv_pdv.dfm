@@ -28814,7 +28814,7 @@ object frmPDV_PDV: TfrmPDV_PDV
       item
         Name = 'ID_CAIXA'
         Attributes = [paNullable]
-        DataType = ftString
+        DataType = ftInteger
         NumericScale = 2
         Precision = 255
         Size = 255
@@ -28823,7 +28823,7 @@ object frmPDV_PDV: TfrmPDV_PDV
       item
         Name = 'DTMOVI'
         Attributes = [paNullable]
-        DataType = ftString
+        DataType = ftDateTime
         NumericScale = 2
         Precision = 255
         Size = 255
@@ -28832,7 +28832,7 @@ object frmPDV_PDV: TfrmPDV_PDV
       item
         Name = 'VRMOVI'
         Attributes = [paNullable]
-        DataType = ftString
+        DataType = ftFloat
         NumericScale = 2
         Precision = 255
         Size = 255
@@ -28859,7 +28859,7 @@ object frmPDV_PDV: TfrmPDV_PDV
       item
         Name = 'ID_PEDIDO'
         Attributes = [paNullable]
-        DataType = ftString
+        DataType = ftInteger
         NumericScale = 2
         Precision = 255
         Size = 255

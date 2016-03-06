@@ -517,7 +517,7 @@ begin
 
     adqInsMovCaixa.Close;
     adqInsMovCaixa.Parameters.ParamByName('ID_CAIXA').Value := 1;
-    adqInsMovCaixa.Parameters.ParamByName('DTMOVI').Value := Now;
+    adqInsMovCaixa.Parameters.ParamByName('DTMOVI').Value := now;
     adqInsMovCaixa.Parameters.ParamByName('VRMOVI').Value := StrToFloat(edtTotal.Text);
     adqInsMovCaixa.Parameters.ParamByName('TPMOVI').Value    := 'V';
     adqInsMovCaixa.Parameters.ParamByName('FORMPGTO').Value  := stFormaEscolhida;
