@@ -83,6 +83,7 @@ type
     adqComposicao: TADOQuery;
     dspComposicao: TDataSetProvider;
     cdsAdicionalADICIONAL: TStringField;
+    adqAuxVrGrup: TADOQuery;
     procedure FormCreate(Sender: TObject);
     procedure btnCancelarClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -360,7 +361,11 @@ procedure TfrmAdicional.OnClickAdicionalPDV(Sender: TObject);
                      - A) Zerar o segundo e o terceiro adicional do CDS
                      - B) Manter o valor dos demais
 
-      }
+      }                    
+      adqAuxVrGrup.Close;
+      adqAuxVrGrup.Parameters.ParamByName('P_ADICIONAL_ID').Value := cdsAdicionalid.AsInteger;
+      adqAuxVrGrup.Open;
+
       cdsAddPedido.Edit;
 
       if cdsAddPedidoVRUNITARIO.AsFloat > 0 then
@@ -372,7 +377,7 @@ procedure TfrmAdicional.OnClickAdicionalPDV(Sender: TObject);
           //A
           cdsAddPedidoQTGRATUI.AsInteger := 1;
           cdsAddPedidoVRTOTAITEM.AsFloat := 0.0;
-          cdsAddPedidoVRADICIONAL.AsFloat := cdsAuxAdicionalVRAGRUPADIC.AsFloat;
+          cdsAddPedidoVRADICIONAL.AsFloat := adqAuxVrGrup.FieldByName('VRAGRUPADIC').AsFloat;//cdsAuxAdicionalVRAGRUPADIC.AsFloat;
 
           //Decrementa quantidade de itens gratuitos restantes
           Dec(inQtdeGrat);
@@ -381,10 +386,10 @@ procedure TfrmAdicional.OnClickAdicionalPDV(Sender: TObject);
           //B
           cdsAddPedidoQTGRATUI.AsInteger := 0;
           cdsAddPedidoVRTOTAITEM.AsFloat := cdsAddPedidoQTITEM.AsFloat * cdsAddPedidoVRUNITARIO.AsFloat;
-          cdsAddPedidoVRADICIONAL.AsFloat := cdsAuxAdicionalVRAGRUPADIC.AsFloat;
+          cdsAddPedidoVRADICIONAL.AsFloat := adqAuxVrGrup.FieldByName('VRAGRUPADIC').AsFloat;//cdsAuxAdicionalVRAGRUPADIC.AsFloat;
         end;
       end else
-        cdsAddPedidoVRADICIONAL.AsFloat := cdsAuxAdicionalVRAGRUPADIC.AsFloat;
+        cdsAddPedidoVRADICIONAL.AsFloat := adqAuxVrGrup.FieldByName('VRAGRUPADIC').AsFloat;//cdsAuxAdicionalVRAGRUPADIC.AsFloat;
       
       if cdsAddPedido.State in [dsInsert, dsEdit] then
         cdsAddPedido.Post;
@@ -406,10 +411,7 @@ begin
   //Insere o adicional selecionado nos adicionais do produto
   cdsAddPedido.Insert;
   cdsAddPedidoIMG.AsInteger        := 0;
-  if cdsAdicional.FieldByName('ADICIONAL').AsString = 'S' then
-    cdsAddPedidoITEM_ID.AsInteger  := cdsAdicionalID.AsInteger
-  else
-    cdsAddPedidoITEM_ID.AsInteger  := cdsAdicionalID.AsInteger;
+  cdsAddPedidoITEM_ID.AsInteger  := cdsAdicionalID.AsInteger;
   cdsAddPedidoVRUNITARIO.AsFloat   := cdsAdicionalVALOR.AsFloat;
   //Grava identificador do produto a que pertence o adicional
   cdsAddPedidoITEMPEDIDO_ID.AsInteger := frmPDV_PDV.cdsITEMPEDIDOID.AsInteger;

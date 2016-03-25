@@ -426,6 +426,7 @@ begin
     if cdsAgrupAdicional.IsEmpty then
     begin
       adqAgrupAdicional.Close;
+      adqAgrupAdicional.Parameters.ParamByName('P_CARDAPIO_ID').Value := cdsItemCategoriaID.AsInteger;
       adqAgrupAdicional.Open;
       cdsAgrupAdicional.Data := dspAgrupAdicional.Data;
       adqAgrupAdicional.Close;
@@ -789,7 +790,7 @@ begin
       cdsAddPedido.Next;
 
     cdsItemPedido.Edit;
-    cdsItemPedidoVRVENDA.AsFloat := cdsItemCategoriaVRVENDA.AsFloat + cdsAddPedidoVRADICIONAL.AsFloat;
+    cdsItemPedidoVRVENDA.AsFloat := cdsItemPedidoVRVENDA.AsFloat + cdsAddPedidoVRADICIONAL.AsFloat;
     cdsItemPedidoVRTOTAL.AsFloat := (cdsItemPedidoQTITEM.AsFloat * cdsItemPedidoVRVENDA.AsFloat) +
                                     (cdsItemPedidoQTITEM.AsFloat * StrToFloat(cdsAddPedidoSUMVRTOTAL.Value));
     boJaPostou := True;
@@ -803,7 +804,7 @@ begin
     adqAuxAdicional.Open;
 
     cdsItemPedido.Edit;
-    cdsItemPedidoVRVENDA.AsFloat := cdsItemCategoriaVRVENDA.AsFloat + adqAuxAdicional.FieldByName('VRAGRUPADIC').AsFloat;
+    cdsItemPedidoVRVENDA.AsFloat := cdsItemPedidoVRVENDA.AsFloat + adqAuxAdicional.FieldByName('VRAGRUPADIC').AsFloat;
     cdsItemPedidoVRTOTAL.AsFloat := (cdsItemPedidoQTITEM.AsFloat * cdsItemPedidoVRVENDA.AsFloat);
   end;
 
@@ -828,6 +829,7 @@ begin
       if cdsAgrupAdicional.IsEmpty then
       begin
         adqAgrupAdicional.Close;
+        adqAgrupAdicional.Parameters.ParamByName('P_CARDAPIO_ID').Value := cdsItemPedidoCARDAPIO_ID.AsInteger;
         adqAgrupAdicional.Open;
         cdsAgrupAdicional.Data := dspAgrupAdicional.Data;
         adqAgrupAdicional.Close;

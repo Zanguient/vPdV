@@ -2124,4 +2124,23 @@ object frmAdicional: TfrmAdicional
     Left = 528
     Top = 24
   end
+  object adqAuxVrGrup: TADOQuery
+    Connection = dmConexao.adoConexaoBd
+    Parameters = <
+      item
+        Name = 'P_ADICIONAL_ID'
+        DataType = ftInteger
+        Size = -1
+        Value = Null
+      end>
+    SQL.Strings = (
+      'SELECT AA.ID, AA.VRAGRUPADIC'
+      
+        '  FROM ADICIONAIS AD INNER JOIN AGRUPADICIONAL AA ON AD.agrupadi' +
+        'cional_id = AA.ID'
+      ' WHERE AD.ID = :P_ADICIONAL_ID'
+      '')
+    Left = 680
+    Top = 150
+  end
 end
