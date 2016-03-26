@@ -1250,7 +1250,7 @@ inherited vCancelaPedido: TvCancelaPedido
         'USPED,'
       '       PEDIDO.DSMOTIVO, PEDIDO.IDTIPOPEDIDO, M.NMMESA'
       '  FROM PEDIDO INNER JOIN MESA M ON PEDIDO.MESA_ID = M.ID'
-      ' WHERE PEDIDO.IDSTATUSPED <> '#39'C'#39)
+      ' WHERE PEDIDO.IDSTATUSPED = '#39'A'#39)
     object adqPadraoID: TAutoIncField
       FieldName = 'ID'
       ReadOnly = True
