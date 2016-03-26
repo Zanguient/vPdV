@@ -1,5 +1,5 @@
 inherited frmPDVMain: TfrmPDVMain
-  Height = 588
+  Height = 700
   Color = clCream
   ParentColor = False
   OnResize = FrameResize
@@ -10,12 +10,12 @@ inherited frmPDVMain: TfrmPDVMain
     end
   end
   inherited panClient: TPanel
-    Height = 561
+    Height = 673
     object scbPedidos: TScrollBox
       Left = 201
       Top = 0
       Width = 276
-      Height = 561
+      Height = 673
       Align = alRight
       BevelInner = bvNone
       BevelOuter = bvNone
@@ -25,7 +25,7 @@ inherited frmPDVMain: TfrmPDVMain
         Left = 0
         Top = 0
         Width = 276
-        Height = 561
+        Height = 673
         Align = alClient
         BevelInner = bvNone
         BevelOuter = bvNone
@@ -56,15 +56,7 @@ inherited frmPDVMain: TfrmPDVMain
           object gcpStatus: TcxGridDBColumn
             Caption = 'Status'
             DataBinding.FieldName = 'status'
-            PropertiesClassName = 'TcxImageComboBoxProperties'
-            Properties.Alignment.Horz = taLeftJustify
-            Properties.Items = <
-              item
-                Description = 'Valor exibido na tela'
-                ImageIndex = 0
-                Value = 'Campo no banco'
-              end>
-            OnGetDisplayText = gcpStatusGetDisplayText
+            PropertiesClassName = 'TcxTextEditProperties'
             Styles.Header = cxStyle1
             Width = 71
           end
@@ -85,14 +77,14 @@ inherited frmPDVMain: TfrmPDVMain
       Left = 0
       Top = 0
       Width = 201
-      Height = 561
+      Height = 673
       Align = alClient
       BevelOuter = bvNone
       Color = clCream
       TabOrder = 1
       object scbOpcoes: TScrollBox
         Left = 0
-        Top = 462
+        Top = 574
         Width = 201
         Height = 99
         Align = alBottom
@@ -2757,7 +2749,7 @@ inherited frmPDVMain: TfrmPDVMain
         Left = 0
         Top = 0
         Width = 201
-        Height = 462
+        Height = 574
         Align = alClient
         BevelInner = bvNone
         BevelOuter = bvNone
@@ -2838,6 +2830,7 @@ inherited frmPDVMain: TfrmPDVMain
     end
     object cdsMesastatus: TStringField
       FieldName = 'status'
+      OnGetText = cdsMesastatusGetText
       Size = 1
     end
     object cdsMesavalor: TFloatField

@@ -18,7 +18,7 @@ uses
   dxSkinXmas2008Blue, dxSkinscxPCPainter, cxCustomData, cxFilter, cxData,
   cxDataStorage, cxEdit, cxDBData, cxGridLevel, cxGridCustomTableView,
   cxGridTableView, cxGridDBTableView, cxClasses, cxGridCustomView, cxGrid,
-  Provider, cxImageComboBox, ImgList, cxCurrencyEdit;
+  Provider, cxImageComboBox, ImgList, cxCurrencyEdit, cxTextEdit;
 
 type
   TfrmPDVMain = class(TvPadraoFrame)
@@ -62,13 +62,13 @@ type
     procedure btnDeliveryClick(Sender: TObject);
     procedure btnBalcaoClick(Sender: TObject);
     procedure btnFecharCaixaClick(Sender: TObject);
-    procedure gcpStatusGetDisplayText(Sender: TcxCustomGridTableItem;
-      ARecord: TcxCustomGridRecord; var AText: String);
     procedure pmiLiberarClick(Sender: TObject);
     procedure pmiOcupadaClick(Sender: TObject);
     procedure sbxOpcoesPDVResize(Sender: TObject);
     procedure FrameResize(Sender: TObject);
     procedure btnSangriaClick(Sender: TObject);
+    procedure cdsMesastatusGetText(Sender: TField; var Text: String;
+      DisplayText: Boolean);
   private
     { Private declarations }
   public
@@ -174,19 +174,6 @@ begin
   inherited;
   if CaixaFechado then
     CaixaPreAberto;
-end;
-
-procedure TfrmPDVMain.gcpStatusGetDisplayText(
-  Sender: TcxCustomGridTableItem; ARecord: TcxCustomGridRecord;
-  var AText: String);
-begin
-  case AnsiIndexStr(UpperCase(cdsMesaStatus.AsString), ['L','O']) of
-    0: Atext := 'Livre';
-    1: Atext := 'Ocupada';
-  else
-    AText := 'Desconhecido';
-  end;
-  inherited;
 end;
 
 procedure TfrmPDVMain.RefreshMesa;
@@ -295,6 +282,18 @@ begin
   finally
     FreeAndNil(frmsangria);
   end;                     
+end;
+
+procedure TfrmPDVMain.cdsMesastatusGetText(Sender: TField;
+  var Text: String; DisplayText: Boolean);
+begin
+  inherited;
+  case AnsiIndexStr(UpperCase(cdsMesaStatus.AsString), ['L','O']) of
+    0: Text := 'Livre';
+    1: Text := 'Ocupada';
+  else
+    Text := 'Desconhecido';
+  end;
 end;
 
 end.
