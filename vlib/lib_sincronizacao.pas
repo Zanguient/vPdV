@@ -852,7 +852,7 @@ begin
     upload.SendData;
 
     FreeAndNil(upload);
-    map:= mapaCampos.MapaAberfechcaixa;
+    map:= mapaCampos.MapaMovCaixa;
     upload:= TUpload.create('MovCaixa', 'pedido.movcaixa.models', map, 'id_desktop');
     upload.SendData;
     dmConexao.adoConexaoBd.CommitTrans;
