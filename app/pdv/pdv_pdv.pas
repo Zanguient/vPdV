@@ -216,7 +216,7 @@ type
     { Public declarations }
     procedure OnClickCategoriaPDV(Sender: TObject);
     procedure OnClickProdutosPDV(Sender: TObject);
-    procedure AtualizaValorPedido(boSemADD: Boolean = False);
+    procedure AtualizaValorPedido(boSemADD: Boolean = False; boShow: Boolean = False);
     procedure AtualizacdsPedido;
   end;
 
@@ -298,7 +298,7 @@ begin
   begin
     scbMenu.Controls[iComp].Width := Trunc(scbMenu.Width/(scbMenu.ControlCount-iGrava));
   end;
-  AtualizaValorPedido;
+  AtualizaValorPedido(False, True);
 end;
 
 procedure TfrmPDV_PDV.FormCreate(Sender: TObject);
@@ -723,7 +723,7 @@ begin
 
       if stStatusPedido = 'F' then
       begin
-{        if not Impressao_Nao_Fiscal.Verif_Impressora then
+        if not Impressao_Nao_Fiscal.Verif_Impressora then
         begin
           if not Confirma(DESEJA_CONTINUAR_PEDIDO) then
             Exit;
@@ -731,16 +731,16 @@ begin
         begin
           cdsAddPedido.Filtered := False;
           Impressao_Nao_Fiscal.Layout_Finaliza_Pedido(cdsPedidoImpressao, cdsItemPedido, cdsAddPedido, 'F');
-        end;}
+        end;
       end else
       begin
-{        if not Impressao_Nao_Fiscal.Verif_Impressora then
+        if not Impressao_Nao_Fiscal.Verif_Impressora then
           Aviso(PEDIDO_NAO_COZINHA)
         else
         begin
           cdsAddPedido.Filtered := False;
           Impressao_Nao_Fiscal.Layout_Finaliza_Pedido(cdsPedidoImpressao, cdsItemPedido, cdsAddPedido, 'G');
-        end;}
+        end;
       end;
 
       if stStatusPedido = 'F' then
@@ -780,32 +780,35 @@ begin
   boJaPostou := False;
 end;
 
-procedure TfrmPDV_PDV.AtualizaValorPedido(boSemADD: Boolean = False);
+procedure TfrmPDV_PDV.AtualizaValorPedido(boSemADD: Boolean = False; boShow: Boolean = False);
 begin
-  if not VarIsNull(cdsAddPedidoSUMVRTOTAL.Value) then
+  if not boShow then
   begin
-    cdsItemCategoria.Locate('PRODUTO_ID', cdsItemPedidoPRODUTO_ID.AsInteger, [loCaseInsensitive]);
-    cdsAddPedido.First;
-    while ((cdsAddPedido.FieldByName('VRUNITARIO').AsFloat = 0) or (not cdsAddPedido.Eof)) do
-      cdsAddPedido.Next;
+    if not VarIsNull(cdsAddPedidoSUMVRTOTAL.Value) then
+    begin
+      cdsItemCategoria.Locate('PRODUTO_ID', cdsItemPedidoPRODUTO_ID.AsInteger, [loCaseInsensitive]);
+      cdsAddPedido.First;
+      while ((cdsAddPedido.FieldByName('VRUNITARIO').AsFloat = 0) or (not cdsAddPedido.Eof)) do
+        cdsAddPedido.Next;
 
-    cdsItemPedido.Edit;
-    cdsItemPedidoVRVENDA.AsFloat := cdsItemPedidoVRVENDA.AsFloat + cdsAddPedidoVRADICIONAL.AsFloat;
-    cdsItemPedidoVRTOTAL.AsFloat := (cdsItemPedidoQTITEM.AsFloat * cdsItemPedidoVRVENDA.AsFloat) +
-                                    (cdsItemPedidoQTITEM.AsFloat * StrToFloat(cdsAddPedidoSUMVRTOTAL.Value));
-    boJaPostou := True;
+      cdsItemPedido.Edit;
+      cdsItemPedidoVRVENDA.AsFloat := cdsItemPedidoVRVENDA.AsFloat + cdsAddPedidoVRADICIONAL.AsFloat;
+      cdsItemPedidoVRTOTAL.AsFloat := (cdsItemPedidoQTITEM.AsFloat * cdsItemPedidoVRVENDA.AsFloat) +
+                                      (cdsItemPedidoQTITEM.AsFloat * StrToFloat(cdsAddPedidoSUMVRTOTAL.Value));
+      boJaPostou := True;
 
-    cdsItemPedido.Post;
-  end else
-  if boSemADD then
-  begin
-    adqAuxAdicional.Close;
-    adqAuxAdicional.Parameters.ParamByName('P_CARDAPIO_ID').Value := cdsItemPedidoCARDAPIO_ID.AsInteger;
-    adqAuxAdicional.Open;
+      cdsItemPedido.Post;
+    end else
+    if boSemADD then
+    begin
+      adqAuxAdicional.Close;
+      adqAuxAdicional.Parameters.ParamByName('P_CARDAPIO_ID').Value := cdsItemPedidoCARDAPIO_ID.AsInteger;
+      adqAuxAdicional.Open;
 
-    cdsItemPedido.Edit;
-    cdsItemPedidoVRVENDA.AsFloat := cdsItemPedidoVRVENDA.AsFloat + adqAuxAdicional.FieldByName('VRAGRUPADIC').AsFloat;
-    cdsItemPedidoVRTOTAL.AsFloat := (cdsItemPedidoQTITEM.AsFloat * cdsItemPedidoVRVENDA.AsFloat);
+      cdsItemPedido.Edit;
+      cdsItemPedidoVRVENDA.AsFloat := cdsItemPedidoVRVENDA.AsFloat + adqAuxAdicional.FieldByName('VRAGRUPADIC').AsFloat;
+      cdsItemPedidoVRTOTAL.AsFloat := (cdsItemPedidoQTITEM.AsFloat * cdsItemPedidoVRVENDA.AsFloat);
+    end;
   end;
 
   if VarIsNull(cdsItemPedidoSUMVRTOTAL.Value) then
@@ -839,7 +842,8 @@ begin
 
       try
         frmAdicional.ShowModal;
-        AtualizaValorPedido(frmAdicional.GetBlz);
+        if frmAdicional.GetBlz then
+          AtualizaValorPedido(frmAdicional.GetBlz);
       finally
         FreeAndNil(frmAdicional);
       end;

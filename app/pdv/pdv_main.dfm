@@ -50,8 +50,8 @@ inherited frmPDVMain: TfrmPDVMain
           Styles.Header = styGridHeader
           object gcpMesa: TcxGridDBColumn
             Caption = 'Mesa'
-            DataBinding.FieldName = 'id_mesa'
-            Width = 40
+            DataBinding.FieldName = 'nmmesa'
+            Width = 77
           end
           object gcpStatus: TcxGridDBColumn
             Caption = 'Status'
@@ -66,14 +66,14 @@ inherited frmPDVMain: TfrmPDVMain
               end>
             OnGetDisplayText = gcpStatusGetDisplayText
             Styles.Header = cxStyle1
-            Width = 92
+            Width = 71
           end
           object gcpValor: TcxGridDBColumn
             Caption = 'Valor'
             DataBinding.FieldName = 'valor'
             PropertiesClassName = 'TcxCurrencyEditProperties'
             Properties.DisplayFormat = '0.00;-0.00'
-            Width = 135
+            Width = 116
           end
         end
         object dbgPedidosLevel1: TcxGridLevel
@@ -2776,7 +2776,8 @@ inherited frmPDVMain: TfrmPDVMain
         'fnull(P.vrpedido, 0) valor'
       '  FROM MESA M LEFT JOIN PEDIDO P ON M.ID = P.MESA_ID'
       '                                 AND P.IDSTATUSPED = '#39'A'#39
-      ' WHERE M.idmesaativ = '#39'A'#39)
+      ' WHERE M.idmesaativ = '#39'A'#39
+      ' ORDER BY M.NMMESA')
   end
   object cdsMesa: TClientDataSet
     Active = True
@@ -2811,7 +2812,7 @@ inherited frmPDVMain: TfrmPDVMain
         Name = 'cdsMesaIndex1'
         Fields = 'id_mesa'
       end>
-    IndexFieldNames = 'id_mesa'
+    IndexFieldNames = 'nmmesa'
     Params = <>
     StoreDefs = True
     Left = 368

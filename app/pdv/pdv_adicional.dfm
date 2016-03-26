@@ -1798,7 +1798,14 @@ object frmAdicional: TfrmAdicional
         DataType = ftString
         Size = 1
       end>
-    IndexDefs = <>
+    IndexDefs = <
+      item
+        Name = 'DEFAULT_ORDER'
+      end
+      item
+        Name = 'CHANGEINDEX'
+      end>
+    IndexFieldNames = 'NMPRODUTO'
     Params = <>
     StoreDefs = True
     Left = 592
@@ -1868,7 +1875,8 @@ object frmAdicional: TfrmAdicional
         '                    INNER JOIN UNIMEDIDA U ON P.UNIMEDIDA_ID = U' +
         '.ID'
       ' WHERE A.AGRUPADICIONAL_ID = :P_AGRUPADICIONAL'
-      '   AND P.IDADICIONAL = 1')
+      '   AND P.IDADICIONAL = 1'
+      ' ORDER BY P.NMPRODUTO')
     Left = 560
     Top = 64
   end

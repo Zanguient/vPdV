@@ -180,13 +180,13 @@ procedure TfrmPDVMain.gcpStatusGetDisplayText(
   Sender: TcxCustomGridTableItem; ARecord: TcxCustomGridRecord;
   var AText: String);
 begin
-  inherited;
   case AnsiIndexStr(UpperCase(cdsMesaStatus.AsString), ['L','O']) of
     0: Atext := 'Livre';
     1: Atext := 'Ocupada';
   else
     AText := 'Desconhecido';
   end;
+  inherited;
 end;
 
 procedure TfrmPDVMain.RefreshMesa;
