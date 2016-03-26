@@ -192,6 +192,7 @@ type
     adqComposicao: TADOQuery;
     dspComposicao: TDataSetProvider;
     adqAuxAdicional: TADOQuery;
+    adqVerifDadosItem: TADOQuery;
     procedure FormShow(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     constructor PCreate(Form: TComponent; Parametros: TParametros); Overload;
@@ -368,7 +369,7 @@ var
   inGambi: Integer;
   procedure ConfirmaProduto(flQuantidade: Double = 0);
   var
-    flRetConfirmaQtdePeso: Double;
+    flRetConfirmaQtdePeso,flQtdePeso: Double;
   begin
     if cdsItemPedido.Locate('PRODUTO_ID', cdsItemCategoriaPRODUTO_ID.AsInteger, [loCaseInsensitive]) and
       (cdsItemCategoriaIDTIPOMED.AsString <> 'M') and (cdsAddPedido.RecordCount = 0) and (flQuantidade = 0) then
@@ -404,9 +405,20 @@ var
         cdsItemPedido.Cancel;
         Abort;
       end;
+      flQtdePeso := 0.0;
+      if (cdsItemCategoriaIDTIPOMED.AsString[1] in ['M']) then
+      begin                   
+        adqVerifDadosItem.Close;
+        adqVerifDadosItem.Parameters.ParamByName('P_CATEGORIA').Value := cdsItemCategoriaID.AsInteger;
+        adqVerifDadosItem.Open;
+
+        flQtdePeso := (flRetConfirmaQtdePeso*adqVerifDadosItem.FieldByName('VRCONVBASE').AsFloat)/adqVerifDadosItem.FieldByName('VRCONVCARDAPIO').AsFloat;
+      end else
+        flQtdePeso := flRetConfirmaQtdePeso;
+
       cdsItemPedidoCARDAPIO_ID.AsInteger := (Sender as TcxButton).Tag;
       cdsItemPedidoQTITEM.AsFloat := RoundTo(flRetConfirmaQtdePeso, -3);
-      cdsItemPedidoVRTOTAL.AsFloat := RoundTo(cdsItemCategoriaVRVENDA.AsFloat*flRetConfirmaQtdePeso, -2);
+      cdsItemPedidoVRTOTAL.AsFloat := RoundTo(cdsItemCategoriaVRVENDA.AsFloat*flQtdePeso, -2);
       cdsItemPedidoLOTE_ID.Clear;
       cdsItemPedidoIMG.Value := 0;
                                                                                                             
